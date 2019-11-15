@@ -53,7 +53,12 @@ Returns root element in DOM where elementToMount was added.
 
 Render the component. Doesn't affect the DOM.
 
-## s.autoupdate
+## s.update
+### void s.update ( rootElement, renderedComponent, component )
+
+Updates the rendered component.
+
+## s.autoUpdate
 ### void s.autoupdate ( rootElement, renderedComponent, component, updateMillis = 17 )
 
 Automatically updates the rendered component every updateMillis milliseconds. Default is 17 milliseconds (1 second / 60 frames per second rounded up to 17).
@@ -70,6 +75,11 @@ Create a text node.
 
 ## s.route
 ### void s.route ( hashUrlRegEx, { component: object, root: element })
+
+Define a hash-based route that will replace root element's content with the specified component on route action.
+
+## s.routeById
+### void s.routeById ( hashUrlRegEx, { component: object, root: elementId })
 
 Define a hash-based route that will replace root element's content with the specified component on route action.
 
