@@ -1,3 +1,4 @@
+
 ![Sling logo](https://github.com/puckowski/Sling.js/blob/master/sling.png "Sling logo")
 
 # Sling
@@ -6,7 +7,7 @@ Client-side JavaScript framework for building Single Page Applications.
 
 ## Building
 
-terser --compress --mangle --output .\dist\sling.js -- .\src\sling.js
+terser --compress --mangle --output .\dist\sling.min.js -- .\src\sling.js
 
 ## Testing
 
@@ -18,7 +19,7 @@ http-server -c-1 .
 
 Then navigate to http://127.0.0.1:8080/index.html
 
-## API
+# API
 
 ## s.setState 
 ### void s.setState ( newStateObj )
@@ -78,6 +79,6 @@ Define a hash-based route that will replace root element's content with the spec
 Navigate to the hash-based route according to a previosuly defined route.
 
 ## s.getRouteSegments 
-## string[] s.getRouteSegments ( )
+### string[] s.getRouteSegments ( )
 
 Returns the current hash-based route's segments or empty array if there are none.
