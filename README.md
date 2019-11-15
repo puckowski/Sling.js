@@ -86,7 +86,7 @@ Define a hash-based route that will replace root element's content with the spec
 ## s.route
 ### s.route ( hashUrl )
 
-Navigate to the hash-based route according to a previosuly defined route.
+Navigate to the hash-based route according to a previously defined route.
 
 ## s.getRouteSegments 
 ### string[] s.getRouteSegments ( )
