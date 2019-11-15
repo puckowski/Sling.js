@@ -1,0 +1,29 @@
+{
+  "name": "sling.js",
+  "version": "0.2.0",
+  "description": "Client-side JavaScript framework for building Single Page Applications.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/puckowski/Sling.js.git"
+  },
+  "keywords": [
+    "Sling",
+    "JavaScript",
+    "Framework",
+    "SPA"
+  ],
+  "author": "Daniel Puckowski",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/puckowski/Sling.js/issues"
+  },
+  "homepage": "https://github.com/puckowski/Sling.js#readme",
+  "devDependencies": {
+    "http-server": "^0.11.1",
+    "terser": "^4.4.0"
+  }
+}
