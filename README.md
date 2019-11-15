@@ -1,4 +1,4 @@
-![Sling logo](https://github.com/puckowski/Sling.js/sling.png "Sling logo") Sling 
+![Sling logo](https://github.com/puckowski/Sling.js/blob/master/sling.png "Sling logo") Sling 
 
 # Sling
 
