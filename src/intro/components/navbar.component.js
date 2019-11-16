@@ -32,12 +32,12 @@ class NavbarComponent {
                                 class: 'navbar-brand'
                             },
                             children: [
-                                s.textNode('Demo App')
+                                s.textNode('Sling')
                             ]
                         }),
                         s.markup('div', {
                             attrs: {
-                                style: 'margin-left:1rem;display:inline-flex;'
+                                style: 'display:inline-flex;'
                             },
                             children: [
                                 s.markup('ul', {

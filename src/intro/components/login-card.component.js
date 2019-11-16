@@ -4,6 +4,14 @@ class LoginCardComponent {
 
     }
 
+    slOnInit() {
+        console.log('Initializing LoginCardComponent');
+    }
+
+    slOnDestroy() {
+        console.log('Destroying LoginCardComponent');
+    }
+
     performLogin() {
         alert('Logged in!');
     }
@@ -11,7 +19,8 @@ class LoginCardComponent {
     view() {
         return s.markup('div', {
             attrs: {
-                style: 'height:calc(100% - 56px);display:flex;'
+                style: 'height:calc(100% - 56px);display:flex;',
+                id: 'divLogin'
             },
             children: [
                 s.markup('div', {
