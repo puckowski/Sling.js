@@ -1,4 +1,4 @@
-.fancy {
+.animEnter {
     animation: fade-in 0.5s;
 }
 
@@ -11,7 +11,7 @@
     }
 }
 
-.exit {
+.animExit {
     animation: fade-out 0.5s;
 }
 
@@ -22,4 +22,8 @@
     to {
         opacity: 0;
     }
+}
+
+.textBold {
+    font-weight: bold;
 }

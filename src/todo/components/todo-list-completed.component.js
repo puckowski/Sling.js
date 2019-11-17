@@ -1,4 +1,4 @@
-class TodoListComponent {
+class TodoListCompletedComponent {
 
     constructor() {
 
@@ -16,18 +16,6 @@ class TodoListComponent {
         s.setState(stateObj);
     }
 
-    updateNote(note, event) {
-        let stateObj = s.getState();
-
-        stateObj.notes.forEach((stateNote) => {
-            if (stateNote === note) {
-                stateNote.text = event.target.value;
-            }
-        })
-
-        s.setState(stateObj);
-    }
-
     view() {
         return s.markup('div', {
             attrs: {
@@ -39,7 +27,7 @@ class TodoListComponent {
                         style: "width:50%;margin:auto;padding:1rem;"
                     },
                     children: [
-                        ...Array.from(s.getState().notes, (note) =>
+                        ...Array.from(s.getState().notes.filter((note) => note.completed ? true : false), (note) =>
                             s.markup('div', {
                                 attrs: {
                                     class: 'input-group mb-3 animEnter',
@@ -71,8 +59,7 @@ class TodoListComponent {
                                         attrs: {
                                             value: note.text,
                                             class: 'form-control',
-                                            ... note.completed && { readonly: 'true' },
-                                            oninput: this.updateNote.bind(this, note)
+                                            ... note.completed && { readonly: 'true' }
                                         }
                                     })
                                 ]
@@ -85,4 +72,4 @@ class TodoListComponent {
     }
 }
 
-export default TodoListComponent;
+export default TodoListCompletedComponent;
