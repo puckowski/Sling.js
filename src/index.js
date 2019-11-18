@@ -5,12 +5,12 @@ let state = { buttonClass: 'btn-primary', index: 0, notes: [] };
 s.setState(state);
 
 let compNavbar = new NavbarComponent();
-s.mountById('divNavbar', compNavbar);
+s.mount('divNavbar', compNavbar);
 
 let compLogin = new LoginCardComponent();
-let rootContent = s.mountById('divContent', compLogin);
+let rootContent = s.mount('divLogin', compLogin);
 
-s.autoUpdate(rootContent, compLogin);
+s.autoUpdate('divLogin', compLogin);
 
 setInterval(() => {
     let state = s.getState();
@@ -33,7 +33,7 @@ setInterval(() => {
 s.route('foo/:userId/bar', { component: compLogin, root: 'divLogin' });
 s.route('foo/5/bar');
 
-s.clearAutoUpdate('divLogin');
+//s.clearAutoUpdate('divLogin');
 
 /*
 setTimeout(() => {

@@ -9,24 +9,21 @@ let state = { buttonClass: 'btn-primary', index: 0, notes: [] };
 s.setState(state);
 
 let compNavbar = new NavbarComponent();
-s.mountById('divNavbar', compNavbar);
+s.mount('divNavbar', compNavbar);
 
 let compNoteInput = new NoteInputComponent();
-s.mountById('divNoteInput', compNoteInput);
+s.mount('divNoteInput', compNoteInput);
 
 let compTodoListNav = new TodoListNavComponent();
-let rootTodoListNav = s.mountById('divNoteNav', compTodoListNav);
-
-let compTodoList = new TodoListComponent();
-let rootTodoList = s.mountById('divTodoList', compTodoList);
-
-let compTodoListCompleted = new TodoListCompletedComponent();
+let rootTodoListNav = s.mount('divNoteNav', compTodoListNav);
 
 let compTodoHeader = new TodoHeaderComponent();
-s.mountById('divTodoHeader', compTodoHeader);
+s.mount('divTodoHeader', compTodoHeader);
+
+let compTodoList = new TodoListComponent();
+let compTodoListCompleted = new TodoListCompletedComponent();
 
 s.route('all', { component: compTodoList, root: 'divTodoList' });
 s.route('completed', { component: compTodoListCompleted, root: 'divTodoList' });
 
-s.autoUpdate(rootTodoList, compTodoList);
-s.autoUpdate(rootTodoListNav, compTodoListNav);
+s.autoUpdate('navTodoList', compTodoListNav);

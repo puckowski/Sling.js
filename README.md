@@ -54,15 +54,9 @@ __object s.markup ( tagString, { attrs: {}, children: [] } )__
 Returns markup object to render. May be mounted to DOM.
 
 ## s.mount
-__element s.mount ( rootElement, component )__
+__element s.mount ( rootElementId, component )__
 
-Mounts ```component``` on ```rootElement``` in DOM.
-Returns root element in DOM where ```component``` was added.
-
-## s.mountById
-__element s.mountById ( rootElementId, elementToMount )__
-
-Same as s.mount, but takes in an element ID as first parameter instead of the actual root element to mount to.
+Mounts ```component``` on element with ID ```rootElementId``` in DOM.
 Returns root element in DOM where ```component``` was added.
 
 ## s.update
@@ -71,7 +65,7 @@ __void s.update ( rootElementId, component )__
 Updates the component mounted at element with ID ```rootElementId```.
 
 ## s.autoUpdate
-__void s.autoupdate ( rootElement, component, updateMillis = 17 )__
+__void s.autoupdate ( rootElementId, component, updateMillis = 17 )__
 
 Automatically updates ```component``` every ```updateMillis``` milliseconds. Default is 17 milliseconds (1 second / 60 frames per second rounded up to 17).
 
@@ -91,9 +85,9 @@ Returns Sling version number represented as a float.
 Create a text node.
 
 ## s.route
-__void s.route ( hashUrlRegEx, { root: element, component: object })__
+__void s.route ( hashUrlRegEx, { root: elementId, component: object })__
 
-Define a hash-based route that will replace root ```element```'s content with the specified component on route action.
+Define a hash-based route that will replace element with ID ```elementId```'s content with the specified component on route action.
 
 ## s.route
 __s.route ( hashUrl )__

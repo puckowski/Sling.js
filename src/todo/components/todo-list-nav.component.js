@@ -1,3 +1,6 @@
+import TodoListComponent from './todo-list.component.js';
+import TodoListCompletedComponent from './todo-list-completed.component.js';
+
 class TodoListNavComponent {
 
     constructor() {
@@ -13,12 +16,22 @@ class TodoListNavComponent {
 
         switch (routeString) {
             case 'all': {
+                let compTodoList = new TodoListComponent();
+                let rootTodoList = s.mount('divTodoList', compTodoList);
+
                 s.route('all');
+                
+                s.autoUpdate('divTodoList', compTodoList);
 
                 break;
             }
             case 'completed': {
+                let compTodoListCompleted = new TodoListCompletedComponent();
+                let rootTodoList = s.mount('divTodoList', compTodoListCompleted);
+
                 s.route('completed');
+
+                s.autoUpdate('divTodoList', compTodoListCompleted);
 
                 break;
             }
@@ -41,7 +54,8 @@ class TodoListNavComponent {
         return s.markup('ul', {
             attrs: {
                 class: 'nav',
-                style: 'width:50%;margin:auto;'
+                style: 'width:50%;margin:auto;',
+                id: 'navTodoList'
             },
             children: [
                 s.markup('li', {
