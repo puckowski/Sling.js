@@ -1,5 +1,6 @@
 import TodoListComponent from './todo-list.component.js';
 import TodoListCompletedComponent from './todo-list-completed.component.js';
+import NoteService from '../services/note.service.js';
 
 class TodoListNavComponent {
 
@@ -11,27 +12,41 @@ class TodoListNavComponent {
         this.performRouteAction(s.getRouteSegments()[0]);
     }
 
+    routeToAll() {
+        let compTodoList = new TodoListComponent();
+        s.mount('divTodoList', compTodoList);
+
+        s.route('all');
+
+        s.autoUpdate('divTodoList', compTodoList);
+    }
+
+    routeToCompleted() {
+        let compTodoListCompleted = new TodoListCompletedComponent();
+        s.mount('divTodoList', compTodoListCompleted);
+
+        s.route('completed');
+
+        s.autoUpdate('divTodoList', compTodoListCompleted);
+    }
+
     performRouteAction(routeString) {
         this.routeString = routeString;
 
         switch (routeString) {
             case 'all': {
-                let compTodoList = new TodoListComponent();
-                let rootTodoList = s.mount('divTodoList', compTodoList);
-
-                s.route('all');
-                
-                s.autoUpdate('divTodoList', compTodoList);
+                this.routeToAll();
 
                 break;
             }
             case 'completed': {
-                let compTodoListCompleted = new TodoListCompletedComponent();
-                let rootTodoList = s.mount('divTodoList', compTodoListCompleted);
+                this.routeToCompleted();
 
-                s.route('completed');
-
-                s.autoUpdate('divTodoList', compTodoListCompleted);
+                break;
+            }
+            default: {
+                this.routeString = 'all';
+                this.routeToAll();
 
                 break;
             }
@@ -41,13 +56,14 @@ class TodoListNavComponent {
     completeNote(note) {
         let stateObj = s.getState();
 
-        stateObj.notes.forEach((stateNote) => {
+        stateObj.getNotes().forEach((stateNote) => {
             if (stateNote === note) {
                 stateNote.completed = !note.completed;
             }
         })
 
         s.setState(stateObj);
+        new NoteService().setNoteCookie(stateObj);
     }
 
     view() {

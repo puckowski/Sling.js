@@ -4,9 +4,20 @@ import TodoListComponent from './todo/components/todo-list.component.js';
 import TodoHeaderComponent from './todo/components/todo-header.component.js';
 import TodoListCompletedComponent from './todo/components/todo-list-completed.component.js';
 import TodoListNavComponent from './todo/components/todo-list-nav.component.js';
+import StoreTodo from './todo/stores/todo.store.js';
+import NoteService from './todo/services/note.service.js';
 
-let state = { buttonClass: 'btn-primary', index: 0, notes: [] };
+let noteCookieData = new NoteService().getNoteCookie();
+let state = new StoreTodo();
+
+if (noteCookieData.length > 0) {
+    state.addNotes(JSON.parse(noteCookieData)); 
+}
+
 s.setState(state);
+
+s.route('all', { component: new TodoListComponent(), root: 'divTodoList' });
+s.route('completed', { component: new TodoListCompletedComponent(), root: 'divTodoList' });
 
 let compNavbar = new NavbarComponent();
 s.mount('divNavbar', compNavbar);
@@ -15,15 +26,9 @@ let compNoteInput = new NoteInputComponent();
 s.mount('divNoteInput', compNoteInput);
 
 let compTodoListNav = new TodoListNavComponent();
-let rootTodoListNav = s.mount('divNoteNav', compTodoListNav);
+s.mount('divNoteNav', compTodoListNav);
 
 let compTodoHeader = new TodoHeaderComponent();
 s.mount('divTodoHeader', compTodoHeader);
-
-let compTodoList = new TodoListComponent();
-let compTodoListCompleted = new TodoListCompletedComponent();
-
-s.route('all', { component: compTodoList, root: 'divTodoList' });
-s.route('completed', { component: compTodoListCompleted, root: 'divTodoList' });
 
 s.autoUpdate('navTodoList', compTodoListNav);

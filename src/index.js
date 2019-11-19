@@ -1,14 +1,14 @@
 import LoginCardComponent from './intro/components/login-card.component.js';
 import NavbarComponent from './intro/components/navbar.component.js';
 
-let state = { buttonClass: 'btn-primary', index: 0, notes: [] };
+let state = { buttonClass: 'btn-primary', index: 0 };
 s.setState(state);
 
 let compNavbar = new NavbarComponent();
 s.mount('divNavbar', compNavbar);
 
 let compLogin = new LoginCardComponent();
-let rootContent = s.mount('divLogin', compLogin);
+s.mount('divLogin', compLogin);
 
 s.autoUpdate('divLogin', compLogin);
 

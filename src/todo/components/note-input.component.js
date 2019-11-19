@@ -1,3 +1,7 @@
+import Note from '../models/note.model.js';
+import NoteService from '../services/note.service.js';
+import TodoListComponent from './todo-list.component.js';
+
 class NoteInputComponent {
 
     constructor() {
@@ -32,10 +36,30 @@ class NoteInputComponent {
 
         let stateObj = s.getState();
 
-        stateObj.notes.push({ text: noteText, completed: false });
+        stateObj.getNotes().push(new Note(noteText, false));
         s.setState(stateObj);
+        new NoteService().setNoteCookie(stateObj);
 
         this.resetInput();
+    }
+
+    clearCompletedNotes() {
+        let stateObj = s.getState();
+
+        let currNote;
+        for(let i = 0; i < stateObj.getNotes().length; ++i) {
+            currNote = stateObj.getNotes()[i];
+
+            if (currNote.completed === true) {
+                stateObj.getNotes().splice(i, 1);
+                i--;
+            }
+        }
+        
+        s.setState(stateObj);
+        new NoteService().setNoteCookie(stateObj);
+
+        s.reloadRoute();
     }
 
     view() {
@@ -48,7 +72,7 @@ class NoteInputComponent {
             children: [
                 s.markup('div', {
                     attrs: {
-                        style: 'display:inline-flex;width:50%;margin:auto;'
+                        style: 'display:grid;width:50%;margin:auto;'
                     },
                     children: [
                         s.markup('textarea', {
@@ -59,15 +83,36 @@ class NoteInputComponent {
                                 oninput: this.updateNoteText.bind(this)
                             }
                         }),
-                        s.markup('button', {
+                        s.markup('br', {
+
+                        }),
+                        s.markup('div', {
                             attrs: {
-                                class: 'btn btn-primary',
-                                type: 'submit',
-                                onclick: this.addNewNote.bind(this),
-                                style: 'width:150px;'
+                                style: 'justify-self:center;'
                             },
                             children: [
-                                s.textNode('Add note')
+                                s.markup('button', {
+                                    attrs: {
+                                        class: 'btn btn-primary',
+                                        type: 'submit',
+                                        onclick: this.addNewNote.bind(this),
+                                        style: 'width:150px;margin-right:1rem;'
+                                    },
+                                    children: [
+                                        s.textNode('Add note')
+                                    ]
+                                }),
+                                s.markup('button', {
+                                    attrs: {
+                                        class: 'btn btn-primary',
+                                        type: 'submit',
+                                        onclick: this.clearCompletedNotes.bind(this),
+                                        style: 'width:150px;'
+                                    },
+                                    children: [
+                                        s.textNode('Clear completed')
+                                    ]
+                                })
                             ]
                         })
                     ]

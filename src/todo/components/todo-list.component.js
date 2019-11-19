@@ -1,3 +1,5 @@
+import NoteService from '../services/note.service.js';
+
 class TodoListComponent {
 
     constructor() {
@@ -7,25 +9,27 @@ class TodoListComponent {
     completeNote(note) {
         let stateObj = s.getState();
 
-        stateObj.notes.forEach((stateNote) => {
+        stateObj.getNotes().forEach((stateNote) => {
             if (stateNote === note) {
                 stateNote.completed = !note.completed;
             }
         })
 
         s.setState(stateObj);
+        new NoteService().setNoteCookie(stateObj);
     }
 
     updateNote(note, event) {
         let stateObj = s.getState();
 
-        stateObj.notes.forEach((stateNote) => {
+        stateObj.getNotes().forEach((stateNote) => {
             if (stateNote === note) {
                 stateNote.text = event.target.value;
             }
         })
 
         s.setState(stateObj);
+        new NoteService().setNoteCookie(stateObj);
     }
 
     view() {
@@ -39,7 +43,7 @@ class TodoListComponent {
                         style: "width:50%;margin:auto;padding:1rem;"
                     },
                     children: [
-                        ...Array.from(s.getState().notes, (note) =>
+                        ...Array.from(s.getState().getNotes(), (note) =>
                             s.markup('div', {
                                 attrs: {
                                     class: 'input-group mb-3 animEnter',
