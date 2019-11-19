@@ -13,7 +13,7 @@ Sling creates and uses a virtual DOM to perform differential updates for fast re
 __Next Billion Users (NBUs)__
 Empower developers to create SPAs for the NBUs of the web. The NBUs tend to use more affordable, less powerful devices which struggle to achieve less than 2 second Time to Interactive (TTI) with larger component libraries and frameworks.
 
-__Gradual Learning Curve__
+__Practical__
 Familiarity with other JavaScript component libraries. Components are instantiated objects which may be used to control their own state and have a simple markup language with a gradual learning curve.
 
 __Generalized__
@@ -21,6 +21,9 @@ API as unopinionated as possible. Developers choose the right design patterns fo
 
 __Fast__
 High performance. Sling aims to get your SPA to interactive as quickly as possible and aims to keep your SPA as responsive as possible by staying within small production budgets. With Sling, it should be easier for your SPA to run at 60 frames per second for a native application experience.
+
+__Minimal Setup__
+Simply include Sling once in your SPA and Sling is ready to use. No configuration files, no hidden requirements.
 
 ## Building
 
@@ -41,9 +44,9 @@ http://127.0.0.1:8080/todo.html
 
 The V8 JavaScript engine can parse, compile, and optimize the entire minified distributed of Sling in 12 milliseconds.
 
-|Parse     |Compile   |Optimize  |Total     |
-|----------|----------|----------|----------|
-|1ms       |7ms       |4ms       |12ms      |
+|Version |Parse     |Compile   |Optimize  |Total     |
+|----------|----------|----------|----------|----------|
+|0.7       |1ms       |7ms       |4ms       |12ms      |
 
 ## Compatibility
 
