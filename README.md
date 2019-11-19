@@ -4,9 +4,23 @@
 
 # Sling
 
-Client-side JavaScript framework for building Single Page Applications. Sling is lightweight and less than 3KB minified.
+Client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight and less than 3KB minified.
 
 Sling creates and uses a virtual DOM to perform differential updates for fast rendering.
+
+## Goals
+
+__Next Billion Users (NBUs)__
+Empower developers to create SPAs for the NBUs of the web. The NBUs tend to use more affordable, less powerful devices which struggle to achieve less than 2 second Time to Interactive (TTI) with larger component libraries and frameworks.
+
+__Gradual Learning Curve__
+Familiarity with other JavaScript component libraries. Components are instantiated objects which may be used to control their own state and have a simple markup language with a gradual learning curve.
+
+__Generalized__
+API as unopinionated as possible. Developers choose the right design patterns for their SPAs, not the library.
+
+__Fast__
+High performance. Sling aims to get your SPA to interactive as quickly as possible and aims to keep your SPA as responsive as possible by staying within small production budgets. With Sling, it should be easier for your SPA to run at 60 frames per second for a native application experience.
 
 ## Building
 
@@ -23,11 +37,23 @@ http-server -c-1 .
 Then navigate to http://127.0.0.1:8080/index.html or
 http://127.0.0.1:8080/todo.html
 
-# Components
+## Performance
+
+The V8 JavaScript engine can parse, compile, and optimize the entire minified distributed of Sling in 12 milliseconds.
+
+|Parse     |Compile   |Optimize  |Total     |
+|----------|----------|----------|----------|
+|1ms       |7ms       |4ms       |12ms      |
+
+## Compatibility
+
+Sling uses ES2015/ES6 syntax. Sling does not have any production dependencies.
+
+## Components
 
 A component is a JavaScript class with a ```view()``` function that returns markup to render.
 
-# Lifecycle Hooks
+## Lifecycle Hooks
 
 Components may specify two lifecycle hooks:
 * ```slOnInit()```
@@ -90,9 +116,14 @@ __void s.route ( hashUrlRegEx, { root: elementId, component: object })__
 Define a hash-based route that will replace element with ID ```elementId```'s content with the specified component on route action.
 
 ## s.route
-__s.route ( hashUrl )__
+__void s.route ( hashUrl )__
 
 Navigate to the hash-based route according to a previously defined route.
+
+## s.reloadRoute
+__void s.reloadRoute ( )__
+
+Reloads the currently active route. Effectively, redraws the active route.
 
 ## s.getRouteSegments 
 __string[] s.getRouteSegments ( )__
