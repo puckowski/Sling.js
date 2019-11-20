@@ -85,10 +85,49 @@ __object s.markup ( tagString, { attrs: {}, children: [] } )__
 
 Returns markup object to render. May be mounted to DOM.
 
+Example markup call:
+
+```
+s.markup('div', {
+
+	attrs: {
+
+		style:  "width:50%;margin:auto;padding:1rem;"
+
+	},
+
+	children: [
+
+		...Array.from(s.getState().getNotes(), (note) =>
+
+			s.markup('div', {
+
+				attrs: {
+
+					class:  'input-group mb-3 animEnter',
+
+					style:  'width:100%;'
+
+				},
+
+				children: [
+				]
+			})
+		)
+	]
+});
+```
+
 ## s.textNode
 ### string s.textNode( text )
 
 Create a text node.
+
+Example textNode call:
+
+```
+s.textNode('Click me!');
+```
 
 ## s.mount
 __element s.mount ( rootElementId, component )__
@@ -106,6 +145,12 @@ __void s.autoupdate ( rootElementId, component, updateMillis = 17 )__
 
 Automatically updates ```component``` every ```updateMillis``` milliseconds. Default is 17 milliseconds (1 second / 60 frames per second rounded up to 17).
 
+Example autoUpdate call:
+
+```
+s.autoUpdate('navTodoList', new TodoListNavComponent());
+```
+
 ## s.clearAutoUpdate
 __void s.clearAutoUpdate ( rootElementId )__
 
@@ -116,10 +161,24 @@ __void s.route ( hashUrlRegEx, { root: elementId, component: object })__
 
 Define a hash-based route that will replace element with ID ```elementId```'s content with the specified component on route action.
 
+Example route definition:
+
+```
+s.route('all', { component:  new  TodoListComponent(), root:  'divTodoList' });
+s.route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList' });
+s.route('user/:userId', { component: new UserProfileComponent(), root: 'divUserProfile' });
+```
+
 ## s.route
 __void s.route ( hashUrl )__
 
 Navigate to the hash-based route according to a previously defined route.
+
+Example route call:
+
+```
+s.route('user/5'); // Activates component at root for route 'user/:userId'
+```
 
 ## s.reloadRoute
 __void s.reloadRoute ( )__
@@ -131,10 +190,22 @@ __string[] s.getRouteSegments ( )__
 
 Returns the current hash-based route's segments or an empty array if there are none.
 
+Example:
+
+```
+console.log(s.getRouteSegments()); // [ 'user', '5' ]
+```
+
 ## s.version
 __number s.version ( )__
 
 Returns Sling version number represented as a float.
+
+Example:
+
+```
+console.log(s.version()); // 0.8
+```
 
 # XHR API
 
@@ -143,27 +214,188 @@ __Promise s.request ( url, methodString, optionsObject = { } )__
 
 Create a XML HTTP Request (XHR) for the specified URL using the specified method, such as ```GET```. Options ```contentType``` (defaults to ```application/json```) and ```data``` may be specified. Returns a Promise.
 
+On success, returns XMLHttpRequest which has data in ```response``` property like so:
+
+```
+XMLHttpRequest 
+{
+	onabort:  null
+	onerror:  null
+	onload:  null
+	onloadend:  null
+	onloadstart:  null
+	onprogress:  null
+	onreadystatechange:  ƒ ()
+	ontimeout:  null
+	readyState:  4
+	response:  "[↵ {↵ "userId": 1,↵ "id": 1,↵ "title": ""
+	...
+}
+```
+
+On request fail, returns an object in the following format:
+```
+{
+	status: 404,
+	statusText: ''
+}
+```
+
 ## s.get
 __Promise s.get ( url, data = { } )__
 
 Create a ```GET``` XHR request with the specified ```data``` which returns a Promise.
+
+On success, returns XMLHttpRequest which has data in ```response``` property like so:
+
+```
+XMLHttpRequest 
+{
+	onabort:  null
+	onerror:  null
+	onload:  null
+	onloadend:  null
+	onloadstart:  null
+	onprogress:  null
+	onreadystatechange:  ƒ ()
+	ontimeout:  null
+	readyState:  4
+	response:  "[↵ {↵ "userId": 1,↵ "id": 1,↵ "title": ""
+	...
+}
+```
+
+On request fail, returns an object in the following format:
+```
+{
+	status: 404,
+	statusText: ''
+}
+```
 
 ## s.post
 __Promise s.post ( url, data = { } )__
 
 Create a ```POST``` XHR request with the specified ```data``` which returns a Promise.
 
+On success, returns XMLHttpRequest which has data in ```response``` property like so:
+
+```
+XMLHttpRequest 
+{
+	onabort:  null
+	onerror:  null
+	onload:  null
+	onloadend:  null
+	onloadstart:  null
+	onprogress:  null
+	onreadystatechange:  ƒ ()
+	ontimeout:  null
+	readyState:  4
+	response:  "[↵ {↵ "userId": 1,↵ "id": 1,↵ "title": ""
+	...
+}
+```
+
+On request fail, returns an object in the following format:
+```
+{
+	status: 404,
+	statusText: ''
+}
+```
+
 ## s.put
 __Promise s.put ( url, data = { } )__
 
 Create a ```PUT``` XHR request with the specified ```data``` which returns a Promise.
+On success, returns XMLHttpRequest which has data in ```response``` property like so:
+
+```
+XMLHttpRequest 
+{
+	onabort:  null
+	onerror:  null
+	onload:  null
+	onloadend:  null
+	onloadstart:  null
+	onprogress:  null
+	onreadystatechange:  ƒ ()
+	ontimeout:  null
+	readyState:  4
+	response:  "[↵ {↵ "userId": 1,↵ "id": 1,↵ "title": ""
+	...
+}
+```
+
+On request fail, returns an object in the following format:
+```
+{
+	status: 404,
+	statusText: ''
+}
+```
 
 ## s.patch
 __Promise s.patch ( url, data = { } )__
 
 Create a ```PATCH``` XHR request with the specified ```data``` which returns a Promise.
 
+On success, returns XMLHttpRequest which has data in ```response``` property like so:
+
+```
+XMLHttpRequest 
+{
+	onabort:  null
+	onerror:  null
+	onload:  null
+	onloadend:  null
+	onloadstart:  null
+	onprogress:  null
+	onreadystatechange:  ƒ ()
+	ontimeout:  null
+	readyState:  4
+	response:  "[↵ {↵ "userId": 1,↵ "id": 1,↵ "title": ""
+	...
+}
+```
+
+On request fail, returns an object in the following format:
+```
+{
+	status: 404,
+	statusText: ''
+}
+```
+
 ## s.delete
 __Promise s.delete ( url, data = { } )__
 
 Create a ```DELETE``` XHR request with the specified ```data``` which returns a Promise.
+
+On success, returns XMLHttpRequest which has data in ```response``` property like so:
+
+```
+XMLHttpRequest 
+{
+	onabort:  null
+	onerror:  null
+	onload:  null
+	onloadend:  null
+	onloadstart:  null
+	onprogress:  null
+	onreadystatechange:  ƒ ()
+	ontimeout:  null
+	readyState:  4
+	response:  "[↵ {↵ "userId": 1,↵ "id": 1,↵ "title": ""
+	...
+}
+```
+
+On request fail, returns an object in the following format:
+```
+{
+	status: 404,
+	statusText: ''
+}
+```
