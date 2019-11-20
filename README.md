@@ -43,7 +43,7 @@ http://127.0.0.1:8080/todo.html
 
 ## Performance (Time)
 
-The V8 JavaScript engine can compile and parse the entire minified distributed of Sling in 4 milliseconds. Sling Core 1.0 is compiled and parsed 10.5 times faster than a minimal Angular 9.0.0 project and 13.5 faster than a normal Angular 9.0.0 project.
+The V8 JavaScript engine can compile and parse the entire minified distributed of Sling in 4 milliseconds. Sling Core 1.0 is compiled and parsed 10.5 times faster than a minimal Angular 9.0.0 project and 13.5 times faster than a normal Angular 9.0.0 project.
 
 |Version                                 |Compile   |Parse     |Total     |
 |----------------------------------------|----------|----------|----------|
