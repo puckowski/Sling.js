@@ -17,13 +17,13 @@ __Practical__
 Familiarity with other JavaScript component libraries. Components are instantiated objects which may be used to control their own state and have a simple markup language with a gradual learning curve.
 
 __Generalized__
-API as unopinionated as possible. Developers choose the right design patterns for their SPAs, not the library.
+API as unopinionated as possible. Developers choose the right design patterns for their SPAs--not the library.
 
 __Fast__
-High performance. Sling aims to get your SPA to interactive as quickly as possible and aims to keep your SPA as responsive as possible by staying within small production budgets. With Sling, it should be easier for your SPA to run at 60 frames per second for a native application experience.
+High performance. Sling aims to get your SPA to interactive as quickly as possible and aims to keep your SPA as responsive as possible by staying within small production code budgets. With Sling, it should be easier for your SPA to run at 60 frames per second for a native application experience.
 
 __Minimal Setup__
-Simply include Sling once in your SPA and Sling is ready to use. No configuration files, no hidden requirements.
+Simply include Sling once in your SPA and Sling is ready to use. No configuration files and no hidden requirements.
 
 ## Building
 
@@ -44,7 +44,7 @@ http://127.0.0.1:8080/todo.html
 
 The V8 JavaScript engine can parse, compile, and optimize the entire minified distributed of Sling in 12 milliseconds.
 
-|Version |Parse     |Compile   |Optimize  |Total     |
+|Version   |Parse     |Compile   |Optimize  |Total     |
 |----------|----------|----------|----------|----------|
 |0.7       |1ms       |7ms       |4ms       |12ms      |
 
@@ -55,6 +55,8 @@ Sling uses ES2015/ES6 syntax. Sling does not have any production dependencies.
 ## Components
 
 A component is a JavaScript class with a ```view()``` function that returns markup to render.
+
+Components may be nested, but lifecycle hooks for nested components will not be automatically called. This is done for performance reasons and to stay within production code budgets.
 
 ## Lifecycle Hooks
 
@@ -82,6 +84,11 @@ __object s.markup ( tagString, { attrs: {}, children: [] } )__
 
 Returns markup object to render. May be mounted to DOM.
 
+## s.textNode
+### string s.textNode( text )
+
+Create a text node.
+
 ## s.mount
 __element s.mount ( rootElementId, component )__
 
@@ -103,16 +110,6 @@ __void s.clearAutoUpdate ( rootElementId )__
 
 Clear the automatic update behavior of the element with ID ```rootElementId```.
 
-## s.version
-__number s.version ( )__
-
-Returns Sling version number represented as a float.
-
-## s.textNode
-### string s.textNode( text )
-
-Create a text node.
-
 ## s.route
 __void s.route ( hashUrlRegEx, { root: elementId, component: object })__
 
@@ -132,3 +129,8 @@ Reloads the currently active route. Effectively, redraws the active route.
 __string[] s.getRouteSegments ( )__
 
 Returns the current hash-based route's segments or an empty array if there are none.
+
+## s.version
+__number s.version ( )__
+
+Returns Sling version number represented as a float.
