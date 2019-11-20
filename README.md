@@ -46,8 +46,8 @@ The V8 JavaScript engine can compile and parse the entire minified distributed o
 
 |Version   |Compile   |Parse     |Total     |
 |----------|----------|----------|----------|
-|Core 0.8  |1ms       |3ms       |4ms       |
-|XHR 0.8   |2ms       |4ms       |6ms       |
+|Core 1.0  |1ms       |3ms       |4ms       |
+|XHR 1.0   |2ms       |4ms       |6ms       |
 
 ## Compatibility
 
