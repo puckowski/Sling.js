@@ -1,10 +1,11 @@
 
 
+
 ![Sling logo](https://github.com/puckowski/Sling.js/blob/master/sling.png "Sling logo")
 
 # Sling
 
-Client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight and less than 3KB minified.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight and less than 3KB minified.
 
 Sling creates and uses a virtual DOM to perform differential updates for fast rendering.
 
@@ -40,14 +41,29 @@ http-server -c-1 .
 Then navigate to http://127.0.0.1:8080/index.html or
 http://127.0.0.1:8080/todo.html
 
-## Performance
+## Performance (Time)
 
-The V8 JavaScript engine can compile and parse the entire minified distributed of Sling in 4 milliseconds.
+The V8 JavaScript engine can compile and parse the entire minified distributed of Sling in 4 milliseconds. Sling Core 1.0 is compiled and parsed 10.5 times faster than a minimal Angular 9.0.0 project and 13.5 faster than a normal Angular 9.0.0 project.
 
-|Version   |Compile   |Parse     |Total     |
-|----------|----------|----------|----------|
-|Core 1.0  |1ms       |3ms       |4ms       |
-|XHR 1.0   |2ms       |4ms       |6ms       |
+|Version                                 |Compile   |Parse     |Total     |
+|----------------------------------------|----------|----------|----------|
+|Sling Core 1.0 (Routing included)       |1ms       |3ms       |4ms       |
+|Sling Core + XHR 1.0 (Routing included) |2ms       |4ms       |6ms       |
+|Angular 9.0.0 Minimal (w/Routing)       |27ms      |15ms      |42ms      |
+|Angular 9.0.0 (w/Routing)               |30ms      |24ms      |54ms      |
+|Angular 9.0.0 (w/Routing and HttpClient)|30ms      |26ms      |56ms      |
+
+## Performance (Network)
+
+Using simulated 3G network speeds, Sling Core 1.0 with routing and XHR loads 3.2 times faster than a minimal Angular 9.0.0 project and 3.62 times faster than an Angular 9.0.0 project with HttpClient.
+
+|Version                                  |Requests  |Async Time (3G network)|Total     |
+|-----------------------------------------|----------|-----------------------|----------|
+|Sling Core 1.0 (Routing included)        |1         |2.06s                  |2.86KB    |
+|Sling Core + XHR 1.0 (Routing included)  |1         |2.06s                  |3.80KB    |
+|Angular 9.0.0 Minimal (w/Routing)        |3         |6.59s                  |226.1KB   |
+|Angular 9.0.0 (w/Routing)                |3         |7.18s                  |255.1KB   |
+|Angular 9.0.0 (w/Routing and HttpClient) |3         |7.47s                  |270.1KB   |
 
 ## Compatibility
 
