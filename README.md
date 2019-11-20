@@ -42,11 +42,12 @@ http://127.0.0.1:8080/todo.html
 
 ## Performance
 
-The V8 JavaScript engine can parse, compile, and optimize the entire minified distributed of Sling in 12 milliseconds.
+The V8 JavaScript engine can compile and parse the entire minified distributed of Sling in 4 milliseconds.
 
-|Version   |Parse     |Compile   |Optimize  |Total     |
-|----------|----------|----------|----------|----------|
-|0.7       |1ms       |7ms       |4ms       |12ms      |
+|Version   |Compile   |Parse     |Total     |
+|----------|----------|----------|----------|
+|Core 0.8  |1ms       |3ms       |4ms       |
+|XHR 0.8   |2ms       |4ms       |6ms       |
 
 ## Compatibility
 
@@ -67,7 +68,7 @@ Components may specify two lifecycle hooks:
 The ```slOnInit()``` lifecycle hook is called before the component is mounted to the DOM.
 The ```slOnDestroy()``` lifecycle hook is called before the component is removed from the DOM.
 
-# API
+# Core API
 
 ## s.setState 
 __void s.setState ( newStateObj )__
@@ -134,3 +135,35 @@ Returns the current hash-based route's segments or an empty array if there are n
 __number s.version ( )__
 
 Returns Sling version number represented as a float.
+
+# XHR API
+
+## s.request
+__Promise s.request ( url, methodString, optionsObject = { } )__
+
+Create a XML HTTP Request (XHR) for the specified URL using the specified method, such as ```GET```. Options ```contentType``` (defaults to ```application/json```) and ```data``` may be specified. Returns a Promise.
+
+## s.get
+__Promise s.get ( url, data = { } )__
+
+Create a ```GET``` XHR request with the specified ```data``` which returns a Promise.
+
+## s.post
+__Promise s.post ( url, data = { } )__
+
+Create a ```POST``` XHR request with the specified ```data``` which returns a Promise.
+
+## s.put
+__Promise s.put ( url, data = { } )__
+
+Create a ```PUT``` XHR request with the specified ```data``` which returns a Promise.
+
+## s.patch
+__Promise s.patch ( url, data = { } )__
+
+Create a ```PATCH``` XHR request with the specified ```data``` which returns a Promise.
+
+## s.delete
+__Promise s.delete ( url, data = { } )__
+
+Create a ```DELETE``` XHR request with the specified ```data``` which returns a Promise.
