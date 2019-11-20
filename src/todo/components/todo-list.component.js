@@ -1,4 +1,5 @@
 import NoteService from '../services/note.service.js';
+import TestComponent from './test.component.js';
 
 class TodoListComponent {
 
