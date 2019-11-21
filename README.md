@@ -53,6 +53,13 @@ The V8 JavaScript engine can compile and parse the entire minified distributed o
 |Angular 9.0.0 (w/Routing)               |30ms      |24ms      |54ms      |
 |Angular 9.0.0 (w/Routing and HttpClient)|30ms      |26ms      |56ms      |
 
+Because Sling is so lightweight, it can render thousands more nodes than Angular can in the same time period.
+
+| Version                          |Number of nodes |Time   |
+|----------------------------------|----------------|-------|
+|Sling Core 1.0 (Routing included) |10,000          |27ms   |
+|Angular 9.0.0 Minimal (w/Routing) |10,000          |294ms  |
+
 ## Performance (Network)
 
 Using simulated 3G network speeds, Sling Core 1.0 with routing and XHR loads 3.2 times faster than a minimal Angular 9.0.0 project and 3.62 times faster than an Angular 9.0.0 project with HttpClient.
