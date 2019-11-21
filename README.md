@@ -82,6 +82,23 @@ A component is a JavaScript class with a ```view()``` function that returns mark
 
 Components may be nested, but lifecycle hooks for nested components will not be automatically called. This is done for performance reasons and to stay within production code budgets.
 
+Example component:
+
+```
+class HelloWorldComponent {
+	constructor() {
+	}
+
+	view() {
+		return s.markup('h1', {
+			children: [
+				s.textNode('Hello, world!')
+			]
+		});
+	}
+}
+```
+
 ## Lifecycle Hooks
 
 Components may specify two lifecycle hooks:
