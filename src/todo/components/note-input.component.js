@@ -1,6 +1,5 @@
 import Note from '../models/note.model.js';
 import NoteService from '../services/note.service.js';
-import TodoListComponent from './todo-list.component.js';
 
 class NoteInputComponent {
 
@@ -58,8 +57,6 @@ class NoteInputComponent {
         
         s.setState(stateObj);
         new NoteService().setNoteCookie(stateObj);
-
-        s.reloadRoute();
     }
 
     view() {

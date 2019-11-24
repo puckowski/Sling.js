@@ -68,6 +68,13 @@ class TodoListComponent {
                                                         }
                                                     })
                                                 ]
+                                            }),
+                                            s.markup('img', {
+                                                attrs: {
+                                                    src: 'cat-typing.gif',
+                                                    width: '50px',
+                                                    height: '50px'
+                                                }
                                             })
                                         ]
                                     }),

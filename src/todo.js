@@ -1,4 +1,4 @@
-import NavbarComponent from './intro/components/navbar.component.js';
+import NavbarComponent from './todo/components/navbar.component.js';
 import NoteInputComponent from './todo/components/note-input.component.js';
 import TodoListComponent from './todo/components/todo-list.component.js';
 import TodoHeaderComponent from './todo/components/todo-header.component.js';

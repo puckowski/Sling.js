@@ -4,7 +4,11 @@
   "description": "Client-side JavaScript framework for building Single Page Applications.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --mode development",
+    "buildProd": "webpack --mode production",
+    "start": "node server.js",
+    "dev": "webpack-dev-server --content-base dist/"
   },
   "repository": {
     "type": "git",
@@ -23,7 +27,25 @@
   },
   "homepage": "https://github.com/puckowski/Sling.js#readme",
   "devDependencies": {
+    "@babel/core": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
+    "babel-eslint": "^10.0.3",
+    "babel-loader": "^8.0.6",
+    "copy-webpack-plugin": "^5.0.5",
+    "eslint": "^6.7.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-loader": "^3.0.2",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.16.0",
+    "file-loader": "^4.3.0",
     "http-server": "^0.11.1",
-    "terser": "^4.4.0"
+    "terser": "^4.4.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
+  },
+  "dependencies": {
+    "terser-webpack-plugin": "^2.2.1"
   }
 }
