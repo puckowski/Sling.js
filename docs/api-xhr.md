@@ -3,8 +3,16 @@
 ## s.request
 __Promise s.request ( url, methodString, optionsObject = { } )__
 
-Create a XML HTTP Request (XHR) for the specified URL using the specified method, such as ```GET```. Options ```contentType``` (defaults to ```application/json```) and ```data``` may be specified. Returns a Promise.
+Create a XML HTTP Request (XHR) for the specified URL using the specified method, such as ```GET```. Returns a Promise.
 
+|Request Option    |Default                |Detail                                      |
+|------------------|-----------------------|--------------------------------------------|
+|contentType       |```application/json``` |Set ```Content-Type``` request header.      |
+|data              |```''```               |Body of the request.                        |
+|withCredentials   |```false```            |Send cookies to 3rd party domains.          |
+|timeout           |```0``` (No timeout)   |0 is no timeout. Specified in milliseconds. |
+|headers           |```{}```               |Key/value request headers to set.           |
+  
 On success, returns XMLHttpRequest which has data in ```response``` property like so:
 
 ```

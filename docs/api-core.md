@@ -110,10 +110,10 @@ Example route call:
 s.route('user/5'); // Activates component at root for route 'user/:userId'
 ```
 
-## s.reloadRoute
-__void s.reloadRoute ( )__
+## s.getRoute
+__void s.getRoute ( )__
 
-Reloads the currently active route. Effectively, redraws the active route.
+Get the current hash-based route.
 
 ## s.getRouteSegments 
 __string[] s.getRouteSegments ( )__
@@ -134,5 +134,5 @@ Returns Sling version number represented as a float.
 Example:
 
 ```
-console.log(s.version()); // 0.8
+console.log(s.version()); // 1.0
 ```
