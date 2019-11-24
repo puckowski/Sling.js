@@ -3,26 +3,26 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
 var config = {
-    context: __dirname + '/src', // `__dirname` is root of project and `/src` is source
+    context: __dirname + '/src',
     entry: {
         app: './todo.js',
     },
     output: {
-        path: __dirname + '/dist', // `/dist` is the destination
-        filename: 'dist.js', // bundle created by webpack it will contain all our app logic. we will link to this .js file from our html page.
+        path: __dirname + '/dist',
+        filename: 'dist.js',
     },
     module: {
         rules: [
             {
-                test: /\.js$/, // rule for .js files
+                test: /\.js$/,
                 exclude: /node_modules/,
-                use: ["babel-loader", "eslint-loader"] // apply this loader for js files
+                use: ["babel-loader", "eslint-loader"]
             },
             {
                 test: /\.css$/,
                 use: [
-                    'style-loader', // the order is important. it executes in reverse order !
-                    'css-loader' // this will load first !
+                    'style-loader',
+                    'css-loader'
                 ]
             }
         ]
@@ -34,7 +34,7 @@ var config = {
     plugins: [
         new CopyWebpackPlugin([
             { from: './*.html', to: '' },
-            { from: './images', to: '' },
+            { from: './images', to: 'images' },
             { from: './css', to: '' }
         ]),
     ]

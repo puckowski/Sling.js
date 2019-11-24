@@ -17,7 +17,7 @@ class NavbarComponent {
                     children: [
                         s.markup('img', {
                             attrs: {
-                                src: 'sling.png',
+                                src: 'images/sling.png',
                                 width: '30px',
                                 height: '30px',
                                 class: 'd-inline-block align-top',

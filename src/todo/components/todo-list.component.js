@@ -71,7 +71,7 @@ class TodoListComponent {
                                             }),
                                             s.markup('img', {
                                                 attrs: {
-                                                    src: 'cat-typing.gif',
+                                                    src: 'images/cat-typing.gif',
                                                     width: '50px',
                                                     height: '50px'
                                                 }
@@ -83,7 +83,8 @@ class TodoListComponent {
                                             value: note.text,
                                             class: 'form-control',
                                             ... note.completed && { readonly: 'true' },
-                                            oninput: this.updateNote.bind(this, note)
+                                            oninput: this.updateNote.bind(this, note),
+                                            style: 'margin-left:1px;'
                                         }
                                     })
                                 ]

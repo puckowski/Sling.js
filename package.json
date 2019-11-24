@@ -7,8 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode development",
     "buildProd": "webpack --mode production",
-    "start": "node server.js",
-    "dev": "webpack-dev-server --content-base dist/"
+    "devServer": "webpack-dev-server --content-base dist/",
+    "buildSlingCore": "terser --compress --mangle --output .\\dist\\sling.min.js -- .\\src\\sling\\core\\sling.js",
+    "buildSlingXhr": "terser --compress --mangle --output .\\dist\\sling-xhr.min.js -- .\\src\\sling\\xhr\\sling-xhr.js",
+    "buildSlingFull": "terser --compress --mangle --output .\\dist\\sling-full.min.js -- .\\dist\\sling-full.js"
   },
   "repository": {
     "type": "git",
