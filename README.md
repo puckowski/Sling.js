@@ -28,18 +28,13 @@ Simply include Sling once in your SPA and Sling is ready to use. No configuratio
 
 ## Building
 
-```terser --compress --mangle --output .\dist\sling.min.js -- .\src\sling.js```
+Run ```npm install``` then ```npm run build``` or ```npm run buildProd``` to build the project.
 
 ## Testing
 
-Recommend NPM package http-server.
+Run ```npm run dev``` after a ```npm install``` to start ```webpack-dev-server```.
 
-```
-http-server -c-1 .
-```
-
-Then navigate to http://127.0.0.1:8080/index.html or
-http://127.0.0.1:8080/todo.html
+Then navigate to ```localhost:8080/todo.html```.
 
 ## Performance (Time)
 
