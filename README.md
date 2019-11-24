@@ -29,7 +29,7 @@ Run ```npm install``` then ```npm run build``` or ```npm run buildProd``` to bui
 
 ## Testing
 
-Run ```npm run dev``` after a ```npm install``` to start ```webpack-dev-server```.
+Run ```npm run devServer``` after a ```npm install``` to start ```webpack-dev-server```.
 
 Then navigate to ```localhost:8080/todo.html```.
 
@@ -212,10 +212,10 @@ Example route call:
 s.route('user/5'); // Activates component at root for route 'user/:userId'
 ```
 
-## s.reloadRoute
-__void s.reloadRoute ( )__
+## s.getRoute
+__void s.getRoute ( )__
 
-Reloads the currently active route. Effectively, redraws the active route.
+Get the current hash-based route.
 
 ## s.getRouteSegments 
 __string[] s.getRouteSegments ( )__
@@ -236,7 +236,7 @@ Returns Sling version number represented as a float.
 Example:
 
 ```
-console.log(s.version()); // 0.8
+console.log(s.version()); // 1.0
 ```
 
 # XHR API
@@ -244,8 +244,16 @@ console.log(s.version()); // 0.8
 ## s.request
 __Promise s.request ( url, methodString, optionsObject = { } )__
 
-Create a XML HTTP Request (XHR) for the specified URL using the specified method, such as ```GET```. Options ```contentType``` (defaults to ```application/json```) and ```data``` may be specified. Returns a Promise.
+Create a XML HTTP Request (XHR) for the specified URL using the specified method, such as ```GET```. Returns a Promise.
 
+|Request Option    |Default                |Detail                                      |
+|------------------|-----------------------|--------------------------------------------|
+|contentType       |```application/json``` |Set ```Content-Type``` request header.      |
+|data              |```''```               |Body of the request.                        |
+|withCredentials   |```false```            |Send cookies to 3rd party domains.          |
+|timeout           |```0``` (No timeout)   |0 is no timeout. Specified in milliseconds. |
+|headers           |```{}```               |Key/value request headers to set.           |
+  
 On success, returns XMLHttpRequest which has data in ```response``` property like so:
 
 ```
