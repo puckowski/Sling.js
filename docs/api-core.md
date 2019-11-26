@@ -17,7 +17,7 @@ Returns markup object to render. May be mounted to DOM.
 
 Example markup call:
 
-```
+```javascript
 s.markup('div', {
 
 	attrs: {
@@ -55,7 +55,7 @@ Create a text node.
 
 Example textNode call:
 
-```
+```javascript
 s.textNode('Click me!');
 ```
 
@@ -64,6 +64,8 @@ __element s.mount ( rootElementId, component )__
 
 Mounts ```component``` on element with ID ```rootElementId``` in DOM.
 Returns root element in DOM where ```component``` was added.
+
+Mounted components replace the element with ```rootElementId``` to avoid an excessive DOM size. Mounted components must have the same root element ID as the element in the DOM they are attached to.
 
 ## s.update
 __void s.update ( rootElementId, component )__
@@ -77,7 +79,7 @@ Automatically updates ```component``` every ```updateMillis``` milliseconds. Def
 
 Example autoUpdate call:
 
-```
+```javascript
 s.autoUpdate('navTodoList', new TodoListNavComponent());
 ```
 
@@ -93,7 +95,7 @@ Define a hash-based route that will replace element with ID ```elementId```'s co
 
 Example route definition:
 
-```
+```javascript
 s.route('all', { component:  new  TodoListComponent(), root:  'divTodoList' });
 s.route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList' });
 s.route('user/:userId', { component: new UserProfileComponent(), root: 'divUserProfile' });
@@ -106,7 +108,7 @@ Navigate to the hash-based route according to a previously defined route.
 
 Example route call:
 
-```
+```javascript
 s.route('user/5'); // Activates component at root for route 'user/:userId'
 ```
 
@@ -122,7 +124,7 @@ Returns the current hash-based route's segments or an empty array if there are n
 
 Example:
 
-```
+```javascript
 console.log(s.getRouteSegments()); // [ 'user', '5' ]
 ```
 
@@ -133,6 +135,6 @@ Returns Sling version number represented as a float.
 
 Example:
 
-```
+```javascript
 console.log(s.version()); // 1.0
 ```
