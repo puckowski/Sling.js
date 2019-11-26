@@ -64,6 +64,22 @@ Using simulated 3G network speeds, Sling Core 1.0 with routing and XHR loads 3.2
 |Angular 9.0.0 (w/Routing)                |3         |7.18s                  |255.1KB   |
 |Angular 9.0.0 (w/Routing and HttpClient) |3         |7.47s                  |270.1KB   |
 
+## Add Sling
+
+To add Sling to your project, simply add ```sling.min.js``` to your project and add the appropriate ```script``` tag:
+
+```html
+<script src="sling.min.js"></script>
+```
+
+To add Sling via CDN use the following ```script``` tag:
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/puckowski/Sling.js@1.2/dist/sling.min.js" crossorigin="anonymous"></script>
+```
+
+For XHR capabilities, also include ```sling-xhr.min.js``` or replace ```sling.min.js``` with ```sling-full.min.js```.
+
 ## Compatibility
 
 Sling uses ES2015/ES6 syntax. Sling does not have any production dependencies.
@@ -76,7 +92,7 @@ Components may be nested, but lifecycle hooks for nested components will not be 
 
 Example component:
 
-```
+```javascript
 class HelloWorldComponent {
 	constructor() {
 	}
@@ -119,7 +135,7 @@ Returns markup object to render. May be mounted to DOM.
 
 Example markup call:
 
-```
+```javascript
 s.markup('div', {
 
 	attrs: {
@@ -157,7 +173,7 @@ Create a text node.
 
 Example textNode call:
 
-```
+```javascript
 s.textNode('Click me!');
 ```
 
@@ -179,7 +195,7 @@ Automatically updates ```component``` every ```updateMillis``` milliseconds. Def
 
 Example autoUpdate call:
 
-```
+```javascript
 s.autoUpdate('navTodoList', new TodoListNavComponent());
 ```
 
@@ -195,7 +211,7 @@ Define a hash-based route that will replace element with ID ```elementId```'s co
 
 Example route definition:
 
-```
+```javascript
 s.route('all', { component:  new  TodoListComponent(), root:  'divTodoList' });
 s.route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList' });
 s.route('user/:userId', { component: new UserProfileComponent(), root: 'divUserProfile' });
@@ -208,7 +224,7 @@ Navigate to the hash-based route according to a previously defined route.
 
 Example route call:
 
-```
+```javascript
 s.route('user/5'); // Activates component at root for route 'user/:userId'
 ```
 
@@ -224,7 +240,7 @@ Returns the current hash-based route's segments or an empty array if there are n
 
 Example:
 
-```
+```javascript
 console.log(s.getRouteSegments()); // [ 'user', '5' ]
 ```
 
@@ -235,7 +251,7 @@ Returns Sling version number represented as a float.
 
 Example:
 
-```
+```javascript
 console.log(s.version()); // 1.0
 ```
 
