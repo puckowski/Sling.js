@@ -72,7 +72,7 @@ To add Sling to your project, simply add ```sling.min.js``` to your project and 
 <script src="sling.min.js"></script>
 ```
 
-To add Sling via CDN use the following ```script``` tag:
+To add Sling via CDN like jsDelivr use the following ```script``` tag:
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/puckowski/Sling.js@1.2/dist/sling.min.js" crossorigin="anonymous"></script>
@@ -182,6 +182,8 @@ __element s.mount ( rootElementId, component )__
 
 Mounts ```component``` on element with ID ```rootElementId``` in DOM.
 Returns root element in DOM where ```component``` was added.
+
+Mounted components replace the element with ```rootElementId``` to avoid an excessive DOM size. Mounted components must have the same root element ID as the element in the DOM they are attached to.
 
 ## s.update
 __void s.update ( rootElementId, component )__
