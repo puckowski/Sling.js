@@ -75,7 +75,7 @@ To add Sling to your project, simply add ```sling.min.js``` to your project and 
 To add Sling via CDN like jsDelivr use the following ```script``` tag:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/puckowski/Sling.js@1.2/dist/sling.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/puckowski/Sling.js@1.3/dist/sling.min.js" crossorigin="anonymous"></script>
 ```
 
 For XHR capabilities, also include ```sling-xhr.min.js``` or replace ```sling.min.js``` with ```sling-full.min.js```.
@@ -206,8 +206,8 @@ __void s.clearAutoUpdate ( rootElementId )__
 
 Clear the automatic update behavior of the element with ID ```rootElementId```.
 
-## s.route
-__void s.route ( hashUrlRegEx, { root: elementId, component: object })__
+## s.addRoute
+__void s.addRoute ( hashUrlRegEx, { root: elementId, component: object })__
 
 Define a hash-based route that will replace element with ID ```elementId```'s content with the specified component on route action.
 
@@ -220,9 +220,9 @@ s.route('user/:userId', { component: new UserProfileComponent(), root: 'divUserP
 ```
 
 ## s.route
-__void s.route ( hashUrl )__
+__void s.route ( hashUrl, params = { } )__
 
-Navigate to the hash-based route according to a previously defined route.
+Navigate to the hash-based route according to a previously defined route. May specify route parameters as an object.
 
 Example route call:
 
@@ -246,6 +246,11 @@ Example:
 console.log(s.getRouteSegments()); // [ 'user', '5' ]
 ```
 
+## s.getRouteParams
+__object s.getRouteParams()__
+
+Returns the current route's parameters as an object. Returns ```{ }``` if there are none.
+
 ## s.version
 __number s.version ( )__
 
@@ -267,9 +272,9 @@ Create a XML HTTP Request (XHR) for the specified URL using the specified method
 |Request Option    |Default                |Detail                                      |
 |------------------|-----------------------|--------------------------------------------|
 |contentType       |```application/json``` |Set ```Content-Type``` request header.      |
-|data              |```''```               |Body of the request.                        |
+|body              |```''```               |Body of the request.                        |
 |withCredentials   |```false```            |Send cookies to 3rd party domains.          |
-|timeout           |```0``` (No timeout)   |0 is no timeout. Specified in milliseconds. |
+|timeout           |```0```                |0 is no timeout. Specified in milliseconds. |
 |headers           |```{}```               |Key/value request headers to set.           |
   
 On success, returns XMLHttpRequest which has data in ```response``` property like so:
