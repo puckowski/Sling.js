@@ -6,6 +6,10 @@ class TodoListCompletedComponent {
 
     }
 
+    slOnDestroy() {
+        console.log('Destroy completed list component');
+    }
+    
     completeNote(note) {
         let stateObj = s.getState();
 
