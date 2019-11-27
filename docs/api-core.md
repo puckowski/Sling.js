@@ -88,8 +88,8 @@ __void s.clearAutoUpdate ( rootElementId )__
 
 Clear the automatic update behavior of the element with ID ```rootElementId```.
 
-## s.route
-__void s.route ( hashUrlRegEx, { root: elementId, component: object })__
+## s.addRoute
+__void s.addRoute ( hashUrlRegEx, { root: elementId, component: object })__
 
 Define a hash-based route that will replace element with ID ```elementId```'s content with the specified component on route action.
 
@@ -102,9 +102,9 @@ s.route('user/:userId', { component: new UserProfileComponent(), root: 'divUserP
 ```
 
 ## s.route
-__void s.route ( hashUrl )__
+__void s.route ( hashUrl, params = { } )__
 
-Navigate to the hash-based route according to a previously defined route.
+Navigate to the hash-based route according to a previously defined route. May specify route parameters as an object.
 
 Example route call:
 
@@ -127,6 +127,11 @@ Example:
 ```javascript
 console.log(s.getRouteSegments()); // [ 'user', '5' ]
 ```
+
+## s.getRouteParams
+__object s.getRouteParams()__
+
+Returns the current route's parameters as an object. Returns ```{ }``` if there are none.
 
 ## s.version
 __number s.version ( )__
