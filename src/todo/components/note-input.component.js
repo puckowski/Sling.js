@@ -45,18 +45,21 @@ class NoteInputComponent {
     clearCompletedNotes() {
         let stateObj = s.getState();
 
-        let currNote;
+        let currNote, clearedNote = false;
         for(let i = 0; i < stateObj.getNotes().length; ++i) {
             currNote = stateObj.getNotes()[i];
 
             if (currNote.completed === true) {
                 stateObj.getNotes().splice(i, 1);
+                clearedNote = true;
                 i--;
             }
         }
         
-        s.setState(stateObj);
-        new NoteService().setNoteCookie(stateObj);
+        if (clearedNote === true) {
+            s.setState(stateObj);
+            new NoteService().setNoteCookie(stateObj);
+        }
     }
 
     view() {
