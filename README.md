@@ -559,11 +559,11 @@ Example observable usage:
 let myArray = [1, 2, 3];
 let myObservable = s.observable(myArray);
 myObservable.subscribe(function(arr) {
-	console.log('New length: '  +  arr.length);
+	console.log('New length: ' + arr.length);
 });
 
-myObservable.getData().push(1);
-obs.getData()[myObservable.getData().length] =  3;
+myObservable.getData().push(4);
+obs.getData()[myObservable.getData().length] = 5;
 ```
 
 ## Observable Functions
