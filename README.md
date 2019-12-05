@@ -75,7 +75,7 @@ To add Sling to your project, simply add ```sling.min.js``` to your project and 
 To add Sling via CDN like jsDelivr use the following ```script``` tag:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/puckowski/Sling.js@1.6/dist/sling.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/puckowski/Sling.js@1.7/dist/sling.min.js" crossorigin="anonymous"></script>
 ```
 
 For XHR capabilities, also include ```sling-xhr.min.js``` or replace ```sling.min.js``` with ```sling-full.min.js```.
@@ -465,8 +465,8 @@ On request fail, returns an object in the following format:
 
 # Reactive API
 
-## s.stream
-__object s.stream( )__
+## s.Stream
+__object s.Stream( )__
 
 Returns a Sling stream. A stream is a sequence of values over time and the associated operations which are automatically applied as those values change.
 
@@ -475,7 +475,7 @@ Example stream usage using Sling XHR API:
 ```javascript
 s.get('https://jsonplaceholder.typicode.com/posts').then(xhrResp => {
 	let postArr = JSON.parse(xhrResp.response);
-	let postStream = s.stream().from(postArr).transform(function(arr) {
+	let postStream = s.Stream().from(postArr).transform(function(arr) {
 		return arr.filter(v => v.userId === 1);
 	}).transform(function(arr) {
 		return arr.filter(v => v.body.includes('quo'));
@@ -486,7 +486,7 @@ s.get('https://jsonplaceholder.typicode.com/posts').then(xhrResp => {
 Equivalent stream usage using preexisting stream object and Sling XHR API:
 
 ```javascript
-let postStream2 = s.stream();
+let postStream2 = s.Stream();
 postStream2.transform(function(arr) {
 	return arr.filter(v => v.userId === 1);
 }).transform(function(arr) {
@@ -548,7 +548,7 @@ __object from ( newArray )__
 
 Set stream data to ```newArray``` and apply all existing transformers. Returns the stream.
 
-## s.observable
+## s.Observable
 __object s.observable( array )__
 
 Returns a Sling observable. An observable is an array which may be listened to.
@@ -557,7 +557,7 @@ Example observable usage:
 
 ```javascript
 let myArray = [1, 2, 3];
-let myObservable = s.observable(myArray);
+let myObservable = s.Observable(myArray);
 myObservable.subscribe(function(arr) {
 	console.log('New length: ' + arr.length);
 });
@@ -587,3 +587,45 @@ Remove all subscribed functions. Returns the observable.
 __[ ] getData( )__
 
 Get the underlying array data.
+
+## s.BehaviorSubject
+__object s.BehaviorSubject( value )__
+
+Returns a Sling behavior subject. A behavior subject is a value that emits changes to subscribers.
+
+Example behavior subject usage:
+
+```javascript
+let subject = s.BehaviorSubject(5);
+subject.next(subject.getData() + 1);
+let value = subject.getData(); // 6
+
+subject.subscribe(function (value) { console.log('Value: ' + value); });
+```
+
+## BehaviorSubject Functions
+
+## subscribe
+__void subscribe ( listenerFunction )__
+
+Listener function will be automatically called whenever the subject's value changes. Returns the behavior subject.
+
+## clearSubscription
+__object clearSubscription( functionToClear )__
+
+Remove ```functionToClear``` from the list of subscribed functions. Returns the behavior subject.
+
+## clearSubscriptions
+__object clearSubscriptions( )__
+
+Remove all subscribed functions. Returns the behavior subject.
+
+## next
+__object next( value )__
+
+Set the next value of the subject. All subscribers are automatically called. Returns the behavior subject.
+
+## getData
+__[ ] getData( )__
+
+Get the underlying value.
