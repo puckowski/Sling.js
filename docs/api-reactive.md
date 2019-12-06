@@ -161,6 +161,6 @@ __object next( value )__
 Set the next value of the subject. All subscribers are automatically called. Returns the behavior subject.
 
 ## getData
-__[ ] getData( )__
+__primitive|object getData( )__
 
 Get the underlying value.
