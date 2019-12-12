@@ -102,9 +102,9 @@ s.route('user/:userId', { component: new UserProfileComponent(), root: 'divUserP
 ```
 
 ## s.route
-__void s.route ( hashUrl, params = { } )__
+__object s.route ( hashUrl, params = { } )__
 
-Navigate to the hash-based route according to a previously defined route. May specify route parameters as an object.
+Navigate to the hash-based route according to a previously defined route. May specify route parameters as an object. Returns the component that was routed to.
 
 Example route call:
 
