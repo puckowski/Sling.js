@@ -75,10 +75,12 @@ To add Sling to your project, simply add ```sling.min.js``` to your project and 
 To add Sling via CDN like jsDelivr use the following ```script``` tag:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/puckowski/Sling.js@1.7/dist/sling.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/puckowski/Sling.js@1.8/dist/sling.min.js" crossorigin="anonymous"></script>
 ```
 
 For XHR capabilities, also include ```sling-xhr.min.js``` or replace ```sling.min.js``` with ```sling-full.min.js```.
+
+For reactive capabilities, also include ```sling-reactive.min.js``` or replace ```sling.min.js``` with ```sling-full.min.js```.
 
 ## Compatibility
 
@@ -112,9 +114,11 @@ class HelloWorldComponent {
 Components may specify two lifecycle hooks:
 * ```slOnInit()```
 * ```slOnDestroy()```
+* ```slAfterInit()```
 
 The ```slOnInit()``` lifecycle hook is called before the component is mounted to the DOM.
 The ```slOnDestroy()``` lifecycle hook is called before the component is removed from the DOM.
+The ```slAfterInit()``` lifecycle hook is called after the component is mounted to the DOM.
 
 # Core API
 
@@ -220,9 +224,9 @@ s.route('user/:userId', { component: new UserProfileComponent(), root: 'divUserP
 ```
 
 ## s.route
-__void s.route ( hashUrl, params = { } )__
+__object s.route ( hashUrl, params = { } )__
 
-Navigate to the hash-based route according to a previously defined route. May specify route parameters as an object.
+Navigate to the hash-based route according to a previously defined route. May specify route parameters as an object. Returns the component that was routed to.
 
 Example route call:
 
