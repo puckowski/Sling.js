@@ -134,12 +134,12 @@ __object s.getRouteParams()__
 Returns the current route's parameters as an object. Returns ```{ }``` if there are none.
 
 ## s.version
-__number s.version ( )__
+__string s.version__
 
-Returns Sling version number represented as a float.
+Returns Sling version number represented as a string.
 
 Example:
 
 ```javascript
-console.log(s.version()); // 1.0
+console.log(s.version); // '1.9.1'
 ```
