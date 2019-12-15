@@ -252,7 +252,7 @@ console.log(s.getRouteSegments()); // [ 'user', '5' ]
 
 Using Sling Reactive, route changes may be listened to by using a Sling Observable. Every time the route changes, the subscribed function below will be called.
 
-```
+```javascript
 let routeObservable = s.Observable(s.getRouteSegments());
 routeObservable.subscribe(function(routeArr) {
     if (routeArr.length > 0) {
