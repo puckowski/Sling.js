@@ -1,5 +1,6 @@
 .animEnter {
     animation: fade-in 0.5s;
+    transform: translateZ(0);
 }
 
 @keyframes fade-in {
@@ -13,6 +14,7 @@
 
 .animExit {
     animation: fade-out 0.5s;
+    transform: translateZ(0);
 }
 
 @keyframes fade-out {

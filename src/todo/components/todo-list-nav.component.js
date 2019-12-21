@@ -1,5 +1,3 @@
-import TodoListComponent from './todo-list.component.js';
-import TodoListCompletedComponent from './todo-list-completed.component.js';
 import NoteService from '../services/note.service.js';
 
 class TodoListNavComponent {
@@ -10,23 +8,25 @@ class TodoListNavComponent {
 
     slOnInit() {
         this.performRouteAction(s.getRouteSegments()[0]);
+
+        let routeObservable = s.Observable(s.getRouteSegments());
+        routeObservable.subscribe(function (routeArr) {
+            if (routeArr.length > 0) {
+                this.routeString = routeArr[0];
+            }
+            else {
+                this.routeString = '';
+            }
+        }.bind(this));
     }
 
     routeToAll() {
-        let compTodoList = new TodoListComponent();
-        s.mount('divTodoList', compTodoList);
-
-        s.route('all');
-
+        let compTodoList = s.route('all');
         s.autoUpdate('divTodoList', compTodoList);
     }
 
     routeToCompleted() {
-        let compTodoListCompleted = new TodoListCompletedComponent();
-        s.mount('divTodoList', compTodoListCompleted);
-
-        s.route('completed');
-
+        let compTodoListCompleted = s.route('completed');
         s.autoUpdate('divTodoList', compTodoListCompleted);
     }
 
