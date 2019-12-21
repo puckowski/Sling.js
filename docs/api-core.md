@@ -89,9 +89,18 @@ __void s.clearAutoUpdate ( rootElementId )__
 Clear the automatic update behavior of the element with ID ```rootElementId```.
 
 ## s.addRoute
-__void s.addRoute ( hashUrlRegEx, { root: elementId, component: object })__
+__void s.addRoute ( hashUrlRegEx, { root: elementId, routeObj: object })__
 
 Define a hash-based route that will replace element with ID ```elementId```'s content with the specified component on route action.
+
+Below is a list of possible ```routeObj``` properties:
+
+|Property |Description                                                                |
+|---------|---------------------------------------------------------------------------|
+| root    |The ```id``` of the element to replace on route.                           |
+|component|The component to replace ```root```.                                       |
+|authGuard|A function that returns true if route action may be taken, otherwise false.|
+|authFail |Object with ```route``` property to route to on ```authGuard``` fail. Also may specify ```params```.|
 
 Example route definition:
 
@@ -99,6 +108,12 @@ Example route definition:
 s.route('all', { component:  new  TodoListComponent(), root:  'divTodoList' });
 s.route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList' });
 s.route('user/:userId', { component: new UserProfileComponent(), root: 'divUserProfile' });
+```
+
+Example ```authGuard``` definition:
+
+```javascript
+s.route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList', authGuard: function(proposedRoute) { console.log('This will prevent route to \'completed\'.'); return false; }, authFail: { route: 'all', params: { } } });
 ```
 
 ## s.route
