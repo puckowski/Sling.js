@@ -1,8 +1,9 @@
+
 ![Sling logo](https://github.com/puckowski/Sling.js/blob/master/src/images/sling.png "Sling logo")
 
 # Sling
 
-Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight and less than 3.3KB minified.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight and less than 3.5KB minified.
 
 Sling creates and uses a virtual DOM to perform differential updates for fast rendering.
 
@@ -75,7 +76,7 @@ To add Sling to your project, simply add ```sling.min.js``` to your project and 
 To add Sling via CDN like jsDelivr use the following ```script``` tag:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/puckowski/Sling.js@1.9.1/dist/sling.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/puckowski/Sling.js@1.9.2/dist/sling.min.js" crossorigin="anonymous"></script>
 ```
 
 For XHR capabilities, also include ```sling-xhr.min.js``` or replace ```sling.min.js``` with ```sling-full.min.js```.
@@ -211,9 +212,18 @@ __void s.clearAutoUpdate ( rootElementId )__
 Clear the automatic update behavior of the element with ID ```rootElementId```.
 
 ## s.addRoute
-__void s.addRoute ( hashUrlRegEx, { root: elementId, component: object })__
+__void s.addRoute ( hashUrlRegEx, { root: elementId, routeObj: object })__
 
 Define a hash-based route that will replace element with ID ```elementId```'s content with the specified component on route action.
+
+Below is a list of possible ```routeObj``` properties:
+
+|Property |Description                                                                |
+|---------|---------------------------------------------------------------------------|
+| root    |The ```id``` of the element to replace on route.                           |
+|component|The component to replace ```root```.                                       |
+|authGuard|A function that returns true if route action may be taken, otherwise false.|
+|authFail |Object with ```route``` property to route to on ```authGuard``` fail. Also may specify ```params```.|
 
 Example route definition:
 
@@ -221,6 +231,12 @@ Example route definition:
 s.route('all', { component:  new  TodoListComponent(), root:  'divTodoList' });
 s.route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList' });
 s.route('user/:userId', { component: new UserProfileComponent(), root: 'divUserProfile' });
+```
+
+Example ```authGuard``` definition:
+
+```javascript
+s.route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList', authGuard: function(proposedRoute) { console.log('This will prevent route to \'completed\'.'); return false; }, authFail: { route: 'all', params: { } } });
 ```
 
 ## s.route
