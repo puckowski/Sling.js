@@ -6,7 +6,7 @@ class TodoHeaderComponent {
     view() {
         return s.markup('div', {
             attrs: {
-                
+                id: 'divTodoHeader'
             },
             children: [
                 s.markup('h4', {

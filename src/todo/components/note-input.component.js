@@ -60,6 +60,11 @@ class NoteInputComponent {
             s.setState(stateObj);
             new NoteService().setNoteCookie(stateObj);
         }
+
+        document.querySelectorAll('#divTodoList input').forEach(node => {
+            node.checked = false;
+            node.removeAttribute('readonly');
+        });
     }
 
     view() {

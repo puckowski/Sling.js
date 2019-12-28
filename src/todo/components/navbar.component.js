@@ -8,7 +8,7 @@ class NavbarComponent {
         return s.markup('nav', {
             attrs: {
                 class: 'navbar navbar-light bg-light',
-                id: "navbar"
+                id: 'divNavbar'
             },
             children: [
                 s.markup('span', {

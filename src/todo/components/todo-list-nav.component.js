@@ -21,13 +21,17 @@ class TodoListNavComponent {
     }
 
     routeToAll() {
-        let compTodoList = s.route('all');
-        s.autoUpdate('divTodoList', compTodoList);
+        s.route('all');
+
+        //let compTodoList = s.route('all');
+        //s.autoUpdate('divTodoList', compTodoList);
     }
 
     routeToCompleted() {
-        let compTodoListCompleted = s.route('completed');
-        s.autoUpdate('divTodoList', compTodoListCompleted);
+        s.route('completed');
+        
+        //let compTodoListCompleted = s.route('completed');
+        //s.autoUpdate('divTodoList', compTodoListCompleted);
     }
 
     performRouteAction(routeString) {
@@ -71,7 +75,7 @@ class TodoListNavComponent {
             attrs: {
                 class: 'nav',
                 style: 'width:50%;margin:auto;',
-                id: 'navTodoList'
+                id: 'divNoteNav'
             },
             children: [
                 s.markup('li', {

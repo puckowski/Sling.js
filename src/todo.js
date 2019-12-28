@@ -7,6 +7,8 @@ import TodoListNavComponent from './todo/components/todo-list-nav.component.js';
 import StoreTodo from './todo/stores/todo.store.js';
 import NoteService from './todo/services/note.service.js';
 
+s.setDetectionStrategy(s.changeDetectorParams.CHANGE_STRATEGY_AUTOMATIC);
+
 let noteCookieData = new NoteService().getNoteCookie();
 let state = new StoreTodo();
 
@@ -30,5 +32,3 @@ s.mount('divNoteNav', compTodoListNav);
 
 let compTodoHeader = new TodoHeaderComponent();
 s.mount('divTodoHeader', compTodoHeader);
-
-s.autoUpdate('navTodoList', compTodoListNav);

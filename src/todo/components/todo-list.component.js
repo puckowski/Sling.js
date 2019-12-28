@@ -8,21 +8,33 @@ class TodoListComponent {
 
     completeNote(note) {
         let stateObj = s.getState();
+        let updatedNoteIndex = 0;
+        let updatedNote = false;
 
-        stateObj.getNotes().forEach((stateNote) => {
+        stateObj.getNotes().forEach((stateNote, index) => {
             if (stateNote === note) {
                 stateNote.completed = !note.completed;
+                updatedNote = true;
+                updatedNoteIndex = index;
             }
         })
 
         s.setState(stateObj);
         new NoteService().setNoteCookie(stateObj);
+
+        if (updatedNote === true && note.completed === false) {
+            document.querySelectorAll('#divTodoList input').forEach((node, index) => {
+                if (index === ((updatedNoteIndex * 2) + 1)) {
+                    node.removeAttribute('readonly');
+                }
+            });
+        }
     }
 
     updateNote(note, event) {
         let stateObj = s.getState();
 
-        stateObj.getNotes().forEach((stateNote) => {
+        stateObj.getNotes().forEach(stateNote => {
             if (stateNote === note) {
                 stateNote.text = event.target.value;
             }
