@@ -1,11 +1,12 @@
-
 ![Sling logo](https://github.com/puckowski/Sling.js/blob/master/src/images/sling.png "Sling logo")
 
 # Sling
 
-Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight and less than 3.5KB minified.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight and less than 5KB minified.
 
 Sling creates and uses a virtual DOM to perform differential updates for fast rendering.
+
+Sling has an automatic change detection mechanism which updates your components for you.
 
 ## Goals
 
@@ -76,7 +77,7 @@ To add Sling to your project, simply add ```sling.min.js``` to your project and 
 To add Sling via CDN like jsDelivr use the following ```script``` tag:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/puckowski/Sling.js@1.9.2/dist/sling.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/puckowski/Sling.js@2.0.0/dist/sling.min.js" crossorigin="anonymous"></script>
 ```
 
 For XHR capabilities, also include ```sling-xhr.min.js``` or replace ```sling.min.js``` with ```sling-full.min.js```.
@@ -195,22 +196,6 @@ __void s.update ( rootElementId, component )__
 
 Updates the component mounted at element with ID ```rootElementId```.
 
-## s.autoUpdate
-__void s.autoupdate ( rootElementId, component, updateMillis = 17 )__
-
-Automatically updates ```component``` every ```updateMillis``` milliseconds. Default is 17 milliseconds (1 second / 60 frames per second rounded up to 17).
-
-Example autoUpdate call:
-
-```javascript
-s.autoUpdate('navTodoList', new TodoListNavComponent());
-```
-
-## s.clearAutoUpdate
-__void s.clearAutoUpdate ( rootElementId )__
-
-Clear the automatic update behavior of the element with ID ```rootElementId```.
-
 ## s.addRoute
 __void s.addRoute ( hashUrlRegEx, { root: elementId, routeObj: object })__
 
@@ -281,9 +266,21 @@ routeObservable.subscribe(function(routeArr) {
 ```
 
 ## s.getRouteParams
-__object s.getRouteParams()__
+__object s.getRouteParams ( )__
 
 Returns the current route's parameters as an object. Returns ```{ }``` if there are none.
+
+## s.setDetectionStrategy
+__void s.setDetectionStrategy ( newDetectionStrategy )__
+
+Set the new change detection strategy.
+
+Valid change detection strategies are as follows:
+
+|Strategy                                        |Description|
+|------------------------------------------------|-----------|
+|s.changeDetectorParams.CHANGE_STRATEGY_AUTOMATIC|Automatically update components after browser events and requests. This is the default setting.|
+|s.changeDetectorParams.CHANGE_STRATEGY_MANUAL   |Manually update components after browser events and requests.|
 
 ## s.version
 __string s.version__
