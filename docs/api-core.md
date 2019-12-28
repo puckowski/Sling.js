@@ -72,22 +72,6 @@ __void s.update ( rootElementId, component )__
 
 Updates the component mounted at element with ID ```rootElementId```.
 
-## s.autoUpdate
-__void s.autoupdate ( rootElementId, component, updateMillis = 17 )__
-
-Automatically updates ```component``` every ```updateMillis``` milliseconds. Default is 17 milliseconds (1 second / 60 frames per second rounded up to 17).
-
-Example autoUpdate call:
-
-```javascript
-s.autoUpdate('navTodoList', new TodoListNavComponent());
-```
-
-## s.clearAutoUpdate
-__void s.clearAutoUpdate ( rootElementId )__
-
-Clear the automatic update behavior of the element with ID ```rootElementId```.
-
 ## s.addRoute
 __void s.addRoute ( hashUrlRegEx, { root: elementId, routeObj: object })__
 
@@ -158,9 +142,21 @@ routeObservable.subscribe(function(routeArr) {
 ```
 
 ## s.getRouteParams
-__object s.getRouteParams()__
+__object s.getRouteParams ( )__
 
 Returns the current route's parameters as an object. Returns ```{ }``` if there are none.
+
+## s.setDetectionStrategy
+__void s.setDetectionStrategy ( newDetectionStrategy )__
+
+Set the new change detection strategy.
+
+Valid change detection strategies are as follows:
+
+|Strategy                                        |Description|
+|------------------------------------------------|-----------|
+|s.changeDetectorParams.CHANGE_STRATEGY_AUTOMATIC|Automatically update components after browser events and requests. This is the default setting.|
+|s.changeDetectorParams.CHANGE_STRATEGY_MANUAL   |Manually update components after browser events and requests.|
 
 ## s.version
 __string s.version__
