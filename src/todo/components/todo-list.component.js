@@ -3,10 +3,14 @@ import NoteService from '../services/note.service.js';
 class TodoListComponent {
 
     constructor() {
-
+        this.count = 0;
     }
 
-    completeNote(note) {
+    completeNote(note, event) {
+        //event.stopPropagation();
+        console.log(event);
+
+        this.count++;
         let stateObj = s.getState();
         let updatedNoteIndex = 0;
         let updatedNote = false;
@@ -44,7 +48,7 @@ class TodoListComponent {
         new NoteService().setNoteCookie(stateObj);
     }
 
-    view() {
+    view() {  
         return s.markup('div', {
             attrs: {
                 id: 'divTodoList'
@@ -76,7 +80,7 @@ class TodoListComponent {
                                                         attrs: {
                                                             type: 'checkbox',
                                                             ... note.completed && { checked: 'true' },
-                                                            onchange: this.completeNote.bind(this, note)
+                                                            onchange: function(e) { console.log('event fired'); e.stopPropagation(); } //this.completeNote.bind(this, note)
                                                         }
                                                     })
                                                 ]
