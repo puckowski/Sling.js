@@ -2,7 +2,7 @@
 
 # Sling
 
-Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight and less than 5KB minified.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight and less than 5.5KB minified.
 
 Sling creates and uses a virtual DOM to perform differential updates for fast rendering.
 
@@ -77,7 +77,7 @@ To add Sling to your project, simply add ```sling.min.js``` to your project and 
 To add Sling via CDN like jsDelivr use the following ```script``` tag:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/puckowski/Sling.js@2.0.1/dist/sling.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/puckowski/Sling.js@2.0.2/dist/sling.min.js" crossorigin="anonymous"></script>
 ```
 
 For XHR capabilities, also include ```sling-xhr.min.js``` or replace ```sling.min.js``` with ```sling-full.min.js```.
