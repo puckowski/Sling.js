@@ -151,12 +151,10 @@ __void s.setDetectionStrategy ( newDetectionStrategy )__
 
 Set the new change detection strategy.
 
-Valid change detection strategies are as follows:
+## s.detectChanges
+__void s.detectChanges ( )__
 
-|Strategy                                        |Description|
-|------------------------------------------------|-----------|
-|s.changeDetectorParams.CHANGE_STRATEGY_AUTOMATIC|Automatically update components after browser events and requests. This is the default setting.|
-|s.changeDetectorParams.CHANGE_STRATEGY_MANUAL   |Manually update components after browser events and requests.|
+Trigger automatic change detection immediately.
 
 ## s.version
 __string s.version__
