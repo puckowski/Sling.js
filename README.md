@@ -77,7 +77,7 @@ To add Sling to your project, simply add ```sling.min.js``` to your project and 
 To add Sling via CDN like jsDelivr use the following ```script``` tag:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/puckowski/Sling.js@2.0.2/dist/sling.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/puckowski/Sling.js@2.0.3/dist/sling.min.js" crossorigin="anonymous"></script>
 ```
 
 For XHR capabilities, also include ```sling-xhr.min.js``` or replace ```sling.min.js``` with ```sling-full.min.js```.
@@ -111,16 +111,36 @@ class HelloWorldComponent {
 }
 ```
 
+## Change Detection
+
+Sling supports two change detection strategies: automatic and manual. The default mode is automatic.
+
+|Strategy                                        |Description|
+|------------------------------------------------|-----------|
+|```s.CHANGE_STRATEGY_AUTOMATIC```|Automatically update components after browser events and requests. This is the default setting.|
+|```s.CHANGE_STRATEGY_MANUAL```   |Manually update components after browser events and requests.|
+
+Automatic change detection performs updates upon the following:
+* All browser events (click, mouseover, keyup, etc.)
+* ```setTimeout``` and ```setInterval```
+* XMLHttpRequest and Fetch API requests
+
+Automatic change detection does not perform updates upon the following:
+* Websocket events
+* IndexedDB callbacks
+
+For versions of ```setTimeout``` and ```setInterval``` that do not trigger automatic change detection, use the following:
+* ```s.detachedSetTimeout()```
+* ```s.detachedSetInterval()```
+
 ## Lifecycle Hooks
 
-Components may specify two lifecycle hooks:
-* ```slOnInit()```
-* ```slOnDestroy()```
-* ```slAfterInit()```
-
-The ```slOnInit()``` lifecycle hook is called before the component is mounted to the DOM.
-The ```slOnDestroy()``` lifecycle hook is called before the component is removed from the DOM.
-The ```slAfterInit()``` lifecycle hook is called after the component is mounted to the DOM.
+Components may specify up to three lifecycle hooks:
+|Lifecycle Hook         |Triggers Change Detection|Timing                                     |
+|-----------------------|-------------------------|-------------------------------------------|
+|```slOnInit()```       |```false```              |Before the component is mounted to the DOM.|
+|```slOnDestroy()```    |```false```              |Before the component is removed from the DOM.|
+|```slAfterInit()```    |```true```               |After the component is mounted to the DOM.|
 
 # Core API
 
@@ -275,12 +295,10 @@ __void s.setDetectionStrategy ( newDetectionStrategy )__
 
 Set the new change detection strategy.
 
-Valid change detection strategies are as follows:
+## s.detectChanges
+__void s.detectChanges ( )__
 
-|Strategy                                        |Description|
-|------------------------------------------------|-----------|
-|s.changeDetectorParams.CHANGE_STRATEGY_AUTOMATIC|Automatically update components after browser events and requests. This is the default setting.|
-|s.changeDetectorParams.CHANGE_STRATEGY_MANUAL   |Manually update components after browser events and requests.|
+Trigger automatic change detection immediately.
 
 ## s.version
 __string s.version__
