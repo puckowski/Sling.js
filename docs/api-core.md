@@ -60,12 +60,19 @@ s.textNode('Click me!');
 ```
 
 ## s.mount
-__element s.mount ( rootElementId, component )__
+__element s.mount ( rootElementId, component, attachDetector = true )__
 
 Mounts ```component``` on element with ID ```rootElementId``` in DOM.
 Returns root element in DOM where ```component``` was added.
 
 Mounted components replace the element with ```rootElementId``` to avoid an excessive DOM size. Mounted components must have the same root element ID as the element in the DOM they are attached to.
+
+By default, the Sling change detector is attached for the mounted component. Setting ```attachDetector``` to ```false``` prevents the change detector from being attached to this component. There are two convenience constants for change detection which are as follows:
+
+|Constant                        |Value      |
+|--------------------------------|-----------|
+|```s.CHANGE_DETECTOR_DETACHED```|```false```|
+|```s.CHANGE_DETECTOR_ATTACHED```|```true``` |
 
 ## s.update
 __void s.update ( rootElementId, component )__
@@ -155,6 +162,16 @@ Set the new change detection strategy.
 __void s.detectChanges ( )__
 
 Trigger automatic change detection immediately.
+
+## s.isDetectorAttached
+__boolean s.isDetectorAttached ( eleId )__
+
+Returns true if Sling change detector is attached for the given element ID ```eleId```.
+
+## s.detachDetector
+__void s.detachDetector ( eleId )__
+
+Detach the Sling change detector for the given element ID ```eleId```.
 
 ## s.version
 __string s.version__
