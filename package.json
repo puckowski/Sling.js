@@ -11,6 +11,7 @@
     "buildSlingCore": "terser --compress --mangle --output .\\dist\\sling.min.js -- .\\src\\sling\\core\\sling.js",
     "buildSlingXhr": "terser --compress --mangle --output .\\dist\\sling-xhr.min.js -- .\\src\\sling\\xhr\\sling-xhr.js",
     "buildSlingReactive": "terser --compress --mangle --output .\\dist\\sling-reactive.min.js -- .\\src\\sling\\reactive\\sling-reactive.js",
+    "buildSlingMinimal": "terser --compress --mangle --output .\\dist\\sling-minimal.min.js -- .\\src\\sling\\minimal\\sling-minimal.js",
     "buildSlingFull": "terser --compress --mangle --output .\\dist\\sling-full.min.js -- .\\dist\\sling-full.js"
   },
   "repository": {
