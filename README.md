@@ -142,6 +142,14 @@ Components may specify up to three lifecycle hooks:
 |```slOnDestroy()```    |```false```              |Before the component is removed from the DOM.|
 |```slAfterInit()```    |```true```               |After the component is mounted to the DOM.|
 
+## Directives
+
+Structural directives modify interactions with the DOM layout.
+
+|Directive          |Type     |Behavior                                                       |
+|-------------------|---------|---------------------------------------------------------------|
+|```slUseExisting```|Structural|Create the element or, if it exists, use the existing element.|
+
 # Core API
 
 ## s.setState 
