@@ -132,12 +132,11 @@ For versions of ```setTimeout``` and ```setInterval``` that do not trigger autom
 ## Lifecycle Hooks
 
 Components may specify up to three lifecycle hooks:
-
-|Lifecycle Hook     |Triggers Change Detection|Timing                                       |
-|-------------------|-------------------------|---------------------------------------------|
-|```slOnInit()```   |```false```              |Before the component is mounted to the DOM.  |
-|```slOnDestroy()```|```false```              |Before the component is removed from the DOM.|
-|```slAfterInit()```|```true```               |After the component is mounted to the DOM.   |
+|Lifecycle Hook         |Triggers Change Detection|Timing                                     |
+|-----------------------|-------------------------|-------------------------------------------|
+|```slOnInit()```       |```false```              |Before the component is mounted to the DOM.|
+|```slOnDestroy()```    |```false```              |Before the component is removed from the DOM.|
+|```slAfterInit()```    |```true```               |After the component is mounted to the DOM.|
 
 ## Directives
 
