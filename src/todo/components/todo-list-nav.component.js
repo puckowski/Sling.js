@@ -22,16 +22,10 @@ class TodoListNavComponent {
 
     routeToAll() {
         s.route('all');
-
-        //let compTodoList = s.route('all');
-        //s.autoUpdate('divTodoList', compTodoList);
     }
 
     routeToCompleted() {
         s.route('completed');
-        
-        //let compTodoListCompleted = s.route('completed');
-        //s.autoUpdate('divTodoList', compTodoListCompleted);
     }
 
     performRouteAction(routeString) {

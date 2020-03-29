@@ -1,18 +1,11 @@
 {
   "name": "sling.js",
-  "version": "0.2.0",
+  "version": "2.0.6",
   "description": "Client-side JavaScript framework for building Single Page Applications.",
-  "main": "index.js",
+  "main": "dist.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --mode development",
-    "buildProd": "webpack --mode production",
-    "devServer": "webpack-dev-server --content-base dist/",
-    "buildSlingCore": "terser --compress --mangle --output .\\dist\\sling.min.js -- .\\src\\sling\\core\\sling.js",
-    "buildSlingXhr": "terser --compress --mangle --output .\\dist\\sling-xhr.min.js -- .\\src\\sling\\xhr\\sling-xhr.js",
-    "buildSlingReactive": "terser --compress --mangle --output .\\dist\\sling-reactive.min.js -- .\\src\\sling\\reactive\\sling-reactive.js",
-    "buildSlingMinimal": "terser --compress --mangle --output .\\dist\\sling-minimal.min.js -- .\\src\\sling\\minimal\\sling-minimal.js",
-    "buildSlingFull": "terser --compress --mangle --output .\\dist\\sling-full.min.js -- .\\dist\\sling-full.js"
+    "devServer": "webpack-dev-server --content-base dist/"
   },
   "repository": {
     "type": "git",

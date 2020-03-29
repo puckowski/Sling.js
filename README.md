@@ -2,7 +2,7 @@
 
 # Sling
 
-Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight and less than 5.5KB minified.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight and **less than 5.5KB minified**.
 
 Sling creates and uses a virtual DOM to perform differential updates for fast rendering.
 
@@ -11,23 +11,19 @@ Sling has an automatic change detection mechanism which updates your components 
 ## Goals
 
 __Next Billion Users (NBUs)__
-Empower developers to create SPAs for the NBUs of the web. The NBUs tend to use more affordable, less powerful devices which struggle to achieve less than 2 second Time to Interactive (TTI) with larger component libraries and frameworks.
+Empower developers to create SPAs for the NBUs of the web. The NBUs tend to use more affordable and less powerful devices. These devices struggle to achieve a two second Time to Interactive (TTI) with larger component libraries and frameworks.
 
 __Practical__
-Familiarity with other JavaScript component libraries. Components are instantiated objects which may be used to control their own state and have a simple markup language with a gradual learning curve.
+Familiarity with other JavaScript component libraries. Components are instantiated objects which may be used to control their own state. Components have a simple markup language with a gradual learning curve.
 
 __Generalized__
-API as unopinionated as possible. Developers choose the right design patterns for their SPAs--not the library.
+API as unopinionated as possible. Developers choose the right design patterns for their SPAs—not the library.
 
 __Fast__
-High performance. Sling aims to get your SPA to interactive as quickly as possible and aims to keep your SPA as responsive as possible by staying within small production code budgets. With Sling, it should be easier for your SPA to run at 60 frames per second for a native application experience.
+High performance. Sling aims to get your SPA to interactive as quickly as possible and aims to keep your SPA as responsive as possible by staying within small code production budgets. With Sling, it should be easier for your SPA to run at 60 frames per second for a native application experience.
 
 __Minimal Setup__
 Simply include Sling once in your SPA and Sling is ready to use. No configuration files and no hidden requirements.
-
-## Building
-
-Run ```npm install``` then ```npm run build``` or ```npm run buildProd``` to build the project.
 
 ## Testing
 
@@ -77,7 +73,7 @@ To add Sling to your project, simply add ```sling.min.js``` to your project and 
 To add Sling via CDN like jsDelivr use the following ```script``` tag:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/puckowski/Sling.js@2.0.4/dist/sling.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/puckowski/Sling.js@2.0.6/dist/sling.min.js" crossorigin="anonymous"></script>
 ```
 
 For XHR capabilities, also include ```sling-xhr.min.js``` or replace ```sling.min.js``` with ```sling-full.min.js```.
@@ -171,27 +167,16 @@ Example markup call:
 
 ```javascript
 s.markup('div', {
-
 	attrs: {
-
 		style:  "width:50%;margin:auto;padding:1rem;"
-
 	},
-
 	children: [
-
 		...Array.from(s.getState().getNotes(), (note) =>
-
 			s.markup('div', {
-
 				attrs: {
-
 					class:  'input-group mb-3 animEnter',
-
 					style:  'width:100%;'
-
 				},
-
 				children: [
 				]
 			})
@@ -260,9 +245,11 @@ s.route('completed', { component:  new  TodoListCompletedComponent(), root:  'di
 ```
 
 ## s.route
-__object s.route ( hashUrl, params = { } )__
+__object s.route ( hashUrl, params = { }, attachDetector = true )__
 
 Navigate to the hash-based route according to a previously defined route. May specify route parameters as an object. Returns the component that was routed to.
+
+By default, the Sling change detector is attached for the mounted component. Setting ```attachDetector``` to ```false``` prevents the change detector from being attached to this component.
 
 Example route call:
 
@@ -333,7 +320,7 @@ Returns Sling version number represented as a string.
 Example:
 
 ```javascript
-console.log(s.version); // '1.9.1'
+console.log(s.version); // '2.0.6'
 ```
 
 # XHR API

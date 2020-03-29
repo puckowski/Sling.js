@@ -3,7 +3,6 @@ import NoteService from '../services/note.service.js';
 class TodoListCompletedComponent {
 
     constructor() {
-
     }
 
     slOnDestroy() {

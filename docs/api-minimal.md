@@ -1,4 +1,4 @@
-# Core API
+# Minimal API
 
 ## s.setState 
 __void s.setState ( newStateObj )__
@@ -19,27 +19,16 @@ Example markup call:
 
 ```javascript
 s.markup('div', {
-
 	attrs: {
-
 		style:  "width:50%;margin:auto;padding:1rem;"
-
 	},
-
 	children: [
-
 		...Array.from(s.getState().getNotes(), (note) =>
-
 			s.markup('div', {
-
 				attrs: {
-
 					class:  'input-group mb-3 animEnter',
-
 					style:  'width:100%;'
-
 				},
-
 				children: [
 				]
 			})
@@ -108,9 +97,11 @@ s.route('completed', { component:  new  TodoListCompletedComponent(), root:  'di
 ```
 
 ## s.route
-__object s.route ( hashUrl, params = { } )__
+__object s.route ( hashUrl, params = { }, attachDetector = true )__
 
 Navigate to the hash-based route according to a previously defined route. May specify route parameters as an object. Returns the component that was routed to.
+
+By default, the Sling change detector is attached for the mounted component. Setting ```attachDetector``` to ```false``` prevents the change detector from being attached to this component.
 
 Example route call:
 
@@ -161,5 +152,5 @@ Returns Sling version number represented as a string.
 Example:
 
 ```javascript
-console.log(s.version); // '1.9.1'
+console.log(s.version); // '2.0.6'
 ```

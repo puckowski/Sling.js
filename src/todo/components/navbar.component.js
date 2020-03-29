@@ -1,7 +1,6 @@
 class NavbarComponent {
 
     constructor() {
-
     }
 
     view() {
