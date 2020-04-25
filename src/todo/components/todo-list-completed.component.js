@@ -1,5 +1,7 @@
 import NoteService from '../services/note.service.js';
 
+import { getState, setState, markup } from '../../sling/core/sling';
+
 class TodoListCompletedComponent {
 
     constructor() {
@@ -8,9 +10,9 @@ class TodoListCompletedComponent {
     slOnDestroy() {
         console.log('Destroy completed list component');
     }
-    
+
     completeNote(note) {
-        let stateObj = s.getState();
+        let stateObj = getState();
 
         stateObj.getNotes().forEach((stateNote) => {
             if (stateNote === note) {
@@ -18,42 +20,42 @@ class TodoListCompletedComponent {
             }
         })
 
-        s.setState(stateObj);
+        setState(stateObj);
         new NoteService().setNoteCookie(stateObj);
     }
 
     view() {
-        return s.markup('div', {
+        return markup('div', {
             attrs: {
                 id: 'divTodoList'
             },
             children: [
-                s.markup('div', {
+                markup('div', {
                     attrs: {
                         style: "width:50%;margin:auto;padding:1rem;"
                     },
                     children: [
-                        ...Array.from(s.getState().getNotes().filter((note) => note.completed ? true : false), (note) =>
-                            s.markup('div', {
+                        ...Array.from(getState().getNotes().filter((note) => note.completed ? true : false), (note) =>
+                            markup('div', {
                                 attrs: {
                                     class: 'input-group mb-3 animEnter',
                                     style: 'width:100%;'
                                 },
                                 children: [
-                                    s.markup('div', {
+                                    markup('div', {
                                         attrs: {
                                             class: 'input-group-prepend'
                                         },
                                         children: [
-                                            s.markup('div', {
+                                            markup('div', {
                                                 attrs: {
                                                     class: 'input-group-text'
                                                 },
                                                 children: [
-                                                    s.markup('input', {
+                                                    markup('input', {
                                                         attrs: {
                                                             type: 'checkbox',
-                                                            ... note.completed && { checked: 'true' },
+                                                            ...note.completed && { checked: 'true' },
                                                             onchange: this.completeNote.bind(this, note)
                                                         }
                                                     })
@@ -61,11 +63,11 @@ class TodoListCompletedComponent {
                                             })
                                         ]
                                     }),
-                                    s.markup('input', {
+                                    markup('input', {
                                         attrs: {
                                             value: note.text,
                                             class: 'form-control',
-                                            ... note.completed && { readonly: 'true' }
+                                            ...note.completed && { readonly: 'true' }
                                         }
                                     })
                                 ]

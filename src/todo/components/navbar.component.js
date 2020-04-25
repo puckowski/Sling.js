@@ -1,20 +1,22 @@
+import { markup, textNode } from '../../sling/core/sling';
+
 class NavbarComponent {
 
     constructor() {
     }
 
     view() {
-        return s.markup('nav', {
+        return markup('nav', {
             attrs: {
                 class: 'navbar navbar-light bg-light',
                 id: 'divNavbar'
             },
             children: [
-                s.markup('span', {
+                markup('span', {
                     attrs: {
                     },
                     children: [
-                        s.markup('img', {
+                        markup('img', {
                             attrs: {
                                 src: 'images/sling.png',
                                 width: '30px',
@@ -23,33 +25,33 @@ class NavbarComponent {
                                 style: 'margin-right:0.5rem;margin-top:0.3125rem;margin-bottom:0.3125rem;'
                             },
                             children: [
-        
+
                             ]
                         }),
-                        s.markup('span', {
+                        markup('span', {
                             attrs: {
                                 class: 'navbar-brand'
                             },
                             children: [
-                                s.textNode('Sling')
+                                textNode('Sling')
                             ]
                         }),
-                        s.markup('div', {
+                        markup('div', {
                             attrs: {
                                 style: 'display:inline-flex;'
                             },
                             children: [
-                                s.markup('ul', {
+                                markup('ul', {
                                     attrs: {
                                         class: 'navbar-nav'
                                     },
                                     children: [
-                                        s.markup('li', {
+                                        markup('li', {
                                             attrs: {
                                                 class: 'nav-item'
                                             },
                                             children: [
-                                                s.textNode('v' + s.version)
+                                                textNode('v' + s.version)
                                             ]
                                         })
                                     ]

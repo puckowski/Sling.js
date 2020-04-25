@@ -7,28 +7,32 @@ import TodoListNavComponent from './todo/components/todo-list-nav.component.js';
 import StoreTodo from './todo/stores/todo.store.js';
 import NoteService from './todo/services/note.service.js';
 
-s.setDetectionStrategy(s.CHANGE_STRATEGY_AUTOMATIC);
+import { addRoute } from './sling/core/sling-router';
+import { setState, mount } from './sling/core/sling';
+import { setDetectionStrategy } from './sling/core/sling-change';
+
+setDetectionStrategy(s.CHANGE_STRATEGY_AUTOMATIC);
 
 let noteCookieData = new NoteService().getNoteCookie();
 let state = new StoreTodo();
 
 if (noteCookieData.length > 0) {
-    state.addNotes(JSON.parse(noteCookieData)); 
+    state.addNotes(JSON.parse(noteCookieData));
 }
 
-s.setState(state);
+setState(state);
 
-s.addRoute('all', { component: new TodoListComponent(), root: 'divTodoList' });
-s.addRoute('completed', { component: new TodoListCompletedComponent(), root: 'divTodoList' });
+addRoute('all', { component: new TodoListComponent(), root: 'divTodoList' });
+addRoute('completed', { component: new TodoListCompletedComponent(), root: 'divTodoList' });
 
 let compNavbar = new NavbarComponent();
-s.mount('divNavbar', compNavbar);
+mount('divNavbar', compNavbar);
 
 let compNoteInput = new NoteInputComponent();
-s.mount('divNoteInput', compNoteInput);
+mount('divNoteInput', compNoteInput);
 
 let compTodoListNav = new TodoListNavComponent();
-s.mount('divNoteNav', compTodoListNav);
+mount('divNoteNav', compTodoListNav);
 
 let compTodoHeader = new TodoHeaderComponent();
-s.mount('divTodoHeader', compTodoHeader);
+mount('divTodoHeader', compTodoHeader);

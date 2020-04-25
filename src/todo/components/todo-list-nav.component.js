@@ -1,5 +1,8 @@
 import NoteService from '../services/note.service.js';
 
+import { getRouteSegments, route } from '../../sling/core/sling-router';
+import { getState, textNode, markup } from '../../sling/core/sling';
+
 class TodoListNavComponent {
 
     constructor() {
@@ -7,9 +10,9 @@ class TodoListNavComponent {
     }
 
     slOnInit() {
-        this.performRouteAction(s.getRouteSegments()[0]);
+        this.performRouteAction(getRouteSegments()[0]);
 
-        let routeObservable = s.Observable(s.getRouteSegments());
+        let routeObservable = s.Observable(getRouteSegments());
         routeObservable.subscribe(function (routeArr) {
             if (routeArr.length > 0) {
                 this.routeString = routeArr[0];
@@ -21,11 +24,11 @@ class TodoListNavComponent {
     }
 
     routeToAll() {
-        s.route('all');
+        route('all');
     }
 
     routeToCompleted() {
-        s.route('completed');
+        route('completed');
     }
 
     performRouteAction(routeString) {
@@ -52,7 +55,7 @@ class TodoListNavComponent {
     }
 
     completeNote(note) {
-        let stateObj = s.getState();
+        let stateObj = getState();
 
         stateObj.getNotes().forEach((stateNote) => {
             if (stateNote === note) {
@@ -60,24 +63,24 @@ class TodoListNavComponent {
             }
         })
 
-        s.setState(stateObj);
+        setState(stateObj);
         new NoteService().setNoteCookie(stateObj);
     }
 
     view() {
-        return s.markup('ul', {
+        return markup('ul', {
             attrs: {
                 class: 'nav',
                 style: 'width:50%;margin:auto;',
                 id: 'divNoteNav'
             },
             children: [
-                s.markup('li', {
+                markup('li', {
                     attrs: {
                         class: 'nav-item'
                     },
                     children: [
-                        s.markup('a', {
+                        markup('a', {
                             attrs: {
                                 ... this.routeString !== 'all' && { class: 'nav-link' },
                                 ... this.routeString === 'all' && { class: 'nav-link textBold' },
@@ -85,17 +88,17 @@ class TodoListNavComponent {
                                 style: 'cursor:pointer;'
                             },
                             children: [
-                                s.textNode('All')
+                                textNode('All')
                             ]
                         })
                     ]
                 }),
-                s.markup('li', {
+                markup('li', {
                     attrs: {
                         class: 'nav-item'
                     },
                     children: [
-                        s.markup('a', {
+                        markup('a', {
                             attrs: {
                                 ... this.routeString !== 'completed' && { class: 'nav-link' },
                                 ... this.routeString === 'completed' && { class: 'nav-link textBold' },
@@ -103,7 +106,7 @@ class TodoListNavComponent {
                                 style: 'cursor:pointer;'
                             },
                             children: [
-                                s.textNode('Completed')
+                                textNode('Completed')
                             ]
                         })
                     ]

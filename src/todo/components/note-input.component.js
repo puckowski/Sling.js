@@ -1,6 +1,8 @@
 import Note from '../models/note.model.js';
 import NoteService from '../services/note.service.js';
 
+import { setState, getState, markup, textNode } from '../../sling/core/sling';
+
 class NoteInputComponent {
 
     constructor() {
@@ -33,20 +35,20 @@ class NoteInputComponent {
             return;
         }
 
-        let stateObj = s.getState();
+        let stateObj = getState();
 
         stateObj.getNotes().push(new Note(noteText, false));
-        s.setState(stateObj);
+        setState(stateObj);
         new NoteService().setNoteCookie(stateObj);
 
         this.resetInput();
     }
 
     clearCompletedNotes() {
-        let stateObj = s.getState();
+        let stateObj = getState();
 
         let currNote, clearedNote = false;
-        for(let i = 0; i < stateObj.getNotes().length; ++i) {
+        for (let i = 0; i < stateObj.getNotes().length; ++i) {
             currNote = stateObj.getNotes()[i];
 
             if (currNote.completed === true) {
@@ -55,9 +57,9 @@ class NoteInputComponent {
                 i--;
             }
         }
-        
+
         if (clearedNote === true) {
-            s.setState(stateObj);
+            setState(stateObj);
             new NoteService().setNoteCookie(stateObj);
         }
 
@@ -68,19 +70,19 @@ class NoteInputComponent {
     }
 
     view() {
-        return s.markup('div', {
+        return markup('div', {
             attrs: {
                 class: 'input-group',
                 id: 'divNoteInput',
                 style: 'padding:1rem;'
             },
             children: [
-                s.markup('div', {
+                markup('div', {
                     attrs: {
                         style: 'display:grid;width:50%;margin:auto;'
                     },
                     children: [
-                        s.markup('textarea', {
+                        markup('textarea', {
                             attrs: {
                                 class: 'form-control',
                                 "aria-label": 'Note textarea',
@@ -88,15 +90,15 @@ class NoteInputComponent {
                                 oninput: this.updateNoteText.bind(this)
                             }
                         }),
-                        s.markup('br', {
+                        markup('br', {
 
                         }),
-                        s.markup('div', {
+                        markup('div', {
                             attrs: {
                                 style: 'justify-self:center;'
                             },
                             children: [
-                                s.markup('button', {
+                                markup('button', {
                                     attrs: {
                                         class: 'btn btn-primary',
                                         type: 'submit',
@@ -104,10 +106,10 @@ class NoteInputComponent {
                                         style: 'width:150px;margin-right:1rem;'
                                     },
                                     children: [
-                                        s.textNode('Add note')
+                                        textNode('Add note')
                                     ]
                                 }),
-                                s.markup('button', {
+                                markup('button', {
                                     attrs: {
                                         class: 'btn btn-primary',
                                         type: 'submit',
@@ -115,7 +117,7 @@ class NoteInputComponent {
                                         style: 'width:150px;'
                                     },
                                     children: [
-                                        s.textNode('Clear completed')
+                                        textNode('Clear completed')
                                     ]
                                 })
                             ]
