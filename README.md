@@ -152,18 +152,18 @@ Structural directives modify interactions with the DOM layout.
 
 # Core API
 
-## s.setState 
-__void s.setState ( newStateObj )__
+## setState 
+__void setState ( newStateObj )__
 
 Set a new state object for SPA.
 
-## s.getState
-__object s.getState ( )__
+## getState
+__object getState ( )__
 
 Get the state object for SPA.
 
-## s.markup
-__object s.markup ( tagString, { attrs: {}, children: [] } )__
+## markup
+__object markup ( tagString, { attrs: {}, children: [] } )__
 
 Returns markup object to render. May be mounted to DOM.
 
@@ -189,8 +189,8 @@ s.markup('div', {
 });
 ```
 
-## s.textNode
-### string s.textNode( text )
+## textNode
+### string textNode( text )
 
 Create a text node.
 
@@ -200,8 +200,8 @@ Example textNode call:
 s.textNode('Click me!');
 ```
 
-## s.mount
-__element s.mount ( rootElementId, component, attachDetector = true )__
+## mount
+__element mount ( rootElementId, component, attachDetector = true )__
 
 Mounts ```component``` on element with ID ```rootElementId``` in DOM.
 Returns root element in DOM where ```component``` was added.
@@ -215,13 +215,18 @@ By default, the Sling change detector is attached for the mounted component. Set
 |```s.CHANGE_DETECTOR_DETACHED```|```false```|
 |```s.CHANGE_DETECTOR_ATTACHED```|```true``` |
 
-## s.update
-__void s.update ( rootElementId, component )__
+## update
+__void update ( rootElementId, component )__
 
 Updates the component mounted at element with ID ```rootElementId```.
 
-## s.addRoute
-__void s.addRoute ( hashUrlRegEx, { root: elementId, routeObj: object })__
+## initializeRouter
+__ void initializeRouter ( )__
+
+Explicitly initialize the router.
+
+## addRoute
+__void addRoute ( hashUrlRegEx, { root: elementId, routeObj: object })__
 
 Define a hash-based route that will replace element with ID ```elementId```'s content with the specified component on route action.
 
@@ -248,8 +253,8 @@ Example ```authGuard``` definition:
 s.route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList', authGuard: function(proposedRoute) { console.log('This will prevent route to \'completed\'.'); return false; }, authFail: { route: 'all', params: { } } });
 ```
 
-## s.route
-__object s.route ( hashUrl, params = { }, attachDetector = true )__
+## route
+__object route ( hashUrl, params = { }, attachDetector = true )__
 
 Navigate to the hash-based route according to a previously defined route. May specify route parameters as an object. Returns the component that was routed to.
 
@@ -261,13 +266,13 @@ Example route call:
 s.route('user/5'); // Activates component at root for route 'user/:userId'
 ```
 
-## s.getRoute
-__void s.getRoute ( )__
+## getRoute
+__void getRoute ( )__
 
 Get the current hash-based route.
 
-## s.getRouteSegments 
-__string[] s.getRouteSegments ( )__
+## getRouteSegments 
+__string[] getRouteSegments ( )__
 
 Returns the current hash-based route's segments or an empty array if there are none.
 
@@ -291,33 +296,38 @@ routeObservable.subscribe(function(routeArr) {
 }.bind(this));
 ```
 
-## s.getRouteParams
-__object s.getRouteParams ( )__
+## getRouteParams
+__object getRouteParams ( )__
 
 Returns the current route's parameters as an object. Returns ```{ }``` if there are none.
 
-## s.setDetectionStrategy
-__void s.setDetectionStrategy ( newDetectionStrategy )__
+## setDetectionStrategy
+__void setDetectionStrategy ( newDetectionStrategy )__
 
 Set the new change detection strategy.
 
-## s.detectChanges
-__void s.detectChanges ( )__
+## detectChanges
+__void detectChanges ( )__
 
 Trigger automatic change detection immediately.
 
-## s.isDetectorAttached
-__boolean s.isDetectorAttached ( eleId )__
+## isDetectorAttached
+__boolean isDetectorAttached ( eleId )__
 
 Returns true if Sling change detector is attached for the given element ID ```eleId```.
 
-## s.detachDetector
-__void s.detachDetector ( eleId )__
+## detachDetector
+__void detachDetector ( eleId )__
 
 Detach the Sling change detector for the given element ID ```eleId```.
 
-## s.version
-__string s.version__
+## initializeChangeDetector
+__ void initializeChangeDetector ( )__
+
+Explicitly initialize the change detector.
+
+## version
+__string version__
 
 Returns Sling version number represented as a string.
 
@@ -329,8 +339,8 @@ console.log(s.version); // '2.0.6'
 
 # XHR API
 
-## s.request
-__Promise s.request ( url, methodString, optionsObject = { } )__
+## slRequest
+__Promise slRequest ( url, methodString, optionsObject = { } )__
 
 Create a XML HTTP Request (XHR) for the specified URL using the specified method, such as ```GET```. Returns a Promise.
 
@@ -369,8 +379,8 @@ On request fail, returns an object in the following format:
 }
 ```
 
-## s.get
-__Promise s.get ( url, data = { } )__
+## slGet
+__Promise slGet ( url, data = { } )__
 
 Create a ```GET``` XHR request with the specified ```data``` which returns a Promise.
 
@@ -401,8 +411,8 @@ On request fail, returns an object in the following format:
 }
 ```
 
-## s.post
-__Promise s.post ( url, data = { } )__
+## slPost
+__Promise slPost ( url, data = { } )__
 
 Create a ```POST``` XHR request with the specified ```data``` which returns a Promise.
 
@@ -433,8 +443,8 @@ On request fail, returns an object in the following format:
 }
 ```
 
-## s.put
-__Promise s.put ( url, data = { } )__
+## slPut
+__Promise slPut ( url, data = { } )__
 
 Create a ```PUT``` XHR request with the specified ```data``` which returns a Promise.
 On success, returns XMLHttpRequest which has data in ```response``` property like so:
@@ -464,8 +474,8 @@ On request fail, returns an object in the following format:
 }
 ```
 
-## s.patch
-__Promise s.patch ( url, data = { } )__
+## slPatch
+__Promise slPatch ( url, data = { } )__
 
 Create a ```PATCH``` XHR request with the specified ```data``` which returns a Promise.
 
@@ -496,8 +506,8 @@ On request fail, returns an object in the following format:
 }
 ```
 
-## s.delete
-__Promise s.delete ( url, data = { } )__
+## slDelete
+__Promise slDelete ( url, data = { } )__
 
 Create a ```DELETE``` XHR request with the specified ```data``` which returns a Promise.
 
@@ -530,8 +540,8 @@ On request fail, returns an object in the following format:
 
 # Reactive API
 
-## s.Stream
-__object s.Stream( )__
+## Stream
+__object Stream( )__
 
 Returns a Sling stream. A stream is a sequence of values over time and the associated operations which are automatically applied as those values change.
 
@@ -613,8 +623,8 @@ __object from ( newArray )__
 
 Set stream data to ```newArray``` and apply all existing transformers. Returns the stream.
 
-## s.Observable
-__object s.observable( array )__
+## Observable
+__object observable( array )__
 
 Returns a Sling observable. An observable is an array which may be listened to.
 
@@ -653,8 +663,8 @@ __[ ] getData( )__
 
 Get the underlying array data.
 
-## s.BehaviorSubject
-__object s.BehaviorSubject( value )__
+## BehaviorSubject
+__object BehaviorSubject( value )__
 
 Returns a Sling behavior subject. A behavior subject is a value that emits changes to subscribers.
 
