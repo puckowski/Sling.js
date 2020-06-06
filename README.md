@@ -126,6 +126,13 @@ For versions of ```setTimeout``` and ```setInterval``` that do not trigger autom
 * ```s.detachedSetTimeout()```
 * ```s.detachedSetInterval()```
 
+For example:
+```javascript
+s.detachedSetTimeout(() => {
+    console.log('Hello, world!');
+}, 0);
+```
+
 ## Lifecycle Hooks
 
 Components may specify up to three lifecycle hooks:
