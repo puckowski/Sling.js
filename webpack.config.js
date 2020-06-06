@@ -16,7 +16,7 @@ var config = {
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
-                use: ["babel-loader", "eslint-loader"]
+                use: ['babel-loader', 'eslint-loader']
             },
             {
                 test: /\.css$/,
@@ -29,7 +29,24 @@ var config = {
     },
     optimization: {
         minimize: true,
-        minimizer: [new TerserPlugin()],
+        minimizer: [new TerserPlugin({
+            terserOptions: {
+                ecma: undefined,
+                warnings: false,
+                parse: {},
+                compress: {},
+                mangle: true,
+                module: false,
+                output: null,
+                toplevel: false,
+                nameCache: null,
+                ie8: false,
+                keep_classnames: undefined,
+                keep_fnames: false,
+                safari10: false
+            },
+            extractComments: true,
+        })],
     },
     plugins: [
         new CopyWebpackPlugin([

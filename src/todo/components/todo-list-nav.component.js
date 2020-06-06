@@ -2,6 +2,7 @@ import NoteService from '../services/note.service.js';
 
 import { getRouteSegments, route } from '../../sling/core/sling-router';
 import { getState, textNode, markup } from '../../sling/core/sling';
+import { Observable } from '../../sling/reactive/sling-reactive';
 
 class TodoListNavComponent {
 
@@ -12,7 +13,7 @@ class TodoListNavComponent {
     slOnInit() {
         this.performRouteAction(getRouteSegments()[0]);
 
-        let routeObservable = s.Observable(getRouteSegments());
+        let routeObservable = Observable(getRouteSegments());
         routeObservable.subscribe(function (routeArr) {
             if (routeArr.length > 0) {
                 this.routeString = routeArr[0];

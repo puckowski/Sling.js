@@ -86,7 +86,6 @@ class NoteInputComponent {
                             attrs: {
                                 class: 'form-control',
                                 "aria-label": 'Note textarea',
-                                style: 'margin-right:1rem;',
                                 oninput: this.updateNoteText.bind(this)
                             }
                         }),
