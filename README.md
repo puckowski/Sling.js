@@ -8,6 +8,8 @@ Sling creates and uses a virtual DOM to perform differential updates for fast re
 
 Sling has an automatic change detection mechanism which updates your components for you.
 
+Sling is structured using ECMAScript modules so that it is tree shakeable to reduce bundle sizes.
+
 ## Goals
 
 __Next Billion Users (NBUs)__
@@ -23,7 +25,7 @@ __Fast__
 High performance. Sling aims to get your SPA to interactive as quickly as possible and aims to keep your SPA as responsive as possible by staying within small code production budgets. With Sling, it should be easier for your SPA to run at 60 frames per second for a native application experience.
 
 __Minimal Setup__
-Simply include Sling once in your SPA and Sling is ready to use. No configuration files and no hidden requirements.
+Simply import the Sling functions required by your SPA and Sling is ready to use. No configuration files and no hidden requirements.
 
 ## Testing
 
@@ -64,25 +66,16 @@ Using simulated 3G network speeds, Sling Core 1.0 with routing and XHR loads 3.2
 
 ## Add Sling
 
-To add Sling to your project, simply add ```sling.min.js``` to your project and add the appropriate ```script``` tag:
+To add Sling to your project, simply import the Sling function required by your application.
 
-```html
-<script src="sling.min.js"></script>
+Below is an example of Sling import statements:
+
+```javascript
+import { addRoute } from  './sling/core/sling-router';
+import { setState, mount } from  './sling/core/sling';
+import { setDetectionStrategy } from  './sling/core/sling-change';
+import { Observable } from  '../../sling/reactive/sling-reactive';
 ```
-
-To add Sling via CDN like jsDelivr use the following ```script``` tag:
-
-```html
-<script src="https://cdn.jsdelivr.net/gh/puckowski/Sling.js@3.0.0/dist/sling.min.js" crossorigin="anonymous"></script>
-```
-
-For routing capabilities, also include ```sling-router.min.js``` or replace ```sling.min.js``` with ```sling-full.min.js```.
-
-For automatic change detection capabilities, also include ```sling-change.min.js``` or replace ```sling.min.js``` with ```sling-full.min.js```.
-
-For XHR capabilities, also include ```sling-xhr.min.js``` or replace ```sling.min.js``` with ```sling-full.min.js```.
-
-For reactive capabilities, also include ```sling-reactive.min.js``` or replace ```sling.min.js``` with ```sling-full.min.js```.
 
 ## Compatibility
 
