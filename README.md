@@ -379,6 +379,38 @@ On request fail, returns an object in the following format:
 }
 ```
 
+## slRequestWithBody
+__Promise slRequestWithBody ( url, methodString, bodyObject = { } )__
+
+Create a XML HTTP Request (XHR) for the specified URL using the specified method, such as ```GET```, with the specified body object. Returns a Promise.
+
+On success, returns XMLHttpRequest which has data in ```response``` property like so:
+
+```
+XMLHttpRequest 
+{
+	onabort:  null
+	onerror:  null
+	onload:  null
+	onloadend:  null
+	onloadstart:  null
+	onprogress:  null
+	onreadystatechange:  ƒ ()
+	ontimeout:  null
+	readyState:  4
+	response:  "[↵ {↵ "userId": 1,↵ "id": 1,↵ "title": ""
+	...
+}
+```
+
+On request fail, returns an object in the following format:
+```
+{
+	status: 404,
+	statusText: ''
+}
+```
+
 ## slGet
 __Promise slGet ( url, data = { } )__
 
