@@ -1,11 +1,21 @@
 {
   "name": "sling.js",
-  "version": "3.0.0",
+  "version": "0.2.0",
   "description": "Client-side JavaScript framework for building Single Page Applications.",
-  "main": "dist.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "devServer": "webpack-dev-server --content-base dist/"
+    "build": "webpack --mode development",
+    "buildProd": "webpack --mode production",
+    "devServer": "webpack-dev-server --content-base dist/",
+    "buildSlingCore": "terser --compress --mangle --output .\\dist\\sling.min.js -- .\\src\\sling\\core\\sling.js",
+    "buildSlingCoreChange": "terser --compress --mangle --output .\\dist\\sling-change.min.js -- .\\src\\sling\\core\\sling-change.js",
+    "buildSlingCoreRouter": "terser --compress --mangle --output .\\dist\\sling-router.min.js -- .\\src\\sling\\core\\sling-router.js",
+    "buildSlingRouter": "terser --compress --mangle --output .\\dist\\sling-router.min.js -- .\\src\\sling\\core\\sling-router.js",
+    "buildSlingChange": "terser --compress --mangle --output .\\dist\\sling-change.min.js -- .\\src\\sling\\core\\sling-change.js",
+    "buildSlingXhr": "terser --compress --mangle --output .\\dist\\sling-xhr.min.js -- .\\src\\sling\\xhr\\sling-xhr.js",
+    "buildSlingReactive": "terser --compress --mangle --output .\\dist\\sling-reactive.min.js -- .\\src\\sling\\reactive\\sling-reactive.js",
+    "buildSlingFull": "terser --compress --mangle --output .\\dist\\sling-full.min.js -- .\\dist\\sling-full.js"
   },
   "repository": {
     "type": "git",
