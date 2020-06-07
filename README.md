@@ -95,9 +95,9 @@ class HelloWorldComponent {
 	}
 
 	view() {
-		return s.markup('h1', {
+		return markup('h1', {
 			children: [
-				s.textNode('Hello, world!')
+				textNode('Hello, world!')
 			]
 		});
 	}
@@ -170,13 +170,13 @@ Returns markup object to render. May be mounted to DOM.
 Example markup call:
 
 ```javascript
-s.markup('div', {
+markup('div', {
 	attrs: {
 		style:  "width:50%;margin:auto;padding:1rem;"
 	},
 	children: [
-		...Array.from(s.getState().getNotes(), (note) =>
-			s.markup('div', {
+		...Array.from(getState().getNotes(), (note) =>
+			markup('div', {
 				attrs: {
 					class:  'input-group mb-3 animEnter',
 					style:  'width:100%;'
@@ -197,7 +197,7 @@ Create a text node.
 Example textNode call:
 
 ```javascript
-s.textNode('Click me!');
+textNode('Click me!');
 ```
 
 ## mount
@@ -242,15 +242,15 @@ Below is a list of possible ```routeObj``` properties:
 Example route definition:
 
 ```javascript
-s.route('all', { component:  new  TodoListComponent(), root:  'divTodoList' });
-s.route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList' });
-s.route('user/:userId', { component: new UserProfileComponent(), root: 'divUserProfile' });
+route('all', { component:  new  TodoListComponent(), root:  'divTodoList' });
+route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList' });
+route('user/:userId', { component: new UserProfileComponent(), root: 'divUserProfile' });
 ```
 
 Example ```authGuard``` definition:
 
 ```javascript
-s.route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList', authGuard: function(proposedRoute) { console.log('This will prevent route to \'completed\'.'); return false; }, authFail: { route: 'all', params: { } } });
+route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList', authGuard: function(proposedRoute) { console.log('This will prevent route to \'completed\'.'); return false; }, authFail: { route: 'all', params: { } } });
 ```
 
 ## route
@@ -279,13 +279,13 @@ Returns the current hash-based route's segments or an empty array if there are n
 Example:
 
 ```javascript
-console.log(s.getRouteSegments()); // [ 'user', '5' ]
+console.log(getRouteSegments()); // [ 'user', '5' ]
 ```
 
 Using Sling Reactive, route changes may be listened to by using a Sling Observable. Every time the route changes, the subscribed function below will be called.
 
 ```javascript
-let routeObservable = s.Observable(s.getRouteSegments());
+let routeObservable = Observable(getRouteSegments());
 routeObservable.subscribe(function(routeArr) {
     if (routeArr.length > 0) {
         this.primaryRoute = routeArr[0];
@@ -580,9 +580,9 @@ Returns a Sling stream. A stream is a sequence of values over time and the assoc
 Example stream usage using Sling XHR API:
 
 ```javascript
-s.get('https://jsonplaceholder.typicode.com/posts').then(xhrResp => {
+slGet('https://jsonplaceholder.typicode.com/posts').then(xhrResp => {
 	let postArr = JSON.parse(xhrResp.response);
-	let postStream = s.Stream().from(postArr).transform(function(arr) {
+	let postStream = Stream().from(postArr).transform(function(arr) {
 		return arr.filter(v => v.userId === 1);
 	}).transform(function(arr) {
 		return arr.filter(v => v.body.includes('quo'));
@@ -593,14 +593,14 @@ s.get('https://jsonplaceholder.typicode.com/posts').then(xhrResp => {
 Equivalent stream usage using preexisting stream object and Sling XHR API:
 
 ```javascript
-let postStream2 = s.Stream();
+let postStream2 = Stream();
 postStream2.transform(function(arr) {
 	return arr.filter(v => v.userId === 1);
 }).transform(function(arr) {
 	return arr.filter(v => v.body.includes('quo'));
 });
 
-s.get('https://jsonplaceholder.typicode.com/posts').then(xhrResp => {
+slGet('https://jsonplaceholder.typicode.com/posts').then(xhrResp => {
 	let postArr = JSON.parse(xhrResp.response);
 	postArr.forEach(post => {
 		postStream2.push(post);
@@ -664,7 +664,7 @@ Example observable usage:
 
 ```javascript
 let myArray = [1, 2, 3];
-let myObservable = s.Observable(myArray);
+let myObservable = Observable(myArray);
 myObservable.subscribe(function(arr) {
 	console.log('New length: ' + arr.length);
 });
@@ -703,7 +703,7 @@ Returns a Sling behavior subject. A behavior subject is a value that emits chang
 Example behavior subject usage:
 
 ```javascript
-let subject = s.BehaviorSubject(5);
+let subject = BehaviorSubject(5);
 subject.next(subject.getData() + 1);
 let value = subject.getData(); // 6
 
