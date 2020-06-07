@@ -8,7 +8,7 @@ Sling creates and uses a virtual DOM to perform differential updates for fast re
 
 Sling has an automatic change detection mechanism which updates your components for you.
 
-Sling is structured using ECMAScript modules so that it is tree shakeable to reduce bundle sizes.
+Sling is structured using ECMAScript modules so that Sling code is tree shakeable to ultimately reduce bundle sizes.
 
 ## Goals
 
