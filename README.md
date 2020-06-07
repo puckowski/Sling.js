@@ -326,8 +326,8 @@ __ void initializeChangeDetector ( )__
 
 Explicitly initialize the change detector.
 
-## version
-__string version__
+## s.version
+__string s.version__
 
 Returns Sling version number represented as a string.
 
