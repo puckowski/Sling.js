@@ -326,15 +326,15 @@ __ void initializeChangeDetector ( )__
 
 Explicitly initialize the change detector.
 
-## s.version
-__string s.version__
+## s.VERSION
+__string s.VERSION__
 
 Returns Sling version number represented as a string.
 
 Example:
 
 ```javascript
-console.log(s.version); // '2.0.6'
+console.log(s.version); // '3.1.3'
 ```
 
 # XHR API
