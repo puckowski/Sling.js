@@ -1,45 +1,34 @@
 # Core API
 
-## s.setState 
-__void s.setState ( newStateObj )__
+## setState 
+__void setState ( newStateObj )__
 
 Set a new state object for SPA.
 
-## s.getState
-__object s.getState ( )__
+## getState
+__object getState ( )__
 
 Get the state object for SPA.
 
-## s.markup
-__object s.markup ( tagString, { attrs: {}, children: [] } )__
+## markup
+__object markup ( tagString, { attrs: {}, children: [] } )__
 
 Returns markup object to render. May be mounted to DOM.
 
 Example markup call:
 
 ```javascript
-s.markup('div', {
-
+markup('div', {
 	attrs: {
-
 		style:  "width:50%;margin:auto;padding:1rem;"
-
 	},
-
 	children: [
-
-		...Array.from(s.getState().getNotes(), (note) =>
-
-			s.markup('div', {
-
+		...Array.from(getState().getNotes(), (note) =>
+			markup('div', {
 				attrs: {
-
 					class:  'input-group mb-3 animEnter',
-
 					style:  'width:100%;'
-
 				},
-
 				children: [
 				]
 			})
@@ -48,19 +37,19 @@ s.markup('div', {
 });
 ```
 
-## s.textNode
-### string s.textNode( text )
+## textNode
+### string textNode( text )
 
 Create a text node.
 
 Example textNode call:
 
 ```javascript
-s.textNode('Click me!');
+textNode('Click me!');
 ```
 
-## s.mount
-__element s.mount ( rootElementId, component, attachDetector = true )__
+## mount
+__element mount ( rootElementId, component, attachDetector = true )__
 
 Mounts ```component``` on element with ID ```rootElementId``` in DOM.
 Returns root element in DOM where ```component``` was added.
@@ -74,13 +63,18 @@ By default, the Sling change detector is attached for the mounted component. Set
 |```s.CHANGE_DETECTOR_DETACHED```|```false```|
 |```s.CHANGE_DETECTOR_ATTACHED```|```true``` |
 
-## s.update
-__void s.update ( rootElementId, component )__
+## update
+__void update ( rootElementId, component )__
 
 Updates the component mounted at element with ID ```rootElementId```.
 
-## s.addRoute
-__void s.addRoute ( hashUrlRegEx, { root: elementId, routeObj: object })__
+## initializeRouter
+__ void initializeRouter ( )__
+
+Explicitly initialize the router.
+
+## addRoute
+__void addRoute ( hashUrlRegEx, { root: elementId, routeObj: object })__
 
 Define a hash-based route that will replace element with ID ```elementId```'s content with the specified component on route action.
 
@@ -96,21 +90,23 @@ Below is a list of possible ```routeObj``` properties:
 Example route definition:
 
 ```javascript
-s.route('all', { component:  new  TodoListComponent(), root:  'divTodoList' });
-s.route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList' });
-s.route('user/:userId', { component: new UserProfileComponent(), root: 'divUserProfile' });
+route('all', { component:  new  TodoListComponent(), root:  'divTodoList' });
+route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList' });
+route('user/:userId', { component: new UserProfileComponent(), root: 'divUserProfile' });
 ```
 
 Example ```authGuard``` definition:
 
 ```javascript
-s.route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList', authGuard: function(proposedRoute) { console.log('This will prevent route to \'completed\'.'); return false; }, authFail: { route: 'all', params: { } } });
+route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList', authGuard: function(proposedRoute) { console.log('This will prevent route to \'completed\'.'); return false; }, authFail: { route: 'all', params: { } } });
 ```
 
-## s.route
-__object s.route ( hashUrl, params = { } )__
+## route
+__object route ( hashUrl, params = { }, attachDetector = true )__
 
 Navigate to the hash-based route according to a previously defined route. May specify route parameters as an object. Returns the component that was routed to.
+
+By default, the Sling change detector is attached for the mounted component. Setting ```attachDetector``` to ```false``` prevents the change detector from being attached to this component.
 
 Example route call:
 
@@ -118,26 +114,26 @@ Example route call:
 s.route('user/5'); // Activates component at root for route 'user/:userId'
 ```
 
-## s.getRoute
-__void s.getRoute ( )__
+## getRoute
+__void getRoute ( )__
 
 Get the current hash-based route.
 
-## s.getRouteSegments 
-__string[] s.getRouteSegments ( )__
+## getRouteSegments 
+__string[] getRouteSegments ( )__
 
 Returns the current hash-based route's segments or an empty array if there are none.
 
 Example:
 
 ```javascript
-console.log(s.getRouteSegments()); // [ 'user', '5' ]
+console.log(getRouteSegments()); // [ 'user', '5' ]
 ```
 
 Using Sling Reactive, route changes may be listened to by using a Sling Observable. Every time the route changes, the subscribed function below will be called.
 
 ```javascript
-let routeObservable = s.Observable(s.getRouteSegments());
+let routeObservable = Observable(getRouteSegments());
 routeObservable.subscribe(function(routeArr) {
     if (routeArr.length > 0) {
         this.primaryRoute = routeArr[0];
@@ -148,38 +144,43 @@ routeObservable.subscribe(function(routeArr) {
 }.bind(this));
 ```
 
-## s.getRouteParams
-__object s.getRouteParams ( )__
+## getRouteParams
+__object getRouteParams ( )__
 
 Returns the current route's parameters as an object. Returns ```{ }``` if there are none.
 
-## s.setDetectionStrategy
-__void s.setDetectionStrategy ( newDetectionStrategy )__
+## setDetectionStrategy
+__void setDetectionStrategy ( newDetectionStrategy )__
 
 Set the new change detection strategy.
 
-## s.detectChanges
-__void s.detectChanges ( )__
+## detectChanges
+__void detectChanges ( )__
 
 Trigger automatic change detection immediately.
 
-## s.isDetectorAttached
-__boolean s.isDetectorAttached ( eleId )__
+## isDetectorAttached
+__boolean isDetectorAttached ( eleId )__
 
 Returns true if Sling change detector is attached for the given element ID ```eleId```.
 
-## s.detachDetector
-__void s.detachDetector ( eleId )__
+## detachDetector
+__void detachDetector ( eleId )__
 
 Detach the Sling change detector for the given element ID ```eleId```.
 
-## s.version
-__string s.version__
+## initializeChangeDetector
+__ void initializeChangeDetector ( )__
+
+Explicitly initialize the change detector.
+
+## s.VERSION
+__string s.VERSION__
 
 Returns Sling version number represented as a string.
 
 Example:
 
 ```javascript
-console.log(s.version); // '1.9.1'
+console.log(s.version); // '3.1.3'
 ```
