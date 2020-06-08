@@ -2,13 +2,13 @@
 
 # Sling
 
-Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight and **less than 2.75KB minified**.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight and **less than 3.0KB minified**.
 
 Sling creates and uses a virtual DOM to perform differential updates for fast rendering.
 
 Sling has an automatic change detection mechanism which updates your components for you.
 
-Sling is structured using ECMAScript modules so that it is tree shakeable to reduce bundle sizes.
+Sling is structured using ECMAScript modules so that Sling code is tree shakeable to ultimately reduce bundle sizes.
 
 ## Goals
 
@@ -95,9 +95,9 @@ class HelloWorldComponent {
 	}
 
 	view() {
-		return s.markup('h1', {
+		return markup('h1', {
 			children: [
-				s.textNode('Hello, world!')
+				textNode('Hello, world!')
 			]
 		});
 	}
@@ -152,31 +152,31 @@ Structural directives modify interactions with the DOM layout.
 
 # Core API
 
-## s.setState 
-__void s.setState ( newStateObj )__
+## setState 
+__void setState ( newStateObj )__
 
 Set a new state object for SPA.
 
-## s.getState
-__object s.getState ( )__
+## getState
+__object getState ( )__
 
 Get the state object for SPA.
 
-## s.markup
-__object s.markup ( tagString, { attrs: {}, children: [] } )__
+## markup
+__object markup ( tagString, { attrs: {}, children: [] } )__
 
 Returns markup object to render. May be mounted to DOM.
 
 Example markup call:
 
 ```javascript
-s.markup('div', {
+markup('div', {
 	attrs: {
 		style:  "width:50%;margin:auto;padding:1rem;"
 	},
 	children: [
-		...Array.from(s.getState().getNotes(), (note) =>
-			s.markup('div', {
+		...Array.from(getState().getNotes(), (note) =>
+			markup('div', {
 				attrs: {
 					class:  'input-group mb-3 animEnter',
 					style:  'width:100%;'
@@ -189,19 +189,19 @@ s.markup('div', {
 });
 ```
 
-## s.textNode
-### string s.textNode( text )
+## textNode
+### string textNode( text )
 
 Create a text node.
 
 Example textNode call:
 
 ```javascript
-s.textNode('Click me!');
+textNode('Click me!');
 ```
 
-## s.mount
-__element s.mount ( rootElementId, component, attachDetector = true )__
+## mount
+__element mount ( rootElementId, component, attachDetector = true )__
 
 Mounts ```component``` on element with ID ```rootElementId``` in DOM.
 Returns root element in DOM where ```component``` was added.
@@ -215,13 +215,18 @@ By default, the Sling change detector is attached for the mounted component. Set
 |```s.CHANGE_DETECTOR_DETACHED```|```false```|
 |```s.CHANGE_DETECTOR_ATTACHED```|```true``` |
 
-## s.update
-__void s.update ( rootElementId, component )__
+## update
+__void update ( rootElementId, component )__
 
 Updates the component mounted at element with ID ```rootElementId```.
 
-## s.addRoute
-__void s.addRoute ( hashUrlRegEx, { root: elementId, routeObj: object })__
+## initializeRouter
+__ void initializeRouter ( )__
+
+Explicitly initialize the router.
+
+## addRoute
+__void addRoute ( hashUrlRegEx, { root: elementId, routeObj: object })__
 
 Define a hash-based route that will replace element with ID ```elementId```'s content with the specified component on route action.
 
@@ -237,19 +242,19 @@ Below is a list of possible ```routeObj``` properties:
 Example route definition:
 
 ```javascript
-s.route('all', { component:  new  TodoListComponent(), root:  'divTodoList' });
-s.route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList' });
-s.route('user/:userId', { component: new UserProfileComponent(), root: 'divUserProfile' });
+route('all', { component:  new  TodoListComponent(), root:  'divTodoList' });
+route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList' });
+route('user/:userId', { component: new UserProfileComponent(), root: 'divUserProfile' });
 ```
 
 Example ```authGuard``` definition:
 
 ```javascript
-s.route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList', authGuard: function(proposedRoute) { console.log('This will prevent route to \'completed\'.'); return false; }, authFail: { route: 'all', params: { } } });
+route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList', authGuard: function(proposedRoute) { console.log('This will prevent route to \'completed\'.'); return false; }, authFail: { route: 'all', params: { } } });
 ```
 
-## s.route
-__object s.route ( hashUrl, params = { }, attachDetector = true )__
+## route
+__object route ( hashUrl, params = { }, attachDetector = true )__
 
 Navigate to the hash-based route according to a previously defined route. May specify route parameters as an object. Returns the component that was routed to.
 
@@ -261,26 +266,26 @@ Example route call:
 s.route('user/5'); // Activates component at root for route 'user/:userId'
 ```
 
-## s.getRoute
-__void s.getRoute ( )__
+## getRoute
+__void getRoute ( )__
 
 Get the current hash-based route.
 
-## s.getRouteSegments 
-__string[] s.getRouteSegments ( )__
+## getRouteSegments 
+__string[] getRouteSegments ( )__
 
 Returns the current hash-based route's segments or an empty array if there are none.
 
 Example:
 
 ```javascript
-console.log(s.getRouteSegments()); // [ 'user', '5' ]
+console.log(getRouteSegments()); // [ 'user', '5' ]
 ```
 
 Using Sling Reactive, route changes may be listened to by using a Sling Observable. Every time the route changes, the subscribed function below will be called.
 
 ```javascript
-let routeObservable = s.Observable(s.getRouteSegments());
+let routeObservable = Observable(getRouteSegments());
 routeObservable.subscribe(function(routeArr) {
     if (routeArr.length > 0) {
         this.primaryRoute = routeArr[0];
@@ -291,46 +296,51 @@ routeObservable.subscribe(function(routeArr) {
 }.bind(this));
 ```
 
-## s.getRouteParams
-__object s.getRouteParams ( )__
+## getRouteParams
+__object getRouteParams ( )__
 
 Returns the current route's parameters as an object. Returns ```{ }``` if there are none.
 
-## s.setDetectionStrategy
-__void s.setDetectionStrategy ( newDetectionStrategy )__
+## setDetectionStrategy
+__void setDetectionStrategy ( newDetectionStrategy )__
 
 Set the new change detection strategy.
 
-## s.detectChanges
-__void s.detectChanges ( )__
+## detectChanges
+__void detectChanges ( )__
 
 Trigger automatic change detection immediately.
 
-## s.isDetectorAttached
-__boolean s.isDetectorAttached ( eleId )__
+## isDetectorAttached
+__boolean isDetectorAttached ( eleId )__
 
 Returns true if Sling change detector is attached for the given element ID ```eleId```.
 
-## s.detachDetector
-__void s.detachDetector ( eleId )__
+## detachDetector
+__void detachDetector ( eleId )__
 
 Detach the Sling change detector for the given element ID ```eleId```.
 
-## s.version
-__string s.version__
+## initializeChangeDetector
+__ void initializeChangeDetector ( )__
+
+Explicitly initialize the change detector.
+
+## s.VERSION
+__string s.VERSION__
 
 Returns Sling version number represented as a string.
 
 Example:
 
 ```javascript
-console.log(s.version); // '2.0.6'
+console.log(s.version); // '3.1.3'
 ```
 
 # XHR API
 
-## s.request
-__Promise s.request ( url, methodString, optionsObject = { } )__
+## slRequest
+__Promise slRequest ( url, methodString, optionsObject = { } )__
 
 Create a XML HTTP Request (XHR) for the specified URL using the specified method, such as ```GET```. Returns a Promise.
 
@@ -369,8 +379,40 @@ On request fail, returns an object in the following format:
 }
 ```
 
-## s.get
-__Promise s.get ( url, data = { } )__
+## slRequestWithBody
+__Promise slRequestWithBody ( url, methodString, bodyObject = { } )__
+
+Create a XML HTTP Request (XHR) for the specified URL using the specified method, such as ```GET```, with the specified body object. Returns a Promise.
+
+On success, returns XMLHttpRequest which has data in ```response``` property like so:
+
+```
+XMLHttpRequest 
+{
+	onabort:  null
+	onerror:  null
+	onload:  null
+	onloadend:  null
+	onloadstart:  null
+	onprogress:  null
+	onreadystatechange:  ƒ ()
+	ontimeout:  null
+	readyState:  4
+	response:  "[↵ {↵ "userId": 1,↵ "id": 1,↵ "title": ""
+	...
+}
+```
+
+On request fail, returns an object in the following format:
+```
+{
+	status: 404,
+	statusText: ''
+}
+```
+
+## slGet
+__Promise slGet ( url, data = { } )__
 
 Create a ```GET``` XHR request with the specified ```data``` which returns a Promise.
 
@@ -401,8 +443,8 @@ On request fail, returns an object in the following format:
 }
 ```
 
-## s.post
-__Promise s.post ( url, data = { } )__
+## slPost
+__Promise slPost ( url, data = { } )__
 
 Create a ```POST``` XHR request with the specified ```data``` which returns a Promise.
 
@@ -433,8 +475,8 @@ On request fail, returns an object in the following format:
 }
 ```
 
-## s.put
-__Promise s.put ( url, data = { } )__
+## slPut
+__Promise slPut ( url, data = { } )__
 
 Create a ```PUT``` XHR request with the specified ```data``` which returns a Promise.
 On success, returns XMLHttpRequest which has data in ```response``` property like so:
@@ -464,8 +506,8 @@ On request fail, returns an object in the following format:
 }
 ```
 
-## s.patch
-__Promise s.patch ( url, data = { } )__
+## slPatch
+__Promise slPatch ( url, data = { } )__
 
 Create a ```PATCH``` XHR request with the specified ```data``` which returns a Promise.
 
@@ -496,8 +538,8 @@ On request fail, returns an object in the following format:
 }
 ```
 
-## s.delete
-__Promise s.delete ( url, data = { } )__
+## slDelete
+__Promise slDelete ( url, data = { } )__
 
 Create a ```DELETE``` XHR request with the specified ```data``` which returns a Promise.
 
@@ -530,17 +572,17 @@ On request fail, returns an object in the following format:
 
 # Reactive API
 
-## s.Stream
-__object s.Stream( )__
+## Stream
+__object Stream( )__
 
 Returns a Sling stream. A stream is a sequence of values over time and the associated operations which are automatically applied as those values change.
 
 Example stream usage using Sling XHR API:
 
 ```javascript
-s.get('https://jsonplaceholder.typicode.com/posts').then(xhrResp => {
+slGet('https://jsonplaceholder.typicode.com/posts').then(xhrResp => {
 	let postArr = JSON.parse(xhrResp.response);
-	let postStream = s.Stream().from(postArr).transform(function(arr) {
+	let postStream = Stream().from(postArr).transform(function(arr) {
 		return arr.filter(v => v.userId === 1);
 	}).transform(function(arr) {
 		return arr.filter(v => v.body.includes('quo'));
@@ -551,14 +593,14 @@ s.get('https://jsonplaceholder.typicode.com/posts').then(xhrResp => {
 Equivalent stream usage using preexisting stream object and Sling XHR API:
 
 ```javascript
-let postStream2 = s.Stream();
+let postStream2 = Stream();
 postStream2.transform(function(arr) {
 	return arr.filter(v => v.userId === 1);
 }).transform(function(arr) {
 	return arr.filter(v => v.body.includes('quo'));
 });
 
-s.get('https://jsonplaceholder.typicode.com/posts').then(xhrResp => {
+slGet('https://jsonplaceholder.typicode.com/posts').then(xhrResp => {
 	let postArr = JSON.parse(xhrResp.response);
 	postArr.forEach(post => {
 		postStream2.push(post);
@@ -613,8 +655,8 @@ __object from ( newArray )__
 
 Set stream data to ```newArray``` and apply all existing transformers. Returns the stream.
 
-## s.Observable
-__object s.observable( array )__
+## Observable
+__object observable( array )__
 
 Returns a Sling observable. An observable is an array which may be listened to.
 
@@ -622,7 +664,7 @@ Example observable usage:
 
 ```javascript
 let myArray = [1, 2, 3];
-let myObservable = s.Observable(myArray);
+let myObservable = Observable(myArray);
 myObservable.subscribe(function(arr) {
 	console.log('New length: ' + arr.length);
 });
@@ -653,15 +695,15 @@ __[ ] getData( )__
 
 Get the underlying array data.
 
-## s.BehaviorSubject
-__object s.BehaviorSubject( value )__
+## BehaviorSubject
+__object BehaviorSubject( value )__
 
 Returns a Sling behavior subject. A behavior subject is a value that emits changes to subscribers.
 
 Example behavior subject usage:
 
 ```javascript
-let subject = s.BehaviorSubject(5);
+let subject = BehaviorSubject(5);
 subject.next(subject.getData() + 1);
 let value = subject.getData(); // 6
 
