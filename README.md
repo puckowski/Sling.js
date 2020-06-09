@@ -1,4 +1,4 @@
-![Sling logo](https://github.com/puckowski/Sling.js/blob/master/src/images/sling.png "Sling logo")
+![Sling update history](https://github.com/puckowski/Sling.js/blob/master/src/images/Sling_Update_History.png "Sling update history")
 
 # Sling
 
