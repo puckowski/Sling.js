@@ -51,7 +51,7 @@ class NavbarComponent {
                                                 class: 'nav-item'
                                             },
                                             children: [
-                                                textNode('v' + s.version)
+                                                textNode('v' + s.VERSION)
                                             ]
                                         })
                                     ]

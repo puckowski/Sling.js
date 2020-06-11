@@ -1,10 +1,27 @@
 import NoteService from '../services/note.service.js';
 
 import { getState, setState, markup } from '../../sling/core/sling';
+//import { detectChanges } from '../../sling/core/sling-change';
 
 class TodoListComponent {
 
     constructor() {
+    }
+
+    updateReadonlyAttribute(note, updatedNoteIndex) {
+        if (note.completed === false) {
+            document.querySelectorAll('#divTodoList input').forEach((node, index) => {
+                if (index === ((updatedNoteIndex * 2) + 1)) {
+                    node.removeAttribute('readonly');
+                }
+            });
+        } else if (note.completed === true) {
+            document.querySelectorAll('#divTodoList input').forEach((node, index) => {
+                if (index === ((updatedNoteIndex * 2) + 1)) {
+                    node.setAttribute('readonly', true);
+                }
+            });
+        }
     }
 
     completeNote(note) {
@@ -23,12 +40,8 @@ class TodoListComponent {
         setState(stateObj);
         new NoteService().setNoteCookie(stateObj);
 
-        if (updatedNote === true && note.completed === false) {
-            document.querySelectorAll('#divTodoList input').forEach((node, index) => {
-                if (index === ((updatedNoteIndex * 2) + 1)) {
-                    node.removeAttribute('readonly');
-                }
-            });
+        if (updatedNote === true) {
+            this.updateReadonlyAttribute(note, updatedNoteIndex);
         }
     }
 

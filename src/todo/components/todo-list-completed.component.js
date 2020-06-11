@@ -11,6 +11,14 @@ class TodoListCompletedComponent {
         console.log('Destroy completed list component');
     }
 
+    applyCheckedProperty() {
+        document.querySelectorAll('#divTodoList input').forEach((node, index) => {
+            if (index % 2 === 0) {
+                node.checked = true;
+            }
+        });
+    }
+
     completeNote(note) {
         let stateObj = getState();
 
@@ -22,6 +30,8 @@ class TodoListCompletedComponent {
 
         setState(stateObj);
         new NoteService().setNoteCookie(stateObj);
+
+        this.applyCheckedProperty();
     }
 
     view() {
