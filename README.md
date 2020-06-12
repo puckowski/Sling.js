@@ -326,6 +326,11 @@ __ void initializeChangeDetector ( )__
 
 Explicitly initialize the change detector.
 
+## initialize
+__ void initialize ( )__
+
+Explicitly initialize Sling.js.
+
 ## s.VERSION
 __string s.VERSION__
 
