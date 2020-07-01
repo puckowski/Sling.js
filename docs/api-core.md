@@ -1,5 +1,10 @@
 # Core API
 
+## initialize
+__ void initialize ( )__
+
+Explicitly initialize Sling.js.
+
 ## setState 
 __void setState ( newStateObj )__
 
@@ -67,6 +72,19 @@ By default, the Sling change detector is attached for the mounted component. Set
 __void update ( rootElementId, component )__
 
 Updates the component mounted at element with ID ```rootElementId```.
+
+## version
+__string version( )__
+
+Returns Sling version number represented as a string.
+
+Example:
+
+```javascript
+console.log(s.version); // '3.2.0'
+```
+
+# Core Router API
 
 ## initializeRouter
 __ void initializeRouter ( )__
@@ -149,6 +167,13 @@ __object getRouteParams ( )__
 
 Returns the current route's parameters as an object. Returns ```{ }``` if there are none.
 
+# Core Change Detection API
+
+## initializeChangeDetector
+__ void initializeChangeDetector ( )__
+
+Explicitly initialize the change detector.
+
 ## setDetectionStrategy
 __void setDetectionStrategy ( newDetectionStrategy )__
 
@@ -168,19 +193,3 @@ Returns true if Sling change detector is attached for the given element ID ```el
 __void detachDetector ( eleId )__
 
 Detach the Sling change detector for the given element ID ```eleId```.
-
-## initializeChangeDetector
-__ void initializeChangeDetector ( )__
-
-Explicitly initialize the change detector.
-
-## s.VERSION
-__string s.VERSION__
-
-Returns Sling version number represented as a string.
-
-Example:
-
-```javascript
-console.log(s.version); // '3.1.3'
-```
