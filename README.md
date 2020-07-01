@@ -2,7 +2,7 @@
 
 # Sling
 
-Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight and **less than 3.0KB minified**.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **3.0KB minified, and less than 1.3KB gzipped**.
 
 Sling creates and uses a virtual DOM to perform differential updates for fast rendering.
 
@@ -123,12 +123,12 @@ Automatic change detection does not perform updates upon the following:
 * IndexedDB callbacks
 
 For versions of ```setTimeout``` and ```setInterval``` that do not trigger automatic change detection, use the following:
-* ```s.detachedSetTimeout()```
-* ```s.detachedSetInterval()```
+* ```s.DETACHED_SET_TIMEOUT()```
+* ```s.DETACHED_SET_INTERVAL()```
 
 For example:
 ```javascript
-s.detachedSetTimeout(() => {
+s.DETACHED_SET_TIMEOUT(() => {
     console.log('Hello, world!');
 }, 0);
 ```
@@ -151,6 +151,11 @@ Structural directives modify interactions with the DOM layout.
 |```slUseExisting```|Structural|Create the element or, if it exists, use the existing element.|
 
 # Core API
+
+## initialize
+__ void initialize ( )__
+
+Explicitly initialize Sling.js.
 
 ## setState 
 __void setState ( newStateObj )__
@@ -219,6 +224,19 @@ By default, the Sling change detector is attached for the mounted component. Set
 __void update ( rootElementId, component )__
 
 Updates the component mounted at element with ID ```rootElementId```.
+
+## version
+__string version( )__
+
+Returns Sling version number represented as a string.
+
+Example:
+
+```javascript
+console.log(s.version); // '3.2.0'
+```
+
+# Core Router API
 
 ## initializeRouter
 __ void initializeRouter ( )__
@@ -301,6 +319,13 @@ __object getRouteParams ( )__
 
 Returns the current route's parameters as an object. Returns ```{ }``` if there are none.
 
+# Core Change Detection API
+
+## initializeChangeDetector
+__ void initializeChangeDetector ( )__
+
+Explicitly initialize the change detector.
+
 ## setDetectionStrategy
 __void setDetectionStrategy ( newDetectionStrategy )__
 
@@ -320,27 +345,6 @@ Returns true if Sling change detector is attached for the given element ID ```el
 __void detachDetector ( eleId )__
 
 Detach the Sling change detector for the given element ID ```eleId```.
-
-## initializeChangeDetector
-__ void initializeChangeDetector ( )__
-
-Explicitly initialize the change detector.
-
-## initialize
-__ void initialize ( )__
-
-Explicitly initialize Sling.js.
-
-## s.VERSION
-__string s.VERSION__
-
-Returns Sling version number represented as a string.
-
-Example:
-
-```javascript
-console.log(s.version); // '3.1.3'
-```
 
 # XHR API
 
