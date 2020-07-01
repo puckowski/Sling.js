@@ -1,6 +1,6 @@
 import NoteService from '../services/note.service.js';
 
-import { getState, setState, markup } from '../../sling/core/sling';
+import { getState, setState, markup } from '../../../dist/sling.min';
 
 class TodoListCompletedComponent {
 
@@ -9,6 +9,14 @@ class TodoListCompletedComponent {
 
     slOnDestroy() {
         console.log('Destroy completed list component');
+    }
+
+    applyCheckedProperty() {
+        document.querySelectorAll('#divTodoList input').forEach((node, index) => {
+            if (index % 2 === 0) {
+                node.checked = true;
+            }
+        });
     }
 
     completeNote(note) {
@@ -22,6 +30,8 @@ class TodoListCompletedComponent {
 
         setState(stateObj);
         new NoteService().setNoteCookie(stateObj);
+
+        this.applyCheckedProperty();
     }
 
     view() {

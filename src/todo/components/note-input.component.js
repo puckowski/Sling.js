@@ -1,7 +1,7 @@
 import Note from '../models/note.model.js';
 import NoteService from '../services/note.service.js';
 
-import { setState, getState, markup, textNode } from '../../sling/core/sling';
+import { setState, getState, markup, textNode } from '../../../dist/sling.min';
 
 class NoteInputComponent {
 

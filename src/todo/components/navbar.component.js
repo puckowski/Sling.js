@@ -1,4 +1,4 @@
-import { markup, textNode } from '../../sling/core/sling';
+import { markup, textNode, version } from '../../../dist/sling.min';
 
 class NavbarComponent {
 
@@ -51,7 +51,7 @@ class NavbarComponent {
                                                 class: 'nav-item'
                                             },
                                             children: [
-                                                textNode('v' + s.version)
+                                                textNode('v' + version())
                                             ]
                                         })
                                     ]

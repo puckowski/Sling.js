@@ -7,9 +7,9 @@ import TodoListNavComponent from './todo/components/todo-list-nav.component.js';
 import StoreTodo from './todo/stores/todo.store.js';
 import NoteService from './todo/services/note.service.js';
 
-import { addRoute } from './sling/core/sling-router';
-import { setState, mount } from './sling/core/sling';
-import { setDetectionStrategy } from './sling/core/sling-change';
+import { addRoute } from '../dist/sling-router.min';
+import { setState, mount } from '../dist/sling.min';
+import { setDetectionStrategy } from '../dist/sling-change.min';
 
 setDetectionStrategy(s.CHANGE_STRATEGY_AUTOMATIC);
 
