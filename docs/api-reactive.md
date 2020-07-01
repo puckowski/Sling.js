@@ -1,16 +1,16 @@
 # Reactive API
 
-## s.Stream
-__object s.Stream( )__
+## Stream
+__object Stream( )__
 
 Returns a Sling stream. A stream is a sequence of values over time and the associated operations which are automatically applied as those values change.
 
 Example stream usage using Sling XHR API:
 
 ```javascript
-s.get('https://jsonplaceholder.typicode.com/posts').then(xhrResp => {
+slGet('https://jsonplaceholder.typicode.com/posts').then(xhrResp => {
 	let postArr = JSON.parse(xhrResp.response);
-	let postStream = s.Stream().from(postArr).transform(function(arr) {
+	let postStream = Stream().from(postArr).transform(function(arr) {
 		return arr.filter(v => v.userId === 1);
 	}).transform(function(arr) {
 		return arr.filter(v => v.body.includes('quo'));
@@ -21,14 +21,14 @@ s.get('https://jsonplaceholder.typicode.com/posts').then(xhrResp => {
 Equivalent stream usage using preexisting stream object and Sling XHR API:
 
 ```javascript
-let postStream2 = s.Stream();
+let postStream2 = Stream();
 postStream2.transform(function(arr) {
 	return arr.filter(v => v.userId === 1);
 }).transform(function(arr) {
 	return arr.filter(v => v.body.includes('quo'));
 });
 
-s.get('https://jsonplaceholder.typicode.com/posts').then(xhrResp => {
+slGet('https://jsonplaceholder.typicode.com/posts').then(xhrResp => {
 	let postArr = JSON.parse(xhrResp.response);
 	postArr.forEach(post => {
 		postStream2.push(post);
@@ -83,8 +83,8 @@ __object from ( newArray )__
 
 Set stream data to ```newArray``` and apply all existing transformers. Returns the stream.
 
-## s.Observable
-__object s.observable( array )__
+## Observable
+__object observable( array )__
 
 Returns a Sling observable. An observable is an array which may be listened to.
 
@@ -92,7 +92,7 @@ Example observable usage:
 
 ```javascript
 let myArray = [1, 2, 3];
-let myObservable = s.Observable(myArray);
+let myObservable = Observable(myArray);
 myObservable.subscribe(function(arr) {
 	console.log('New length: ' + arr.length);
 });
@@ -123,15 +123,15 @@ __[ ] getData( )__
 
 Get the underlying array data.
 
-## s.BehaviorSubject
-__object s.BehaviorSubject( value )__
+## BehaviorSubject
+__object BehaviorSubject( value )__
 
 Returns a Sling behavior subject. A behavior subject is a value that emits changes to subscribers.
 
 Example behavior subject usage:
 
 ```javascript
-let subject = s.BehaviorSubject(5);
+let subject = BehaviorSubject(5);
 subject.next(subject.getData() + 1);
 let value = subject.getData(); // 6
 

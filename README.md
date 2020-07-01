@@ -1,4 +1,4 @@
-![Sling logo](https://github.com/puckowski/Sling.js/blob/master/src/images/sling.png "Sling logo")
+![Sling update history](https://github.com/puckowski/Sling.js/blob/master/src/images/Sling_Update_History.png "Sling update history")
 
 # Sling
 
@@ -325,6 +325,11 @@ Detach the Sling change detector for the given element ID ```eleId```.
 __ void initializeChangeDetector ( )__
 
 Explicitly initialize the change detector.
+
+## initialize
+__ void initialize ( )__
+
+Explicitly initialize Sling.js.
 
 ## s.VERSION
 __string s.VERSION__
