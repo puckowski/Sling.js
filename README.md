@@ -2,7 +2,7 @@
 
 # Sling
 
-Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **3.0KB minified, and less than 1.3KB gzipped**.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **3.15KB minified, and less than 1.4KB gzipped**.
 
 Sling creates and uses a virtual DOM to perform differential updates for fast rendering.
 
