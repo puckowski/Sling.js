@@ -242,7 +242,7 @@ __object resolveAll( promiseArray )__
 Returns an object with data about settled Promises in the format:
 
 ```javascript
-{ promise: Promise | null, error: Error | null, status: 'fulfilled' | 'rejected' }
+{ result: Promise Result | null, error: Error | null, status: 'fulfilled' | 'rejected' }
 ```
 
 Example:
