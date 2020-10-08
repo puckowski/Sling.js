@@ -84,6 +84,28 @@ Example:
 console.log(s.version); // '3.2.0'
 ```
 
+## resolveAll
+__object resolveAll( promiseArray )__
+
+Returns an object with data about settled Promises in the format:
+
+```javascript
+{ result: Promise Result | null, error: Error | null, status: 'fulfilled' | 'rejected' }
+```
+
+Example:
+
+```javascript
+const requestPromises = [
+	fetch('todo.html'), 
+	fetch('http://does-not-exist')
+];
+
+resolveAll(requestPromises).then((results) => {
+    const successfulPromises = results.filter(p => p.status === 'fulfilled');
+});
+```
+
 # Core Router API
 
 ## initializeRouter

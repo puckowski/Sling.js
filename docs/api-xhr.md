@@ -1,4 +1,3 @@
-
 # XHR API
 
 ## slRequest
