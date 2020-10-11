@@ -54,15 +54,15 @@ Because Sling is so lightweight, it can render thousands more nodes than Angular
 
 ## Performance (Network)
 
-Using simulated 3G network speeds, Sling Core 1.0 with routing and XHR loads 3.2 times faster than a minimal Angular 9.0.0 project and 3.62 times faster than an Angular 9.0.0 project with HttpClient.
+Using simulated 3G network speeds, Sling Core 3.4.0 with routing loads 2.16 times faster than an Angular 10.1.6 project and 2.90 times faster than an Angular 10.1.6 project with routing.
 
-|Version                                  |Requests  |Async Time (3G network)|Total     |
-|-----------------------------------------|----------|-----------------------|----------|
-|Sling Core 1.0 (Routing included)        |1         |2.06s                  |2.86KB    |
-|Sling Core + XHR 1.0 (Routing included)  |1         |2.06s                  |3.80KB    |
-|Angular 9.0.0 Minimal (w/Routing)        |3         |6.59s                  |226.1KB   |
-|Angular 9.0.0 (w/Routing)                |3         |7.18s                  |255.1KB   |
-|Angular 9.0.0 (w/Routing and HttpClient) |3         |7.47s                  |270.1KB   |
+|Version                                  |Requests  |Async Time (3G network)|Total      |
+|-----------------------------------------|----------|-----------------------|-----------|
+|Sling Core 3.4.0                         |1         |2.18s                  |4.20KB     |
+|Sling Core 3.4.0 (w/Routing)             |1         |2.24s                  |5.10KB     |
+|Angular 9.0.7                            |3         |4.88s                  |144.10KB   |
+|Angular 10.1.6                           |3         |4.84s                  |143.00KB   |
+|Angular 10.1.6 (w/Routing)               |3         |6.51s                  |229.00KB   |
 
 ## Add Sling
 
