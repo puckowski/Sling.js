@@ -2,7 +2,7 @@
 
 # Sling
 
-Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **3.3KB minified, and less than 1.5KB gzipped**.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **7.6KB minified, and less than 2.8KB gzipped**.
 
 Sling creates and uses a virtual DOM to perform differential updates for fast rendering.
 
@@ -162,11 +162,6 @@ Structural directives modify interactions with the DOM layout.
 
 # Core API
 
-## initialize
-__ void initialize ( )__
-
-Explicitly initialize Sling.js.
-
 ## setState 
 __void setState ( newStateObj )__
 
@@ -270,11 +265,6 @@ resolveAll(requestPromises).then((results) => {
 
 # Core Router API
 
-## initializeRouter
-__ void initializeRouter ( )__
-
-Explicitly initialize the router.
-
 ## addRoute
 __void addRoute ( hashUrlRegEx, { root: elementId, routeObj: object })__
 
@@ -352,11 +342,6 @@ __object getRouteParams ( )__
 Returns the current route's parameters as an object. Returns ```{ }``` if there are none.
 
 # Core Change Detection API
-
-## initializeChangeDetector
-__ void initializeChangeDetector ( )__
-
-Explicitly initialize the change detector.
 
 ## setDetectionStrategy
 __void setDetectionStrategy ( newDetectionStrategy )__
