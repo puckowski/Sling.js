@@ -37,8 +37,13 @@ markup('div', {
 });
 ```
 
+## m
+__object markup ( tagString, { attrs: {}, children: [] } )__
+
+Terse alias for markup() function.
+
 ## textNode
-### string textNode( text )
+__string textNode( text )__
 
 Create a text node.
 
