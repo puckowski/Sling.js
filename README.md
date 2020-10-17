@@ -2,7 +2,7 @@
 
 # Sling
 
-Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **7.6KB minified, and less than 2.8KB gzipped**.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **7.3KB minified, and less than 2.8KB gzipped**.
 
 Sling creates and uses a virtual DOM to perform differential updates for fast rendering.
 
@@ -168,6 +168,29 @@ Structural directives modify interactions with the DOM layout.
 |Directive          |Type     |Behavior                                                       |
 |-------------------|---------|---------------------------------------------------------------|
 |```slUseExisting```|Structural|Create the element or, if it exists, use the existing element.|
+|```slNoChanges```  |Structural|Only perform change detection on element's children.          |
+
+Example directive usage:
+
+```javascript
+view() {
+    return markup('div', {
+        attrs: {
+            id: 'divSheetContent'
+        },
+        children: [
+            new SelectedPartHeaderComponent().view(),
+            markup('div', {
+                attrs: {
+                    id: 'chartDiv',
+                    slUseExisting: 'true',
+                    style: 'width: 90vw;'
+                }
+            })
+        ]
+    })
+}
+```
 
 # Core API
 
@@ -208,8 +231,13 @@ markup('div', {
 });
 ```
 
+## m
+__object markup ( tagString, { attrs: {}, children: [] } )__
+
+Terse alias for markup() function.
+
 ## textNode
-### string textNode( text )
+__string textNode( text )__
 
 Create a text node.
 
