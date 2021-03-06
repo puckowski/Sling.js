@@ -61,8 +61,8 @@ for (let i = 0; i < 1000; ++i) {
 |Mithril.js 2.0.4                                         |1,000                   |23.600ms           |42.372       |
 |Sling Core 4.1.0 (w/Routing) Manual Change Detection     |1,000                   |54.448ms           |18.366       |
 |Sling Core 4.0.2 (w/Routing) Manual Change Detection     |1,000                   |75.682ms           |13.213       |
-|Sling Core 4.0.2 (w/Routing)                             |1,000                   |121.982ms          |8.197        |
 |Sling Core 4.1.0 (w/Routing)                             |1,000                   |100.556ms          |9.944        |
+|Sling Core 4.0.2 (w/Routing)                             |1,000                   |121.982ms          |8.197        |
 |Angular 10.1.6 (w/Routing)                               |1,000                   |362.536ms          |2.758        |
 
 Sling.js changes nodes **6.659** times faster than Angular in manual change detection mode and changes nodes **3.605** times faster than Angular in automatic change detection mode.
