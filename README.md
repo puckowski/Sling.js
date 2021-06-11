@@ -2,7 +2,7 @@
 
 # Sling
 
-Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **7.4KB minified, and less than 2.6KB gzipped**.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **7.5KB minified, and less than 2.7KB gzipped**.
 
 Sling creates and uses a virtual DOM to perform differential updates for fast rendering.
 
@@ -39,6 +39,7 @@ Because Sling is so lightweight, it can render thousands more nodes than Angular
 
 | Version                          |Number of nodes created |Average time       |Nodes per ms |
 |----------------------------------|------------------------|-------------------|-------------|
+|Sling Core 4.2.0 (w/Routing)      |1,000                   |23.414ms           |42.709       |
 |Sling Core 4.1.0 (w/Routing)      |1,000                   |32.502ms           |30.767       |
 |Mithril.js 2.0.4                  |1,000                   |39.312ms           |25.437       |
 |Sling Core 4.0.2 (w/Routing)      |1,000                   |47.612ms           |21.003       |
@@ -59,10 +60,11 @@ for (let i = 0; i < 1000; ++i) {
 | Version                                                 |Number of nodes changed |Average time       |Nodes per ms |
 |---------------------------------------------------------|------------------------|-------------------|-------------|
 |Mithril.js 2.0.4                                         |1,000                   |23.600ms           |42.372       |
+|Sling Core 4.2.0 (w/Routing)                             |1,000                   |35.893ms           |27.860       |
 |Sling Core 4.1.0 (w/Routing) Manual Change Detection     |1,000                   |54.448ms           |18.366       |
 |Sling Core 4.0.2 (w/Routing) Manual Change Detection     |1,000                   |75.682ms           |13.213       |
-|Sling Core 4.1.0 (w/Routing)                             |1,000                   |100.556ms          |9.944        |
 |Sling Core 4.0.2 (w/Routing)                             |1,000                   |121.982ms          |8.197        |
+|Sling Core 4.1.0 (w/Routing)                             |1,000                   |100.556ms          |9.944        |
 |Angular 10.1.6 (w/Routing)                               |1,000                   |362.536ms          |2.758        |
 
 Sling.js changes nodes **6.659** times faster than Angular in manual change detection mode and changes nodes **3.605** times faster than Angular in automatic change detection mode.
