@@ -2,7 +2,7 @@
 
 # Sling
 
-Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **7.5KB minified, and less than 2.7KB gzipped**.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **8.1KB minified, and less than 2.8KB gzipped**.
 
 Sling creates and uses a virtual DOM to perform differential updates for fast rendering.
 
@@ -98,10 +98,9 @@ To add Sling to your project, simply import the Sling function required by your 
 Below is an example of Sling import statements:
 
 ```javascript
-import { addRoute } from  './sling/core/sling-router';
-import { setState, mount } from  './sling/core/sling';
-import { setDetectionStrategy } from  './sling/core/sling-change';
-import { Observable } from  '../../sling/reactive/sling-reactive';
+import { setState, mount, setDetectionStrategy, addRoute } from './sling';
+import { Observable } from './sling-reactive';
+import { slGet } from './sling-xhr';
 ```
 
 ## Compatibility
@@ -124,7 +123,7 @@ class HelloWorldComponent {
 	view() {
 		return markup('h1', {
 			children: [
-				textNode('Hello, world!')
+				innerText('Hello, world!')
 			]
 		});
 	}
@@ -244,15 +243,26 @@ __object markup ( tagString, { attrs: {}, children: [] } )__
 
 Terse alias for markup() function.
 
-## textNode
-__string textNode( text )__
+## innerText
+__string innerText( text )__
 
-Create a text node.
+Set the inner text of a node.
 
-Example textNode call:
+Example innerText call:
 
 ```javascript
-textNode('Click me!');
+innerText('Click me!');
+```
+
+## spanWithText
+__object spanWithText( text )__
+
+Construct a span element with the given text.
+
+Example spanWithText call:
+
+```javascript
+spanWithText('Toggle');
 ```
 
 ## mount
