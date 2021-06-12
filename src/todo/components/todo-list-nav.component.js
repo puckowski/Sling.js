@@ -1,6 +1,6 @@
 import NoteService from '../services/note.service.js';
 
-import { getState, textNode, markup, getRouteSegments, route } from '../../../dist/sling.min';
+import { getState, innerText, markup, getRouteSegments, route } from '../../../dist/sling.min';
 import { Observable } from '../../../dist/sling-reactive.min';
 
 class TodoListNavComponent {
@@ -88,7 +88,7 @@ class TodoListNavComponent {
                                 style: 'cursor:pointer;'
                             },
                             children: [
-                                textNode('All')
+                                innerText('All')
                             ]
                         })
                     ]
@@ -106,7 +106,7 @@ class TodoListNavComponent {
                                 style: 'cursor:pointer;'
                             },
                             children: [
-                                textNode('Completed')
+                                innerText('Completed')
                             ]
                         })
                     ]

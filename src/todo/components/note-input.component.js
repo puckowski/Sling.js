@@ -1,7 +1,7 @@
 import Note from '../models/note.model.js';
 import NoteService from '../services/note.service.js';
 
-import { setState, getState, markup, textNode } from '../../../dist/sling.min';
+import { setState, getState, markup, innerText } from '../../../dist/sling.min';
 
 class NoteInputComponent {
 
@@ -105,7 +105,7 @@ class NoteInputComponent {
                                         style: 'width:150px;margin-right:1rem;'
                                     },
                                     children: [
-                                        textNode('Add note')
+                                        innerText('Add note')
                                     ]
                                 }),
                                 markup('button', {
@@ -116,7 +116,7 @@ class NoteInputComponent {
                                         style: 'width:150px;'
                                     },
                                     children: [
-                                        textNode('Clear completed')
+                                        innerText('Clear completed')
                                     ]
                                 })
                             ]

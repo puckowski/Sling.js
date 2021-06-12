@@ -1,4 +1,4 @@
-import { textNode, markup } from '../../../dist/sling.min';
+import { innerText, markup } from '../../../dist/sling.min';
 
 class TodoHeaderComponent {
 
@@ -16,7 +16,7 @@ class TodoHeaderComponent {
                         style: 'text-align:center;padding:1rem;font-family:Arial;line-height:58px;font-size:54px;font-weight:300;'
                     },
                     children: [
-                        textNode('Todo App')
+                        innerText('Todo App')
                     ]
                 })
             ]
