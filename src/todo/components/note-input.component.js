@@ -38,6 +38,7 @@ class NoteInputComponent {
         let stateObj = getState();
 
         stateObj.getNotes().push(new Note(noteText, false));
+        stateObj.incrementNoteAddedCount();
         setState(stateObj);
         new NoteService().setNoteCookie(stateObj);
 
@@ -84,6 +85,7 @@ class NoteInputComponent {
                     children: [
                         markup('textarea', {
                             attrs: {
+                                id: 'noteInputTextArea',
                                 class: 'form-control',
                                 "aria-label": 'Note textarea',
                                 oninput: this.updateNoteText.bind(this)
@@ -99,6 +101,7 @@ class NoteInputComponent {
                             children: [
                                 markup('button', {
                                     attrs: {
+                                        id: 'addNoteButton',
                                         class: 'btn btn-primary',
                                         type: 'submit',
                                         onclick: this.addNewNote.bind(this),
@@ -110,6 +113,7 @@ class NoteInputComponent {
                                 }),
                                 markup('button', {
                                     attrs: {
+                                        id: 'clearNotesButton',
                                         class: 'btn btn-primary',
                                         type: 'submit',
                                         onclick: this.clearCompletedNotes.bind(this),

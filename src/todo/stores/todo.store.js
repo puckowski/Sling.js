@@ -1,6 +1,7 @@
 class StoreTodo {
     constructor() {
         this.notes = [];
+        this.noteAddedCount = 0;
     }
 
     getNotes() {
@@ -15,6 +16,14 @@ class StoreTodo {
         dataObject.notes.forEach(note => {
             this.notes.push(note);
         });
+    }
+
+    getNoteAddedCount() {
+        return this.noteAddedCount;
+    }
+
+    incrementNoteAddedCount() {
+        this.noteAddedCount++;
     }
 }
 

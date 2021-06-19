@@ -32,3 +32,7 @@ mount('divNoteNav', compTodoListNav);
 
 let compTodoHeader = new TodoHeaderComponent();
 mount('divTodoHeader', compTodoHeader);
+
+import GlobalTestRunner from './globalTests';
+const testRunner = new GlobalTestRunner();
+testRunner.init();

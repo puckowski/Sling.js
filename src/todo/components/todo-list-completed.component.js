@@ -1,6 +1,6 @@
 import NoteService from '../services/note.service.js';
 
-import { getState, setState, markup } from '../../../dist/sling.min';
+import { getState, setState, markup, slFor, slIf } from '../../../dist/sling.min';
 
 class TodoListCompletedComponent {
 

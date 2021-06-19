@@ -111,8 +111,7 @@ class TodoListComponent {
                                             oninput: this.updateNote.bind(this, note),
                                             style: 'margin-left:1px;'
                                         }
-                                    })
-                                ]
+                                    })]
                             })
                         )
                     ]
