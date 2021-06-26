@@ -2,7 +2,7 @@
 
 # Sling
 
-Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **8.4KB minified, and less than 2.9KB gzipped**.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **7.6KB minified, and less than 2.7KB gzipped**.
 
 Sling creates and uses a virtual DOM to perform differential updates for fast rendering.
 
@@ -332,14 +332,14 @@ Below is a list of possible ```routeObj``` properties:
 | root    |The ```id``` of the element to replace on route.                           |
 |component|The component to replace ```root```.                                       |
 |authGuard|A function that returns true if route action may be taken, otherwise false.|
-|authFail |Object with ```route``` property to route to on ```authGuard``` fail. Also may specify ```params```.|
+|authFail |Object with ```route``` property to route to on ```authGuard``` fail. Also may specify ```params``` and ```attachDetector```.|
 
 Example route definition:
 
 ```javascript
-route('all', { component:  new  TodoListComponent(), root:  'divTodoList' });
-route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList' });
-route('user/:userId', { component: new UserProfileComponent(), root: 'divUserProfile' });
+addRoute('all', { component:  new  TodoListComponent(), root:  'divTodoList' });
+addRoute('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList' });
+addRoute('user/:userId', { component: new UserProfileComponent(), root: 'divUserProfile' });
 ```
 
 Example ```authGuard``` definition:
@@ -358,7 +358,7 @@ By default, the Sling change detector is attached for the mounted component. Set
 Example route call:
 
 ```javascript
-s.route('user/5'); // Activates component at root for route 'user/:userId'
+route('user/5'); // Activates component at root for route 'user/:userId'
 ```
 
 ## getRoute

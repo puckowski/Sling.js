@@ -1,4 +1,4 @@
-import { markup, innerText, version } from '../../../dist/sling.min';
+import { markup, textNode, version } from '../../../dist/sling.min';
 
 class NavbarComponent {
 
@@ -33,7 +33,7 @@ class NavbarComponent {
                                 class: 'navbar-brand'
                             },
                             children: [
-                                innerText('Sling')
+                                textNode('Sling')
                             ]
                         }),
                         markup('div', {
@@ -51,7 +51,7 @@ class NavbarComponent {
                                                 class: 'nav-item'
                                             },
                                             children: [
-                                                innerText('v' + version())
+                                                textNode('v' + version())
                                             ]
                                         })
                                     ]
