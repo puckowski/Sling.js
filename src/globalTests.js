@@ -286,6 +286,183 @@ class TestTagChangeComponent2 {
     }
 }
 
+class TestRebindDetectionComponent {
+    constructor() {
+        this.fakeChildArray = [0, 1, 0];
+    }
+
+    toggleInputMode() {
+        if (this.fakeChildArray.length === 3) {
+            this.fakeChildArray = [0];
+        } else {
+            this.fakeChildArray = [0, 1, 0];
+        }
+    }
+
+    toggleEditingMode() {
+        if (this.fakeChildArray.length === 3 && this.fakeChildArray[1] === 1) {
+            this.fakeChildArray = [0, 0, 0];
+        } else {
+            this.fakeChildArray = [0, 1, 0];
+        }
+    }
+
+    view() {
+        const stateObj = getState();
+        if (stateObj.count2 !== null && stateObj.count2 !== undefined) stateObj.count2++;
+        setState(stateObj);
+
+        return markup('div', {
+            attrs: {
+                id: 'testtagcomponent3'
+            },
+            children: [
+                markup('button', {
+                    attrs: {
+                        onclick: this.toggleInputMode.bind(this),
+                        id: 'toggleModeButton3'
+                    },
+                    children: [
+                        textNode('Toggle')
+                    ]
+                }),
+                markup('table', {
+                    children: [
+                        markup('tr', {
+                            attrs: {
+                                id: 'testTagRow3'
+                            },
+                            children: [
+                                ...Array.from(this.fakeChildArray, (fakeChildFlag) =>
+                                    markup('div', {
+                                        children: [
+                                            ...(fakeChildFlag === 1 ? [markup('button', {
+                                                attrs: {
+                                                    onclick: this.toggleEditingMode.bind(this),
+                                                    id: 'toggleModeButton4'
+                                                },
+                                                children: [
+                                                    textNode('Toggle')
+                                                ]
+                                            })] : []),
+                                            ...(fakeChildFlag === 0 ? [markup('td', {
+                                                children: [
+                                                    textNode('Mode: '),
+                                                    textNode(String(fakeChildFlag))
+                                                ]
+                                            })] : []),
+                                            ...(fakeChildFlag === 1 ? [
+                                                markup('input', {
+                                                    attrs: {
+                                                        value: String(fakeChildFlag)
+                                                    },
+                                                    children: [
+                                                    ]
+                                                })
+                                            ] : [])
+                                        ]
+                                    })
+                                ),
+                            ]
+                        })
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+class TestRebindDetectionComponent2 {
+    constructor() {
+        this.fakeChildArray = [0, 1, 0];
+    }
+
+    toggleInputMode() {
+        if (this.fakeChildArray.length === 3) {
+            this.fakeChildArray = [0];
+        } else {
+            this.fakeChildArray = [0, 1, 0];
+        }
+    }
+
+    toggleEditingMode() {
+        if (this.fakeChildArray.length === 3 && this.fakeChildArray[1] === 1) {
+            this.fakeChildArray = [0, 0, 0];
+        } else {
+            this.fakeChildArray = [0, 1, 0];
+        }
+    }
+
+    view() {
+        const stateObj = getState();
+        if (stateObj.count3 !== null && stateObj.count3 !== undefined) stateObj.count3++;
+        setState(stateObj);
+
+        return markup('div', {
+            attrs: {
+                id: 'testtagcomponent4'
+            },
+            children: [
+                markup('button', {
+                    attrs: {
+                        onclick: this.toggleInputMode.bind(this),
+                        id: 'toggleModeButton5'
+                    },
+                    children: [
+                        textNode('Toggle')
+                    ]
+                }),
+                markup('table', {
+                    children: [
+                        markup('tr', {
+                            attrs: {
+                                id: 'testTagRow4'
+                            },
+                            children: [
+                                ...Array.from(this.fakeChildArray, (fakeChildFlag) =>
+                                    markup('div', {
+                                        children: [
+                                            ...(fakeChildFlag === 1 ? [markup('button', {
+                                                attrs: {
+                                                    onclick: this.toggleEditingMode.bind(this),
+                                                    id: 'toggleModeButton6'
+                                                },
+                                                children: [
+                                                    textNode('Toggle')
+                                                ]
+                                            })] : []),
+                                            ...(fakeChildFlag === 0 ? [markup('td', {
+                                                children: [
+                                                    textNode('Mode: '),
+                                                    textNode(String(fakeChildFlag)),
+                                                    markup('span', {
+                                                        children: [
+                                                            textNode(' <span>')
+                                                        ]
+                                                    })
+                                                ]
+                                            })] : []),
+                                            ...(fakeChildFlag === 1 ? [
+                                                markup('input', {
+                                                    attrs: {
+                                                        value: String(fakeChildFlag)
+                                                    },
+                                                    children: [
+                                                    ]
+                                                })
+                                            ] : [])
+                                        ]
+                                    })
+                                ),
+                            ]
+                        })
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class GlobalTestRunner {
 
     constructor() {
@@ -376,6 +553,143 @@ export class GlobalTestRunner {
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
+    }
+
+    testFinalize95RebindDetection() {
+        const result = {
+            test: 'test rebinding change detection to bound functions',
+            success: false,
+            message: ''
+        };
+
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            if (window.globalAsyncCount === 0) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
+
+                let stateObj = getState();
+                stateObj.count2 = 0;
+                setState(stateObj);
+
+                mount('testtagcomponent3', new TestRebindDetectionComponent());
+
+                const ele = document.getElementById('toggleModeButton4');
+                ele.click();
+                s.DETACHED_SET_TIMEOUT(() => {
+                    ele.click();
+
+                    s.DETACHED_SET_TIMEOUT(() => {
+                        stateObj = getState();
+
+                        const updateCountCorrect = stateObj.count2 && stateObj.count2 === 3;
+
+                        const removeElementsButton = document.getElementById('toggleModeButton3');
+                        removeElementsButton.click();
+
+                        s.DETACHED_SET_TIMEOUT(() => {
+                            const rowEle = document.getElementById('testTagRow3');
+                            const rowsReducedCorrect = rowEle && rowEle.children.length === 1 && rowEle.children[0].childNodes.length === 1;
+
+                            removeElementsButton.click();
+
+                            s.DETACHED_SET_TIMEOUT(() => {
+                                const rowsRestoredCorrect = rowEle && rowEle.children.length === 3;
+
+                                ele.click();
+
+                                s.DETACHED_SET_TIMEOUT(() => {
+                                    const changeDetectionCalled = stateObj.count2 && stateObj.count2 === 6;
+
+                                    result.success = updateCountCorrect && rowsReducedCorrect && rowsRestoredCorrect && changeDetectionCalled;
+
+                                    window.globalTestResults.push(result);
+                                    window.globalTestCount++;
+                                    window.globalAsyncCount--;
+                                }, 100);
+                            }, 100);
+                        }, 100);
+                    }, 100);
+                }, 100);
+            }
+
+            attempts++;
+
+            if (attempts === 10) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+                window.globalAsyncCount--;
+
+                clearInterval(waitForStableInterval);
+            }
+        }, 500);
+    }
+
+    testFinalize99RebindDetectionWithNonNodeType3() {
+        const result = {
+            test: 'test rebinding change detection to bound functions where components have markup',
+            success: false,
+            message: ''
+        };
+
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            if (window.globalAsyncCount === 0) {
+                clearInterval(waitForStableInterval);
+
+                let stateObj = getState();
+                stateObj.count3 = 0;
+                setState(stateObj);
+
+                mount('testtagcomponent4', new TestRebindDetectionComponent2());
+
+                const ele = document.getElementById('toggleModeButton6');
+                ele.click();
+                s.DETACHED_SET_TIMEOUT(() => {
+                    ele.click();
+
+                    s.DETACHED_SET_TIMEOUT(() => {
+                        stateObj = getState();
+
+                        const updateCountCorrect = stateObj.count3 && stateObj.count3 === 3;
+
+                        const removeElementsButton = document.getElementById('toggleModeButton5');
+                        removeElementsButton.click();
+
+                        s.DETACHED_SET_TIMEOUT(() => {
+                            const rowEle = document.getElementById('testTagRow4');
+                            const rowsReducedCorrect = rowEle && rowEle.children.length === 1 && rowEle.children[0].childNodes.length === 1;
+
+                            removeElementsButton.click();
+
+                            s.DETACHED_SET_TIMEOUT(() => {
+                                const rowsRestoredCorrect = rowEle && rowEle.children.length === 3;
+
+                                ele.click();
+
+                                s.DETACHED_SET_TIMEOUT(() => {
+                                    const changeDetectionCalled = stateObj.count3 && stateObj.count3 === 6;
+
+                                    result.success = updateCountCorrect && rowsReducedCorrect && rowsRestoredCorrect && changeDetectionCalled;
+
+                                    window.globalTestResults.push(result);
+                                    window.globalTestCount++;
+                                }, 100);
+                            }, 100);
+                        }, 100);
+                    }, 100);
+                }, 100);
+            }
+
+            attempts++;
+
+            if (attempts === 10) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+
+                clearInterval(waitForStableInterval);
+            }
+        }, 500);
     }
 
     testDetachedInterval() {
@@ -764,6 +1078,7 @@ export class GlobalTestRunner {
         let attempts = 0;
         const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
             if (window.globalAsyncCount === 0) {
+                window.globalAsyncCount++;
                 mount('testfetchcomponent', new TestFetchChangeDetectionComponent());
 
                 const requestPromises = [
@@ -786,6 +1101,7 @@ export class GlobalTestRunner {
                     window.globalTestCount++;
 
                     clearInterval(waitForStableInterval);
+                    window.globalAsyncCount--;
                 });
             }
 
@@ -796,6 +1112,7 @@ export class GlobalTestRunner {
                 window.globalTestCount++;
 
                 clearInterval(waitForStableInterval);
+                window.globalAsyncCount--;
             }
         }, 500);
     }
