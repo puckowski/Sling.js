@@ -597,20 +597,24 @@ export class GlobalTestRunner {
                                 const rowsRestoredCorrect = rowEle && rowEle.children.length === 3;
 
                                 ele.click();
+                                const correctDiv1 = rowEle && rowEle.children.length === 3 && rowEle.children[0].textContent === 'Mode: 0';
+                                const correctDiv2 = rowEle && rowEle.children.length === 3 && rowEle.children[1].textContent === 'Mode: 0';
+                                const correctDiv3 = rowEle && rowEle.children.length === 3 && rowEle.children[2].textContent === 'Mode: 0';
 
                                 s.DETACHED_SET_TIMEOUT(() => {
                                     const changeDetectionCalled = stateObj.count2 && stateObj.count2 === 6;
 
-                                    result.success = updateCountCorrect && rowsReducedCorrect && rowsRestoredCorrect && changeDetectionCalled;
+                                    result.success = updateCountCorrect && rowsReducedCorrect && rowsRestoredCorrect && changeDetectionCalled
+                                        && correctDiv1 && correctDiv2 && correctDiv3;
 
                                     window.globalTestResults.push(result);
                                     window.globalTestCount++;
                                     window.globalAsyncCount--;
-                                }, 100);
-                            }, 100);
-                        }, 100);
-                    }, 100);
-                }, 100);
+                                }, 200);
+                            }, 200);
+                        }, 200);
+                    }, 200);
+                }, 200);
             }
 
             attempts++;
@@ -664,13 +668,20 @@ export class GlobalTestRunner {
 
                             s.DETACHED_SET_TIMEOUT(() => {
                                 const rowsRestoredCorrect = rowEle && rowEle.children.length === 3;
-
+                                const correctTd1 = rowEle && rowEle.children.length === 3 && rowEle.children[0].textContent === 'Mode: 0 <span>';
+                                const correctTd3 = rowEle && rowEle.children.length === 3 && rowEle.children[2].textContent === 'Mode: 0 <span>';
+                                const correctActiveRowCount = rowEle && rowEle.children.length === 3 && rowEle.children[1].children.length === 2;
+                                const correctButton = rowEle && rowEle.children.length === 3 && rowEle.children[1].children.length === 2
+                                    && rowEle.children[1].children[0].textContent === 'Toggle';
+                                const correctInput = rowEle && rowEle.children.length === 3 && rowEle.children[1].children.length === 2
+                                    && rowEle.children[1].children[1].value === '1';
                                 ele.click();
 
                                 s.DETACHED_SET_TIMEOUT(() => {
                                     const changeDetectionCalled = stateObj.count3 && stateObj.count3 === 6;
 
-                                    result.success = updateCountCorrect && rowsReducedCorrect && rowsRestoredCorrect && changeDetectionCalled;
+                                    result.success = updateCountCorrect && rowsReducedCorrect && rowsRestoredCorrect && changeDetectionCalled
+                                        && correctTd1 && correctTd3 && correctActiveRowCount && correctButton && correctInput;
 
                                     window.globalTestResults.push(result);
                                     window.globalTestCount++;
@@ -1029,18 +1040,18 @@ export class GlobalTestRunner {
 
         const buttonEle = document.getElementById('toggleModeButton');
         buttonEle.click();
-        detectChanges();
+        s.DETACHED_SET_TIMEOUT(() => {
+            rowEle = document.getElementById('testTagRow1');
+            rowChildren = rowEle ? rowEle.children : [];
 
-        rowEle = document.getElementById('testTagRow1');
-        rowChildren = rowEle ? rowEle.children : [];
+            let changeCorrect = rowChildren.length > 0 && rowChildren[0].tagName === 'INPUT' && rowChildren[0].childNodes.length === 0;
+            let changeInputCorrect = rowChildren.length > 0 && rowChildren[0].value === 'true';
 
-        let changeCorrect = rowChildren.length > 0 && rowChildren[0].tagName === 'INPUT' && rowChildren[0].childNodes.length === 0;
-        let changeInputCorrect = rowChildren.length > 0 && rowChildren[0].value === 'true';
+            result.success = initialCorrect && initialTdCorrect && changeCorrect && changeInputCorrect;
 
-        result.success = initialCorrect && initialTdCorrect && changeCorrect && changeInputCorrect;
-
-        window.globalTestResults.push(result);
-        window.globalTestCount++;
+            window.globalTestResults.push(result);
+            window.globalTestCount++;
+        }, 100);
     }
 
     testFinalize30DestroyHookCalled() {
@@ -1212,21 +1223,22 @@ export class GlobalTestRunner {
 
         const buttonEle = document.getElementById('toggleModeButton2');
         buttonEle.click();
-        detectChanges();
-
-        rowEle = document.getElementById('testTagRow2');
-        rowChildren = rowEle ? rowEle.children : [];
-
-        let changeCorrect = rowChildren.length > 0 && rowChildren[0].tagName === 'DIV';
-        let changeInputCorrect = rowChildren.length === 1 && rowChildren[0].children.length === 1 && rowChildren[0].children[0].tagName === 'INPUT';
-        let changeInputValueCorrect = rowChildren.length === 1 && rowChildren[0].children.length === 1 && rowChildren[0].children[0].value === 'true';
-        let changeInputChildrenCorrect = rowChildren.length === 1 && rowChildren[0].children.length === 1 && rowChildren[0].children[0].childNodes.length === 0;
-
-        result.success = initialCorrect && initialTdCorrect && initialTd2Correct && changeCorrect && changeInputCorrect
-            && changeInputValueCorrect && changeInputChildrenCorrect;
-
-        window.globalTestResults.push(result);
-        window.globalTestCount++;
+        
+        s.DETACHED_SET_TIMEOUT(() => {
+            rowEle = document.getElementById('testTagRow2');
+            rowChildren = rowEle ? rowEle.children : [];
+    
+            let changeCorrect = rowChildren.length > 0 && rowChildren[0].tagName === 'DIV';
+            let changeInputCorrect = rowChildren.length === 1 && rowChildren[0].children.length === 1 && rowChildren[0].children[0].tagName === 'INPUT';
+            let changeInputValueCorrect = rowChildren.length === 1 && rowChildren[0].children.length === 1 && rowChildren[0].children[0].value === 'true';
+            let changeInputChildrenCorrect = rowChildren.length === 1 && rowChildren[0].children.length === 1 && rowChildren[0].children[0].childNodes.length === 0;
+    
+            result.success = initialCorrect && initialTdCorrect && initialTd2Correct && changeCorrect && changeInputCorrect
+                && changeInputValueCorrect && changeInputChildrenCorrect;
+    
+            window.globalTestResults.push(result);
+            window.globalTestCount++;
+        }, 100);
     }
 
     testFinalize10RemountComponent() {
