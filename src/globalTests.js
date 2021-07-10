@@ -1,4 +1,5 @@
 import { detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll } from "../dist/sling.min";
+import { FormControl } from '../dist/sling-reactive.min';
 
 class TestComponent1 {
     view() {
@@ -188,6 +189,48 @@ class AuthFailComponent {
     }
 }
 
+class NoRouteComponent {
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'routecomponent',
+                style: 'color: blue;'
+            },
+            children: [
+                textNode('No route taken.')
+            ]
+        })
+    }
+}
+
+class RouteBasicComponent {
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'routecomponent',
+                style: 'color: blue;'
+            },
+            children: [
+                textNode('Basic route taken.')
+            ]
+        })
+    }
+}
+
+class RouteComplexComponent {
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'routecomponent',
+                style: 'color: blue;'
+            },
+            children: [
+                textNode('Complex route taken.')
+            ]
+        })
+    }
+}
+
 class RouteParamsTestComponent {
     view() {
         return markup('div', {
@@ -349,6 +392,98 @@ class TestRebindDetectionComponent {
                                                 children: [
                                                     textNode('Mode: '),
                                                     textNode(String(fakeChildFlag))
+                                                ]
+                                            })] : []),
+                                            ...(fakeChildFlag === 1 ? [
+                                                markup('input', {
+                                                    attrs: {
+                                                        value: String(fakeChildFlag)
+                                                    },
+                                                    children: [
+                                                    ]
+                                                })
+                                            ] : [])
+                                        ]
+                                    })
+                                ),
+                            ]
+                        })
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+class TestRebindDetectionComplexComponent {
+    constructor() {
+        this.fakeChildArray = [0, 1, 0, 1, 0];
+    }
+
+    toggleInputMode() {
+        if (this.fakeChildArray.length === 5) {
+            this.fakeChildArray = [0];
+        } else {
+            this.fakeChildArray = [0, 1, 0, 1, 0];
+        }
+    }
+
+    toggleEditingMode() {
+        if (this.fakeChildArray.length === 3 && this.fakeChildArray[1] === 1) {
+            this.fakeChildArray = [0, 0, 0, 0, 0];
+        } else {
+            this.fakeChildArray = [0, 1, 0, 1, 0];
+        }
+    }
+
+    view() {
+        const stateObj = getState();
+        if (stateObj.count4 !== null && stateObj.count4 !== undefined) stateObj.count4++;
+        setState(stateObj);
+
+        return markup('div', {
+            attrs: {
+                id: 'testtagcomponent5'
+            },
+            children: [
+                markup('button', {
+                    attrs: {
+                        onclick: this.toggleInputMode.bind(this),
+                        id: 'toggleModeButton7'
+                    },
+                    children: [
+                        textNode('Toggle')
+                    ]
+                }),
+                markup('table', {
+                    children: [
+                        markup('tr', {
+                            attrs: {
+                                id: 'testTagRow5'
+                            },
+                            children: [
+                                ...Array.from(this.fakeChildArray, (fakeChildFlag) =>
+                                    markup('div', {
+                                        children: [
+                                            ...(fakeChildFlag === 1 ? [markup('button', {
+                                                attrs: {
+                                                    onclick: this.toggleEditingMode.bind(this),
+                                                    id: 'toggleModeButton8'
+                                                },
+                                                children: [
+                                                    textNode('Toggle')
+                                                ]
+                                            })] : []),
+                                            ...(fakeChildFlag === 0 ? [markup('td', {
+                                                children: [
+                                                    textNode('Mode: '),
+                                                    textNode(String(fakeChildFlag)),
+                                                    markup('span', {
+                                                        children: [
+                                                            textNode(' some markup')
+                                                        ]
+                                                    }),
+                                                    textNode(' and a text node')
                                                 ]
                                             })] : []),
                                             ...(fakeChildFlag === 1 ? [
@@ -555,6 +690,48 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
+    testFinalize99RouteBasic() {
+        const result = {
+            test: 'test basic route with parameter',
+            success: false,
+            message: ''
+        };
+
+        mount('routecomponent', new NoRouteComponent());
+        addRoute('basictest/:someId', { component: new RouteBasicComponent(), root: 'routecomponent'});
+        route('basictest/5');
+
+        const divEle = document.getElementById('routecomponent');
+
+        const correctText = divEle.textContent === 'Basic route taken.';
+
+        result.success = correctText;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize99RouteComplex() {
+        const result = {
+            test: 'test basic route with parameter',
+            success: false,
+            message: ''
+        };
+
+        mount('routecomponent', new NoRouteComponent());
+        addRoute('complextest/:someId/static/:someParam', { component: new RouteComplexComponent(), root: 'routecomponent'});
+        route('complextest/5/static/foo');
+
+        const divEle = document.getElementById('routecomponent');
+
+        const correctText = divEle.textContent === 'Complex route taken.';
+
+        result.success = correctText;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
     testFinalize95RebindDetection() {
         const result = {
             test: 'test rebinding change detection to bound functions',
@@ -606,6 +783,82 @@ export class GlobalTestRunner {
 
                                     result.success = updateCountCorrect && rowsReducedCorrect && rowsRestoredCorrect && changeDetectionCalled
                                         && correctDiv1 && correctDiv2 && correctDiv3;
+
+                                    window.globalTestResults.push(result);
+                                    window.globalTestCount++;
+                                    window.globalAsyncCount--;
+                                }, 200);
+                            }, 200);
+                        }, 200);
+                    }, 200);
+                }, 200);
+            }
+
+            attempts++;
+
+            if (attempts === 10) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+                window.globalAsyncCount--;
+
+                clearInterval(waitForStableInterval);
+            }
+        }, 500);
+    }
+
+    testFinalize96RebindDetection() {
+        const result = {
+            test: 'test rebinding change detection to bound functions with complex markup',
+            success: false,
+            message: ''
+        };
+
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            if (window.globalAsyncCount === 0) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
+
+                let stateObj = getState();
+                stateObj.count4 = 0;
+                setState(stateObj);
+
+                mount('testtagcomponent5', new TestRebindDetectionComplexComponent());
+
+                const ele = document.getElementById('toggleModeButton8');
+                ele.click();
+                s.DETACHED_SET_TIMEOUT(() => {
+                    ele.click();
+
+                    s.DETACHED_SET_TIMEOUT(() => {
+                        stateObj = getState();
+
+                        const updateCountCorrect = stateObj.count4 && stateObj.count4 === 3;
+
+                        const removeElementsButton = document.getElementById('toggleModeButton7');
+                        removeElementsButton.click();
+
+                        s.DETACHED_SET_TIMEOUT(() => {
+                            const rowEle = document.getElementById('testTagRow5');
+                            const rowsReducedCorrect = rowEle && rowEle.children.length === 1 && rowEle.children[0].childNodes.length === 1;
+
+                            removeElementsButton.click();
+
+                            s.DETACHED_SET_TIMEOUT(() => {
+                                const rowsRestoredCorrect = rowEle && rowEle.children.length === 5;
+
+                                ele.click();
+                                const correctDiv1 = rowEle && rowEle.children.length === 5 && rowEle.children[0].textContent === 'Mode: 0 some markup and a text node';
+                                const correctDiv2 = rowEle && rowEle.children.length === 5 && rowEle.children[1].textContent === 'Toggle';
+                                const correctDiv3 = rowEle && rowEle.children.length === 5 && rowEle.children[2].textContent === 'Mode: 0 some markup and a text node';
+                                const correctDiv4 = rowEle && rowEle.children.length === 5 && rowEle.children[3].textContent === 'Toggle';
+                                const correctDiv5 = rowEle && rowEle.children.length === 5 && rowEle.children[4].textContent === 'Mode: 0 some markup and a text node';
+
+                                s.DETACHED_SET_TIMEOUT(() => {
+                                    const changeDetectionCalled = stateObj.count4 && stateObj.count4 === 6;
+
+                                    result.success = updateCountCorrect && rowsReducedCorrect && rowsRestoredCorrect && changeDetectionCalled
+                                        && correctDiv1 && correctDiv2 && correctDiv3 && correctDiv4 && correctDiv5;
 
                                     window.globalTestResults.push(result);
                                     window.globalTestCount++;
@@ -1150,6 +1403,29 @@ export class GlobalTestRunner {
         });
     }
 
+    testResolveAllOrdering() {
+        const result = {
+            test: 'test resolve all promises are in correct order',
+            success: false,
+            message: ''
+        };
+
+        const requestPromises = [
+            fetch('todo.html'),
+            fetch('http://does-not-exist')
+        ];
+
+        resolveAll(requestPromises).then((results) => {
+            const firstSuccess = results[0].status === 'fulfilled';
+            const secondFailure = results[1].status === 'rejected';
+
+            result.success = firstSuccess && secondFailure;
+
+            window.globalTestResults.push(result);
+            window.globalTestCount++;
+        });
+    }
+
     testFinalize10RouteParams() {
         const result = {
             test: 'test route params are set correctly',
@@ -1223,19 +1499,19 @@ export class GlobalTestRunner {
 
         const buttonEle = document.getElementById('toggleModeButton2');
         buttonEle.click();
-        
+
         s.DETACHED_SET_TIMEOUT(() => {
             rowEle = document.getElementById('testTagRow2');
             rowChildren = rowEle ? rowEle.children : [];
-    
+
             let changeCorrect = rowChildren.length > 0 && rowChildren[0].tagName === 'DIV';
             let changeInputCorrect = rowChildren.length === 1 && rowChildren[0].children.length === 1 && rowChildren[0].children[0].tagName === 'INPUT';
             let changeInputValueCorrect = rowChildren.length === 1 && rowChildren[0].children.length === 1 && rowChildren[0].children[0].value === 'true';
             let changeInputChildrenCorrect = rowChildren.length === 1 && rowChildren[0].children.length === 1 && rowChildren[0].children[0].childNodes.length === 0;
-    
+
             result.success = initialCorrect && initialTdCorrect && initialTd2Correct && changeCorrect && changeInputCorrect
                 && changeInputValueCorrect && changeInputChildrenCorrect;
-    
+
             window.globalTestResults.push(result);
             window.globalTestCount++;
         }, 100);
@@ -1478,6 +1754,73 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
+    testFormControl() {
+        const result = {
+            test: 'test general form control functions',
+            success: false,
+            message: ''
+        };
+
+        const formControl = FormControl(200);
+        const validatorFn1 = (val) => {
+            if (!isNaN(val) && isFinite(val)) {
+                return null;
+            } else {
+                return { nonNumeric: true };
+            }
+        }
+        const validatorFn2 = (val) => {
+            if (val < 100) {
+                return { lessThan100: true };
+            } else {
+                return null;
+            }
+        }
+
+        const stateObj = getState();
+        stateObj.controlCount = 0;
+        setState(stateObj);
+
+        formControl.setValidators([validatorFn1, validatorFn2]);
+        formControl.getValueChanges().subscribe((val) => {
+            const stateObj = getState();
+            stateObj.controlCount++;
+            setState(stateObj);
+        });
+
+        const valid1 = formControl.getValid() === true;
+        const pristine1 = formControl.getPristine() === true;
+        const errorLength1 = formControl.getErrors().length === 0;
+
+        formControl.setValue(2);
+
+        const valid2 = formControl.getValid() === false;
+        const pristine2 = formControl.getPristine() === false;
+        const errorLength2 = formControl.getErrors().length === 1;
+        const hasLessThanError = formControl.getError('lessThan100') !== null;
+
+        formControl.setValue('abc');
+
+        const valid3 = formControl.getValid() === false;
+        const pristine3 = formControl.getPristine() === false;
+        const errorLength3 = formControl.getErrors().length === 1;
+        const hasNonNumericError = formControl.getError('nonNumeric') !== null;
+
+        formControl.setValue(500);
+
+        const valid4 = formControl.getValid() === true;
+        const pristine4 = formControl.getPristine() === false;
+        const errorLength4 = formControl.getErrors().length === 0;
+
+        const finalControlCountCorrect = getState().controlCount === 3;
+
+        result.success = valid1 && pristine1 && errorLength1 && valid2 && pristine2 && errorLength2 && hasLessThanError
+            && valid3 && pristine3 && errorLength3 && hasNonNumericError && valid4 && pristine4 && errorLength4 && finalControlCountCorrect
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
     dummyTest() {
         const result = {
             test: 'test ',
@@ -1542,7 +1885,7 @@ export class GlobalTestRunner {
         });
 
         const summaryEle = document.createElement('p');
-        summaryEle.innerHTML = '<span>Elapsed time: ' + timeDiff + '</span><br>';
+        summaryEle.innerHTML = '<span>Elapsed time: ' + timeDiff + 'ms</span><br>';
 
         const testsPassing = window.globalTestResults.filter(testResult => testResult.success === true).length;
         summaryEle.innerHTML += '<span><strong>Tests passing: ' + testsPassing + '/' + window.globalTestResults.length + '</strong></span><br>';

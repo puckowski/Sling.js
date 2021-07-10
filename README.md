@@ -2,7 +2,7 @@
 
 # Sling
 
-Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **7.4KB minified, and less than 2.7KB gzipped**.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **5.7KB minified, and less than 2.1KB gzipped**.
 
 Sling creates and uses a virtual DOM to perform differential updates for fast rendering.
 
@@ -808,3 +808,86 @@ Set the next value of the subject. All subscribers are automatically called. Ret
 __primitive|object getData( )__
 
 Get the underlying value.
+
+## FormControl
+__object FormControl( initialValue )__
+
+Returns a Sling form control. A form control is a value checked by attached validation functions that emits changes to subscribers.
+
+Example form control usage:
+
+```javascript
+const formControl = FormControl(200);
+
+const validatorFn1 = (val) => {
+	if (!isNaN(val) && isFinite(val)) {
+    	return null;
+    } else {
+    	return { nonNumeric: true };
+    }
+}
+
+formControl.setValidators([validatorFn1, validatorFn2]);
+
+formControl.getValueChanges().subscribe((value) => {
+	console.log(value);
+});
+
+const valid = formControl.getValid() === true;
+const pristine = formControl.getPristine() === true;
+const errors = formControl.getErrors();
+
+formControl.setValue(2);
+```
+
+## FormControl Functions
+
+## getValue
+__any getValue ( )__
+
+Get the current value of the form control.
+
+## getValid
+__boolean getValid ( )__
+
+Get the current validity status of the form control.
+
+## getDirty
+__boolean getDirty ( )__
+
+Returns true if the form control value has been changed.
+
+## getPristine
+__boolean getPristine ( )__
+
+Returns true if the form control value has not been changed.
+
+## getErrors
+__object[] getErrors ( )__
+
+Returns the list of error objects.
+
+## getError
+__object getError ( errorKey )__
+
+Return the error object identified by the given key, it it exists. Null otherwise.
+
+## getValueChanges
+__BehaviorSubject getValueChanges ( )__
+
+Returns the value changes BehaviorSubject which may be subscribed to on form control value change.
+
+## setValue
+__void setValue ( newValue )__
+
+Sets the new value of the form control.
+
+## setPristine
+__void setPristine ( )__
+
+Sets the form control as pristine.
+
+## setValidators
+__void setValidators ( validatorFnList )__
+
+Sets the validator functions of the form control. Each function accepts a value and returns null if valid or an object with a key.
