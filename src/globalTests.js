@@ -1,5 +1,5 @@
-import { detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll } from "../dist/sling.min";
-import { FormControl } from '../dist/sling-reactive.min';
+import { detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll, getRouteSegments } from "../dist/sling.min";
+import { FormControl, Observable } from '../dist/sling-reactive.min';
 
 class TestComponent1 {
     view() {
@@ -115,6 +115,95 @@ class TestRemountComponent1 {
             },
             children: [
                 textNode('To be remounted.')
+            ]
+        })
+    }
+}
+
+class TestDebounceDetectionComponent {
+    constructor() {
+        this.dummy = false;
+    }
+
+    toggle() {
+        this.dummy = !this.dummy;
+    }
+
+    view() {
+        const state = getState();
+        if (state.debounce !== undefined && state.debounce !== null) state.debounce++;
+        setState(state);
+
+        return markup('div', {
+            attrs: {
+                id: 'testdebouncecomponent',
+            },
+            children: [
+                textNode('To be rendered.'),
+                markup('button', {
+                    attrs: {
+                        id: 'debounceToggleButton',
+                        onclick: this.toggle.bind(this)
+                    },
+                    children: [
+                        textNode('Toggle')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+class TestDomStringComponent {
+    constructor() {
+        this.stringMode = false;
+    }
+
+    toggle() {
+        this.stringMode = !this.stringMode;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'testdomstring',
+            },
+            children: [
+                markup('button', {
+                    attrs: {
+                        id: 'domStringButton',
+                        onclick: this.toggle.bind(this),
+                    },
+                    children: [
+                        textNode('Toggle')
+                    ]
+                }),
+                ...(this.stringMode === false ? [
+                    markup('div', {
+                        children: [
+                            markup('label', {
+                                attrs: {
+                                    style: 'margin-right: 0.25rem;'
+                                },
+                                children: [
+                                    textNode('Username:')
+                                ]
+                            }),
+                            markup('input', {
+                                attrs: {
+                                    style: 'margin-left: 0.25rem;'
+                                }
+                            })
+                        ]
+                    })
+                ] : []),
+                ...(this.stringMode === true ? [
+                    markup('div', {
+                        children: [
+                            textNode('Invalid username')
+                        ]
+                    })
+                ] : []),
             ]
         })
     }
@@ -690,7 +779,7 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
-    testFinalize99RouteBasic() {
+    testFinalize990RouteBasic() {
         const result = {
             test: 'test basic route with parameter',
             success: false,
@@ -698,7 +787,7 @@ export class GlobalTestRunner {
         };
 
         mount('routecomponent', new NoRouteComponent());
-        addRoute('basictest/:someId', { component: new RouteBasicComponent(), root: 'routecomponent'});
+        addRoute('basictest/:someId', { component: new RouteBasicComponent(), root: 'routecomponent' });
         route('basictest/5');
 
         const divEle = document.getElementById('routecomponent');
@@ -711,7 +800,93 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
-    testFinalize99RouteComplex() {
+    testFinalize996ObserableRoute() {
+        const result = {
+            test: 'test route observable changes correctly',
+            success: false,
+            message: ''
+        };
+
+        let state = getState();
+        state.observable = 0;
+        setState(state);
+
+        route('');
+
+        let routeObservable = Observable(getRouteSegments());
+        routeObservable.subscribe(function (routeArr) {
+            state = getState();
+            if (state.observable !== undefined && state.observable !== null) state.observable++;
+            setState(state);
+        });
+
+        state = getState();
+        const correctOriginalCount = state.observable === 0;
+
+        route('basictest/5');
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            state = getState();
+            const correctCount = state.observable === 1;
+
+            const segments = getRouteSegments();
+            const correctSegment1 = segments && segments.length > 0 && segments[0] === 'basictest';
+            const correctSegment2 = segments && segments.length > 1 && segments[1] === '5';
+
+            result.success = correctOriginalCount && correctCount && correctSegment1 && correctSegment2;
+
+            window.globalTestResults.push(result);
+            window.globalTestCount++;
+        }, 100);
+    }
+
+    testFinalize995DebouncedDetection() {
+        const result = {
+            test: 'test debounced change detection',
+            success: false,
+            message: ''
+        };
+
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            if (window.globalAsyncCount === 0) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
+
+                let state = getState();
+                state.debounce = 0;
+                setState(state);
+
+                mount('testdebouncecomponent', new TestDebounceDetectionComponent());
+                const buttonEle = document.getElementById('debounceToggleButton');
+                buttonEle.click();
+                buttonEle.click();
+                buttonEle.click();
+                buttonEle.click();
+                buttonEle.click();
+
+                s.DETACHED_SET_TIMEOUT(() => {
+                    state = getState();
+                    result.success = state.debounce === 2;
+
+                    window.globalTestResults.push(result);
+                    window.globalTestCount++;
+                }, 100);
+            }
+
+            attempts++;
+
+            if (attempts === 25 && window.globalAsyncCount > 0) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+                window.globalAsyncCount--;
+
+                clearInterval(waitForStableInterval);
+            }
+        }, 500);
+    }
+
+    testFinalize990RouteComplex() {
         const result = {
             test: 'test basic route with parameter',
             success: false,
@@ -719,7 +894,7 @@ export class GlobalTestRunner {
         };
 
         mount('routecomponent', new NoRouteComponent());
-        addRoute('complextest/:someId/static/:someParam', { component: new RouteComplexComponent(), root: 'routecomponent'});
+        addRoute('complextest/:someId/static/:someParam', { component: new RouteComplexComponent(), root: 'routecomponent' });
         route('complextest/5/static/foo');
 
         const divEle = document.getElementById('routecomponent');
@@ -732,7 +907,7 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
-    testFinalize95RebindDetection() {
+    testFinalize950RebindDetection() {
         const result = {
             test: 'test rebinding change detection to bound functions',
             success: false,
@@ -796,7 +971,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 10) {
+            if (attempts === 25 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
                 window.globalAsyncCount--;
@@ -806,7 +981,64 @@ export class GlobalTestRunner {
         }, 500);
     }
 
-    testFinalize96RebindDetection() {
+    testFinalize990DomStringReplacement() {
+        const result = {
+            test: 'test DOMString replacement of a child node',
+            success: false,
+            message: ''
+        };
+
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            if (window.globalAsyncCount === 0) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
+
+                const domStringComp = new TestDomStringComponent();
+                mount('testdomstring', domStringComp);
+
+                const domStrRoot = document.getElementById('testdomstring');
+
+                const correctOriginalChildCount = domStrRoot && domStrRoot.children && domStrRoot.children.length === 2;
+                const correctOriginalDivCount = domStrRoot && domStrRoot.children && domStrRoot.children.length === 2
+                    && domStrRoot.children[1].childNodes && domStrRoot.children[1].childNodes.length === 2;
+                const correctOriginalTag = domStrRoot && domStrRoot.children && domStrRoot.children.length === 2
+                    && domStrRoot.children[1].childNodes && domStrRoot.children[1].childNodes[0].tagName === 'LABEL';
+                const correctOriginalTag2 = domStrRoot && domStrRoot.children && domStrRoot.children.length === 2
+                    && domStrRoot.children[1].childNodes && domStrRoot.children[1].childNodes[1].tagName === 'INPUT';
+
+                const domStrButton = document.getElementById('domStringButton');
+                domStrButton.click();
+
+                const correctChildCount = domStrRoot && domStrRoot.children && domStrRoot.children.length === 2;
+                const correctDivCount = domStrRoot && domStrRoot.children && domStrRoot.children.length === 2
+                    && domStrRoot.children[1].childNodes && domStrRoot.children[1].childNodes.length === 1;
+                const correctTag = domStrRoot && domStrRoot.children && domStrRoot.children.length === 2
+                    && domStrRoot.children[1].childNodes.tagName === undefined;
+
+                result.success = correctOriginalChildCount && correctOriginalDivCount && correctOriginalTag && correctOriginalTag2
+                    && correctChildCount && correctDivCount && correctTag;
+
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+                window.globalAsyncCount--;
+
+                clearInterval(waitForStableInterval);
+            }
+
+            attempts++;
+
+            if (attempts === 25 && window.globalAsyncCount > 0) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+                window.globalAsyncCount--;
+
+                clearInterval(waitForStableInterval);
+            }
+        }, 500);
+    }
+
+    testFinalize960RebindDetection() {
         const result = {
             test: 'test rebinding change detection to bound functions with complex markup',
             success: false,
@@ -872,7 +1104,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 10) {
+            if (attempts === 25 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
                 window.globalAsyncCount--;
@@ -882,7 +1114,7 @@ export class GlobalTestRunner {
         }, 500);
     }
 
-    testFinalize99RebindDetectionWithNonNodeType3() {
+    testFinalize980RebindDetectionWithNonNodeType3() {
         const result = {
             test: 'test rebinding change detection to bound functions where components have markup',
             success: false,
@@ -892,6 +1124,7 @@ export class GlobalTestRunner {
         let attempts = 0;
         const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
             if (window.globalAsyncCount === 0) {
+                window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
 
                 let stateObj = getState();
@@ -937,6 +1170,7 @@ export class GlobalTestRunner {
                                         && correctTd1 && correctTd3 && correctActiveRowCount && correctButton && correctInput;
 
                                     window.globalTestResults.push(result);
+                                    window.globalAsyncCount--;
                                     window.globalTestCount++;
                                 }, 100);
                             }, 100);
@@ -947,8 +1181,9 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 10) {
+            if (attempts === 25 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
+                window.globalAsyncCount--;
                 window.globalTestCount++;
 
                 clearInterval(waitForStableInterval);
@@ -1174,7 +1409,7 @@ export class GlobalTestRunner {
         });
     }
 
-    testFinalize10ClearCompletedAndVerifyRendering() {
+    testFinalize100ClearCompletedAndVerifyRendering() {
         const result = {
             test: 'test clearing completed notes and verify rendering',
             success: false,
@@ -1246,7 +1481,7 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
-    testFinalize10ChangeDetectionOnTextWithHook() {
+    testFinalize100ChangeDetectionOnTextWithHook() {
         const result = {
             test: 'test mounting component with lifecycle hook and calling change detection',
             success: false,
@@ -1277,7 +1512,7 @@ export class GlobalTestRunner {
         }, 1);
     }
 
-    testFinalize80ChangeTag() {
+    testFinalize800ChangeTag() {
         const result = {
             test: 'test changing the tag of a node',
             success: false,
@@ -1307,7 +1542,7 @@ export class GlobalTestRunner {
         }, 100);
     }
 
-    testFinalize30DestroyHookCalled() {
+    testFinalize300DestroyHookCalled() {
         const result = {
             test: 'test destroy hook called on route change',
             success: false,
@@ -1328,7 +1563,7 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
-    testFinalize90FetchTriggersChangeDetection() {
+    testFinalize900FetchTriggersChangeDetection() {
         const result = {
             test: 'test fetch triggers change detection',
             success: false,
@@ -1371,7 +1606,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 10) {
+            if (attempts === 25 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -1426,7 +1661,7 @@ export class GlobalTestRunner {
         });
     }
 
-    testFinalize10RouteParams() {
+    testFinalize100RouteParams() {
         const result = {
             test: 'test route params are set correctly',
             success: false,
@@ -1450,7 +1685,7 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
-    testFinalize10AuthenticationGuard() {
+    testFinalize100AuthenticationGuard() {
         const result = {
             test: 'test authentication guard failure routing',
             success: false,
@@ -1472,7 +1707,7 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
-    testFinalize80ChangeTagAndRemoveNode() {
+    testFinalize800ChangeTagAndRemoveNode() {
         const result = {
             test: 'test changing the tag of a node and test removal of a node',
             success: false,
@@ -1517,7 +1752,7 @@ export class GlobalTestRunner {
         }, 100);
     }
 
-    testFinalize10RemountComponent() {
+    testFinalize100RemountComponent() {
         const result = {
             test: 'test remounting a component',
             success: false,
@@ -1712,7 +1947,7 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
-    testFinalize10InnerTextAppendsDomString() {
+    testFinalize100InnerTextAppendsDomString() {
         const result = {
             test: 'test inner text function works correctly',
             success: false,
@@ -1943,8 +2178,8 @@ export class GlobalTestRunner {
             .sort((firstName, secondName) => {
                 if (firstName && firstName.toLowerCase().includes('finalize')) {
                     if (secondName && secondName.toLowerCase().includes('finalize')) {
-                        const p1 = firstName.substring(firstName.indexOf('finalize') + 8, firstName.indexOf('finalize') + 10);
-                        const p2 = secondName.substring(secondName.indexOf('finalize') + 8, secondName.indexOf('finalize') + 10);
+                        const p1 = firstName.substring(firstName.indexOf('finalize') + 8, firstName.indexOf('finalize') + 11);
+                        const p2 = secondName.substring(secondName.indexOf('finalize') + 8, secondName.indexOf('finalize') + 11);
 
                         return p1 > p2;
                     } else {
@@ -1954,8 +2189,8 @@ export class GlobalTestRunner {
                     return -1;
                 } else if (firstName && firstName.toLowerCase().includes('priority')) {
                     if (secondName && secondName.toLowerCase().includes('priority')) {
-                        const p1 = firstName.substring(firstName.indexOf('priority') + 8, firstName.indexOf('priority') + 10);
-                        const p2 = secondName.substring(secondName.indexOf('priority') + 8, secondName.indexOf('priority') + 10);
+                        const p1 = firstName.substring(firstName.indexOf('priority') + 8, firstName.indexOf('priority') + 11);
+                        const p2 = secondName.substring(secondName.indexOf('priority') + 8, secondName.indexOf('priority') + 11);
 
                         return p1 > p2;
                     } else {
