@@ -120,6 +120,200 @@ class TestRemountComponent1 {
     }
 }
 
+class TestNestedDestroyHookComponent2 {
+    slOnDestroy() {
+        const state = getState();
+        state.nestedDestroy = true;
+        setState(state);
+    }
+
+    view() {
+        return markup('div', {
+            children: [
+                textNode('Nested destroy hook.')
+            ]
+        })
+    }
+}
+
+class TestNestedDestroyHookComponent1 {
+    slOnDestroy() {
+        const state = getState();
+        state.rootDestroy = true;
+        setState(state);
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'testnesteddestroyhook',
+            },
+            children: [
+                textNode('Root component markup.'),
+                new TestNestedDestroyHookComponent2()
+            ]
+        })
+    }
+}
+
+class TestNestedDestroyHookComponent3 {
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'testnesteddestroyhook',
+            },
+            children: [
+                textNode('Plain root component markup.')
+            ]
+        })
+    }
+}
+
+class TestNestedAfterInitHookComponent2 {
+    slOnInit() {
+        const state = getState();
+        state.nestedOnInit = true;
+        setState(state);
+    }
+
+    slAfterInit() {
+        const state = getState();
+        state.nestedAfterInit = true;
+        setState(state);
+    }
+
+    view() {
+        return markup('div', {
+            children: [
+                textNode('Nested after init and on init hooks.')
+            ]
+        })
+    }
+}
+
+class TestNestedAfterInitHookComponent1 {
+    slOnInit() {
+        const state = getState();
+        state.rootOnInit = true;
+        setState(state);
+    }
+
+    slAfterInit() {
+        const state = getState();
+        state.rootAfterInit = true;
+        setState(state);
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'testnestedafterinithook',
+            },
+            children: [
+                textNode('Root component markup.'),
+                new TestNestedAfterInitHookComponent2()
+            ]
+        })
+    }
+}
+
+class TestNestedAfterInitHookComponent3 {
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'testnestedafterinithook',
+            },
+            children: [
+                textNode('Plain root component markup.')
+            ]
+        })
+    }
+}
+
+class TestNestedHookComponent4 {
+    slOnInit() {
+        const state = getState();
+        state.nestedOnInit2++;
+        setState(state);
+    }
+
+    slAfterInit() {
+        const state = getState();
+        state.nestedAfterInit2++;
+        setState(state);
+    }
+
+    view() {
+        return markup('div', {
+            children: [
+                textNode('Nested after init and on init hooks.')
+            ]
+        })
+    }
+}
+
+class TestNestedHookComponent2 {
+    slOnInit() {
+        const state = getState();
+        state.nestedOnInit2++;
+        setState(state);
+    }
+
+    slAfterInit() {
+        const state = getState();
+        state.nestedAfterInit2++;
+        setState(state);
+    }
+
+    view() {
+        return markup('div', {
+            children: [
+                textNode('Nested after init and on init hooks.')
+            ]
+        })
+    }
+}
+
+class TestNestedHookComponent1 {
+    slOnInit() {
+        const state = getState();
+        state.rootOnInit2++;
+        setState(state);
+    }
+
+    slAfterInit() {
+        const state = getState();
+        state.rootAfterInit2++;
+        setState(state);
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'testnestedhook',
+            },
+            children: [
+                textNode('Root component markup.'),
+                new TestNestedHookComponent2(),
+                new TestNestedHookComponent4()
+            ]
+        })
+    }
+}
+
+class TestNestedHookComponent3 {
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'testnestedhook',
+            },
+            children: [
+                textNode('Plain root component markup.')
+            ]
+        })
+    }
+}
+
 class TestDebounceDetectionComponent {
     constructor() {
         this.dummy = false;
@@ -795,6 +989,114 @@ export class GlobalTestRunner {
         const correctText = divEle.textContent === 'Basic route taken.';
 
         result.success = correctText;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize996NestedDestroyHook() {
+        const result = {
+            test: 'test nested destroy hook called',
+            success: false,
+            message: ''
+        };
+
+        addRoute('nesteddestroy1', { component: new TestNestedDestroyHookComponent1(), root: 'testnesteddestroyhook' });
+        addRoute('nesteddestroy2', { component: new TestNestedDestroyHookComponent3(), root: 'testnesteddestroyhook' });
+
+        route('nesteddestroy1');
+
+        let state = getState();
+
+        const origEle = document.getElementById('testnesteddestroyhook');
+        const correctOriginalText = origEle && origEle.childNodes && origEle.childNodes.length > 0 && origEle.innerText === 'Root component markup.\nNested destroy hook.';
+        const rootDestroyCalledOriginally = state.rootDestroy === undefined || state.rootDestroy === null;
+        const nestedDestroyCalledOriginally = state.nestedDestroy === undefined || state.nestedDestroy === null;
+
+        route('nesteddestroy2');
+
+        const rootDestroyCalled = state.rootDestroy === true;
+        const nestedDestroyCalled = state.nestedDestroy === true;
+        const ele = document.getElementById('testnesteddestroyhook');
+        const correctTextAfterRoute = ele && ele.childNodes && ele.childNodes.length === 1 && ele.innerText === 'Plain root component markup.';
+
+        result.success = rootDestroyCalledOriginally && nestedDestroyCalledOriginally && rootDestroyCalled && nestedDestroyCalled && correctTextAfterRoute
+            && correctOriginalText;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize996NestedHooks() {
+        const result = {
+            test: 'test nested on init and after init hooks called',
+            success: false,
+            message: ''
+        };
+
+        addRoute('nestedhook1', { component: new TestNestedAfterInitHookComponent1(), root: 'testnestedafterinithook' });
+        addRoute('nestedhook2', { component: new TestNestedAfterInitHookComponent3(), root: 'testnestedafterinithook' });
+
+        let state = getState();
+
+        const rootAfterInitCalledOriginally = state.rootAfterInit === undefined || state.rootAfterInit === null;
+        const nestedAfterInitCalledOriginally = state.nestedAfterInit === undefined || state.nestedAfterInit === null;
+        const rootOnInitCalledOriginally = state.rootOnInit === undefined || state.rootOnInit === null;
+        const nestedOnInitCalledOriginally = state.nestedOnInit === undefined || state.nestedOnInit === null;
+
+        route('nestedhook1');
+
+        const origEle = document.getElementById('testnestedafterinithook');
+        const correctOriginalText = origEle && origEle.childNodes && origEle.childNodes.length > 0 && origEle.innerText === 'Root component markup.\nNested after init and on init hooks.';
+        const rootAfterInitCalled = state.rootAfterInit === true;
+        const nestedAfterInitCalled = state.nestedAfterInit === true;
+        const rootOnInitCalled = state.rootOnInit === true;
+        const nestedOnInitCalled = state.nestedOnInit === true;
+
+        route('nestedhook2');
+
+        const ele = document.getElementById('testnestedafterinithook');
+        const correctTextAfterRoute = ele && ele.childNodes && ele.childNodes.length === 1 && ele.innerText === 'Plain root component markup.';
+
+        result.success = rootAfterInitCalledOriginally && nestedAfterInitCalledOriginally && rootOnInitCalledOriginally && nestedOnInitCalledOriginally
+            && correctOriginalText && rootAfterInitCalled && nestedAfterInitCalled && rootOnInitCalled && nestedOnInitCalled && correctTextAfterRoute;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize996NestedHooksMultipleComponents() {
+        const result = {
+            test: 'test nested on init and after init hooks called with multiple components',
+            success: false,
+            message: ''
+        };
+
+        addRoute('nestedhook3', { component: new TestNestedHookComponent1(), root: 'testnestedhook' });
+        addRoute('nestedhook4', { component: new TestNestedHookComponent3(), root: 'testnestedhook' });
+
+        let state = getState();
+
+        const rootAfterInitCalledOriginally = state.rootAfterInit2 === undefined || state.rootAfterInit2 === null;
+        const nestedAfterInitCalledOriginally = state.nestedAfterInit2 === undefined || state.nestedAfterInit2 === null;
+        const rootOnInitCalledOriginally = state.rootOnInit2 === undefined || state.rootOnInit2 === null;
+        const nestedOnInitCalledOriginally = state.nestedOnInit2 === undefined || state.nestedOnInit2 === null;
+
+        state.rootAfterInit2 = 0;
+        state.rootOnInit2 = 0;
+        state.nestedOnInit2 = 0;
+        state.nestedAfterInit2 = 0;
+        setState(state);
+
+        route('nestedhook3');
+
+        const rootAfterInitCalled = state.rootAfterInit2 === 1;
+        const nestedAfterInitCalled = state.nestedAfterInit2 === 2;
+        const rootOnInitCalled = state.rootOnInit2 === 1;
+        const nestedOnInitCalled = state.nestedOnInit2 === 2;
+
+        result.success = rootAfterInitCalledOriginally && nestedAfterInitCalledOriginally && rootOnInitCalledOriginally && nestedOnInitCalledOriginally
+            && rootAfterInitCalled && nestedAfterInitCalled && rootOnInitCalled && nestedOnInitCalled;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -1588,19 +1890,22 @@ export class GlobalTestRunner {
                     const successfulPromises = results.filter(p => p.status === 'fulfilled');
 
                     const hadSuccess = successfulPromises && successfulPromises.length === 1;
-                    const ele = document.getElementById('testfetchcomponent');
 
-                    const stateObj = getState();
-                    const correctText = ele.textContent === 'Count: 1';
-                    const countIncremented = stateObj && stateObj.count === 2;
+                    s.DETACHED_SET_TIMEOUT(() => {
+                        const ele = document.getElementById('testfetchcomponent');
 
-                    result.success = hadSuccess && correctText && countIncremented;
+                        const stateObj = getState();
+                        const correctText = ele.textContent === 'Count: 1';
+                        const countIncremented = stateObj && stateObj.count === 2;
 
-                    window.globalTestResults.push(result);
-                    window.globalTestCount++;
+                        result.success = hadSuccess && correctText && countIncremented;
 
-                    clearInterval(waitForStableInterval);
-                    window.globalAsyncCount--;
+                        window.globalTestResults.push(result);
+                        window.globalTestCount++;
+
+                        clearInterval(waitForStableInterval);
+                        window.globalAsyncCount--;
+                    }, 100);
                 });
             }
 
