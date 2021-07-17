@@ -2,7 +2,7 @@
 
 # Sling
 
-Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **6.4KB minified, and less than 2.3KB gzipped**.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **6.7KB minified, and less than 2.3KB gzipped**.
 
 Sling creates and uses a virtual DOM to perform differential updates for fast rendering.
 
@@ -351,12 +351,14 @@ Define a hash-based route that will replace element with ID ```elementId```'s co
 
 Below is a list of possible ```routeObj``` properties:
 
-|Property |Description                                                                |
-|---------|---------------------------------------------------------------------------|
-| root    |The ```id``` of the element to replace on route.                           |
-|component|The component to replace ```root```.                                       |
-|authGuard|A function that returns true if route action may be taken, otherwise false.|
-|authFail |Object with ```route``` property to route to on ```authGuard``` fail. Also may specify ```params``` and ```attachDetector```.|
+|Property          |Description                                                                                                                          |
+|------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+|root              |The ```id``` of the element to replace on route.                                                                                     |
+|component         |The component to replace ```root```.                                                                                                 |
+|onCanDeactivate   |A function that returns true if the current route may be navigated away from. Called before onActivationCheck.                       |
+|onActivationCheck |A function that returns true if route action may be taken, otherwise false.                                                          |
+|onActivationFail  |Object with ```route``` property to route to on ```onActivationCheck``` fail. Also may specify ```params``` and ```attachDetector```.|
+|onBeforeRoute     |Function to execute before taking route action. Called after onActivationCheck and before the route action is taken.                 |
 
 Example route definition:
 
@@ -364,12 +366,15 @@ Example route definition:
 addRoute('all', { component:  new  TodoListComponent(), root:  'divTodoList' });
 addRoute('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList' });
 addRoute('user/:userId', { component: new UserProfileComponent(), root: 'divUserProfile' });
+addRoute('.*', { component: new DefaultRouteComponent(), root: 'divRouterOutlet' });
 ```
 
-Example ```authGuard``` definition:
+Note: Use '.*' for the default route. Routes are checked in the order they are registered with addRoute.
+
+Example ```onActivationCheck``` definition:
 
 ```javascript
-route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList', authGuard: function(proposedRoute) { console.log('This will prevent route to \'completed\'.'); return false; }, authFail: { route: 'all', params: { } } });
+route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList', onActivationCheck: function(proposedRoute) { console.log('This will prevent route to \'completed\'.'); return false; }, onActivationFail: { route: 'all', params: { } } });
 ```
 
 ## route

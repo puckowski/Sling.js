@@ -314,6 +314,45 @@ class TestNestedHookComponent3 {
     }
 }
 
+class TestCanDeactiveComponent {
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'testcandeactivate',
+            },
+            children: [
+                textNode('Can deactivate component.')
+            ]
+        })
+    }
+}
+
+class TestCanDeactiveComponent2 {
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'testcandeactivate',
+            },
+            children: [
+                textNode('Deactivated component result.')
+            ]
+        })
+    }
+}
+
+class TestDefaultRouteComponent1 {
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'testdefaultroute',
+            },
+            children: [
+                textNode('Default route content.')
+            ]
+        })
+    }
+}
+
 class TestDebounceDetectionComponent {
     constructor() {
         this.dummy = false;
@@ -994,6 +1033,26 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
+    testFinalize996DefaultRoute() {
+        const result = {
+            test: 'test default route',
+            success: false,
+            message: ''
+        };
+
+        addRoute('.*', { component: new TestDefaultRouteComponent1(), root: 'testdefaultroute' });
+
+        route('abcdefghijklmnopqrstuvwxyz');
+
+        const ele = document.getElementById('testdefaultroute');
+        const correctTextAfterRoute = ele && ele.childNodes && ele.childNodes.length === 1 && ele.innerText === 'Default route content.';
+
+        result.success = ele && correctTextAfterRoute;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
     testFinalize996NestedDestroyHook() {
         const result = {
             test: 'test nested destroy hook called',
@@ -1097,6 +1156,39 @@ export class GlobalTestRunner {
 
         result.success = rootAfterInitCalledOriginally && nestedAfterInitCalledOriginally && rootOnInitCalledOriginally && nestedOnInitCalledOriginally
             && rootAfterInitCalled && nestedAfterInitCalled && rootOnInitCalled && nestedOnInitCalled;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize996CanDeactivateRouterHook() {
+        const result = {
+            test: 'test can deactivate router hook',
+            success: false,
+            message: ''
+        };
+
+        addRoute('deactivate1', { component: new TestCanDeactiveComponent(), root: 'testcandeactivate', onCanDeactivate: () => { 
+            const state = getState();
+            return state.canDeactivate === true;
+        } });
+        addRoute('deactivate2', { component: new TestCanDeactiveComponent2(), root: 'testcandeactivate' });
+
+        route('deactivate1');
+
+        let ele = document.getElementById('testcandeactivate');
+        const correctText = ele && ele.innerText === 'Can deactivate component.';
+
+        route('deactivate2');
+
+        ele = document.getElementById('testcandeactivate');
+        const correctFinalText = ele && ele.innerText === 'Can deactivate component.';
+
+        result.success = correctText && correctFinalText;
+
+        const state = getState();
+        state.canDeactivate = true;
+        setState(state);
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -1997,7 +2089,7 @@ export class GlobalTestRunner {
             message: ''
         };
 
-        addRoute('dashboard', { component: new TestGuardComponent(), root: 'authcomponent', authGuard: () => { return false; }, authFail: { route: 'noauth' } });
+        addRoute('dashboard', { component: new TestGuardComponent(), root: 'authcomponent', onActivationCheck: () => { return false; }, onActivationFail: { route: 'noauth' } });
         addRoute('noauth', { component: new AuthFailComponent(), root: 'authcomponent' });
 
         route('dashboard');
