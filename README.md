@@ -2,7 +2,7 @@
 
 # Sling
 
-Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **6.7KB minified, and less than 2.3KB gzipped**.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **7.8KB minified, and less than 2.7KB gzipped**.
 
 Sling creates and uses a virtual DOM to perform differential updates for fast rendering.
 
@@ -207,10 +207,11 @@ class RootComponent {
 
 Structural directives modify interactions with the DOM layout.
 
-|Directive          |Type     |Behavior                                                       |
-|-------------------|---------|---------------------------------------------------------------|
-|```slUseExisting```|Structural|Create the element or, if it exists, use the existing element.|
-|```slNoChanges```  |Structural|Only perform change detection on element's children.          |
+|Directive            |Type      |Behavior                                                       |
+|---------------------|----------|---------------------------------------------------------------|
+|```slUseExisting```  |Structural|Create the element or, if it exists, use the existing element. |
+|```slNoChanges```    |Structural|Only perform change detection on element's children.           |
+|```slTrustChildren```|Structural|Render HTML string children.                                   |
 
 Example directive usage:
 
@@ -342,6 +343,84 @@ resolveAll(requestPromises).then((results) => {
 });
 ```
 
+## hydrate
+__element hydrate ( rootElementId, attachDetector = true )__
+
+Attach event handlers to component on element with ID ```rootElementId``` in DOM.
+Returns root element in DOM.
+
+Sling will take over the static HTML sent by the server and manage change detection.
+
+In order to correctly hydrate static HTML sent by the server, the static HTML of the root element must contain two attributes. First, an ID must be specified so Sling can locate the component for hydration. Second, the attribute ```slssrclass``` must be specified. The value of ```slssrclass``` should be the class name of the view which manages the component. The class identified by ```slssrclass``` should be defined on the ```window``` object, or defined on the value of ```this```.
+
+Example:
+
+```javascript
+class TestSsrHydrateComponent1 {
+    hydratedFunction() {
+        const state = getState();
+        state.ishydrated = true;
+        setState(state);
+    }
+
+    view() {
+        const state = getState();
+        const isFuncCalled = state.ishydrated;
+
+        return markup('div', {
+            attrs: {
+                id: 'testssrhydrate',
+                slssrclass: 'TestSsrHydrateComponent1'
+            },
+            children: [
+                markup('button', {
+                    attrs: {
+                        id: 'ssrTest2',
+                        onclick: this.hydratedFunction.bind(this)
+                    },
+                    children: [
+                        textNode('Test Hydrate')
+                    ]
+                }),
+                markup('div', {
+                    attrs: {
+                        id: 'ssrTest1'
+                    },
+                    children: [
+                        ...(isFuncCalled === true ? [
+                            textNode('Hydrated function called.')
+                        ] : [
+                            textNode('SSR placeholder.')
+                        ])
+                    ]
+                })
+            ]
+        })
+    }
+}
+window.TestSsrHydrateComponent1 = TestSsrHydrateComponent1;
+
+hydrate('testssrhydrate');
+```
+
+By default, the Sling change detector is attached for the mounted component. Setting ```attachDetector``` to ```false``` prevents the change detector from being attached to this component. There are two convenience constants for change detection which are as follows:
+
+|Constant                        |Value      |
+|--------------------------------|-----------|
+|```s.CHANGE_DETECTOR_DETACHED```|```false```|
+|```s.CHANGE_DETECTOR_ATTACHED```|```true``` |
+
+## renderToString
+__string renderToString( component )__
+
+Renders a component into a HTML string.
+
+Example:
+
+```javascript
+const compStr = renderToString(new LoginComponent());
+```
+
 # Core Router API
 
 ## addRoute
@@ -388,6 +467,17 @@ Example route call:
 
 ```javascript
 route('user/5'); // Activates component at root for route 'user/:userId'
+```
+
+## removeRoute
+__void removeRoute ( hashUrlRegEx )__
+
+Remove a route from the Sling router.
+
+Example:
+
+```javascript
+removeRoute('user/:userId');
 ```
 
 ## getRoute

@@ -1,4 +1,4 @@
-import { detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll, getRouteSegments } from "../dist/sling.min";
+import { detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll, getRouteSegments, hydrate, renderToString, removeRoute } from "../dist/sling.min";
 import { FormControl, Observable } from '../dist/sling-reactive.min';
 
 class TestComponent1 {
@@ -230,6 +230,75 @@ class TestNestedAfterInitHookComponent3 {
     }
 }
 
+class TestSsrHydrateComponent1 {
+    hydratedFunction() {
+        const state = getState();
+        state.ishydrated = true;
+        setState(state);
+    }
+
+    view() {
+        const state = getState();
+        const isFuncCalled = state.ishydrated;
+
+        return markup('div', {
+            attrs: {
+                id: 'testssrhydrate',
+                slssrclass: 'TestSsrHydrateComponent1'
+            },
+            children: [
+                markup('button', {
+                    attrs: {
+                        id: 'ssrTest2',
+                        onclick: this.hydratedFunction.bind(this)
+                    },
+                    children: [
+                        textNode('Test Hydrate')
+                    ]
+                }),
+                markup('div', {
+                    attrs: {
+                        id: 'ssrTest1'
+                    },
+                    children: [
+                        ...(isFuncCalled === true ? [
+                            textNode('Hydrated function called.')
+                        ] : [
+                            textNode('SSR placeholder.')
+                        ])
+                    ]
+                })
+            ]
+        })
+    }
+}
+window.TestSsrHydrateComponent1 = TestSsrHydrateComponent1;
+
+class TestSsrHydrateComponent3 {
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'testssrhydrate2',
+                slssrclass: 'TestSsrHydrateComponent2'
+            },
+            children: [
+                markup('div', {
+                    children: [
+                        textNode('Test consume class.')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+class TestSsrHydrateComponent2 {
+    view() {
+        return new TestSsrHydrateComponent3();
+    }
+}
+window.TestSsrHydrateComponent2 = TestSsrHydrateComponent2;
+
 class TestNestedHookComponent4 {
     slOnInit() {
         const state = getState();
@@ -348,6 +417,34 @@ class TestDefaultRouteComponent1 {
             },
             children: [
                 textNode('Default route content.')
+            ]
+        })
+    }
+}
+
+class TestRemoveRouteComponent1 {
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'testremoveroute',
+            },
+            children: [
+                textNode('Remove route content.')
+            ]
+        })
+    }
+}
+
+class TestTrustDirectiveComponent1 {
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'testtrustdirective',
+                slTrustChildren: 'true'
+            },
+            children: [
+                '<div>First child.</div>',
+                '<p>Second child.</p>'
             ]
         })
     }
@@ -1033,7 +1130,7 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
-    testFinalize996DefaultRoute() {
+    testFinalize998DefaultRoute() {
         const result = {
             test: 'test default route',
             success: false,
@@ -1048,6 +1145,101 @@ export class GlobalTestRunner {
         const correctTextAfterRoute = ele && ele.childNodes && ele.childNodes.length === 1 && ele.innerText === 'Default route content.';
 
         result.success = ele && correctTextAfterRoute;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize999RemoveRoute() {
+        const result = {
+            test: 'test remove route',
+            success: false,
+            message: ''
+        };
+
+        addRoute('routetoremove', { component: new TestRemoveRouteComponent1(), root: 'testremoveroute' });
+        removeRoute('routetoremove');
+
+        route('routetoremove');
+
+        const ele = document.getElementById('testremoveroute');
+
+        result.success = !ele || !ele.children || ele.children.length === 0;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize996SsrHydrate() {
+        const result = {
+            test: 'test SSR hydration',
+            success: false,
+            message: ''
+        };
+
+        hydrate('testssrhydrate');
+
+        const buttonEle = document.getElementById('ssrTest2');
+        buttonEle.click();
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            const ssrDivEle = document.getElementById('ssrTest1');
+            const nodeDefined = ssrDivEle && ssrDivEle.childNodes;
+            const contentCorrect = nodeDefined && ssrDivEle.childNodes[0].textContent === 'Hydrated function called.';
+
+            result.success = contentCorrect;
+
+            window.globalTestResults.push(result);
+            window.globalTestCount++;
+        }, 0);
+    }
+
+    testFinalize997SsrToString() {
+        const result = {
+            test: 'test SSR render markup to string',
+            success: false,
+            message: ''
+        };
+
+        const compStr = renderToString(new TestSsrHydrateComponent1());
+
+        result.success = compStr === '<div id="testssrhydrate" slssrclass="TestSsrHydrateComponent1"><button id="ssrTest2" onclick="">Test Hydrate</button><div id="ssrTest1">Hydrated function called.</div></div>';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize997SsrConsumeClass() {
+        const result = {
+            test: 'test SSR consume class',
+            success: false,
+            message: ''
+        };
+
+        const compStr = renderToString(new TestSsrHydrateComponent2());
+
+        result.success = compStr === '<div id="testssrhydrate2" slssrclass="TestSsrHydrateComponent2"><div>Test consume class.</div></div>';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize996TestTrustDirective() {
+        const result = {
+            test: 'test trust directive',
+            success: false,
+            message: ''
+        };
+
+        addRoute('testtrust', { component: new TestTrustDirectiveComponent1(), root: 'testtrustdirective' });
+
+        route('testtrust');
+
+        const ele = document.getElementById('testtrustdirective');
+
+        const correctChildCount = ele && ele.children && ele.children.length === 2;
+
+        result.success = correctChildCount;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -1168,10 +1360,12 @@ export class GlobalTestRunner {
             message: ''
         };
 
-        addRoute('deactivate1', { component: new TestCanDeactiveComponent(), root: 'testcandeactivate', onCanDeactivate: () => { 
-            const state = getState();
-            return state.canDeactivate === true;
-        } });
+        addRoute('deactivate1', {
+            component: new TestCanDeactiveComponent(), root: 'testcandeactivate', onCanDeactivate: () => {
+                const state = getState();
+                return state.canDeactivate === true;
+            }
+        });
         addRoute('deactivate2', { component: new TestCanDeactiveComponent2(), root: 'testcandeactivate' });
 
         route('deactivate1');
@@ -1219,19 +1413,17 @@ export class GlobalTestRunner {
 
         route('basictest/5');
 
-        s.DETACHED_SET_TIMEOUT(() => {
-            state = getState();
-            const correctCount = state.observable === 1;
+        state = getState();
+        const correctCount = state.observable === 1;
 
-            const segments = getRouteSegments();
-            const correctSegment1 = segments && segments.length > 0 && segments[0] === 'basictest';
-            const correctSegment2 = segments && segments.length > 1 && segments[1] === '5';
+        const segments = getRouteSegments();
+        const correctSegment1 = segments && segments.length > 0 && segments[0] === 'basictest';
+        const correctSegment2 = segments && segments.length > 1 && segments[1] === '5';
 
-            result.success = correctOriginalCount && correctCount && correctSegment1 && correctSegment2;
+        result.success = correctOriginalCount && correctCount && correctSegment1 && correctSegment2;
 
-            window.globalTestResults.push(result);
-            window.globalTestCount++;
-        }, 100);
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
     }
 
     testFinalize995DebouncedDetection() {
