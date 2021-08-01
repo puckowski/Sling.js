@@ -1,4 +1,4 @@
-import { detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll, getRouteSegments, hydrate, renderToString, removeRoute } from "../dist/sling.min";
+import { detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll, getRouteSegments, hydrate, renderToString, removeRoute, version, update, setDetectionStrategy, wrapWithChangeDetector } from "../dist/sling.min";
 import { FormControl, Observable } from '../dist/sling-reactive.min';
 
 class TestComponent1 {
@@ -230,6 +230,83 @@ class TestNestedAfterInitHookComponent3 {
     }
 }
 
+class TestManualChangeDetectionComponent1 {
+    constructor() {
+        this.someValue = 0;
+    }
+
+    incrementSomeValue() {
+        this.someValue++;
+    }
+
+    view() {
+        const state = getState();
+        if (state.manualChanges !== null && state.manualChanges !== undefined) state.manualChanges++;
+        setState(state);
+
+        return markup('div', {
+            attrs: {
+                id: 'testmanualchange',
+            },
+            children: [
+                textNode('Plain root component markup.'),
+                markup('button', {
+                    attrs: {
+                        id: 'manualincrementbutton',
+                        onclick: this.incrementSomeValue.bind(this)
+                    },
+                    children: [
+                        textNode('Increment Some Value')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+class TestSsrHydrateComponent4 {
+    hydratedFunction() {
+        const state = getState();
+        state.ishydrated2 = true;
+        setState(state);
+    }
+
+    view() {
+        const state = getState();
+        const isFuncCalled = state.ishydrated2;
+
+        return markup('div', {
+            attrs: {
+                id: 'testssrhydrate2',
+                slssrclass: 'TestSsrHydrateComponent2'
+            },
+            children: [
+                markup('button', {
+                    attrs: {
+                        id: 'ssrTest4',
+                        onclick: this.hydratedFunction.bind(this)
+                    },
+                    children: [
+                        textNode('Test Hydrate')
+                    ]
+                }),
+                markup('div', {
+                    attrs: {
+                        id: 'ssrTest3'
+                    },
+                    children: [
+                        ...(isFuncCalled === true ? [
+                            textNode('Hydrated function called.')
+                        ] : [
+                            textNode('SSR placeholder.')
+                        ])
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 class TestSsrHydrateComponent1 {
     hydratedFunction() {
         const state = getState();
@@ -430,6 +507,23 @@ class TestRemoveRouteComponent1 {
             },
             children: [
                 textNode('Remove route content.')
+            ]
+        })
+    }
+}
+
+class TestWrapDetectorComponent1 {
+    view() {
+        const state = getState();
+        if (state.wrapDetector !== null && state.wrapDetector !== undefined) state.wrapDetector++;
+        setState(state);
+
+        return markup('div', {
+            attrs: {
+                id: 'testwrapdetector',
+            },
+            children: [
+                textNode('Plain component text.')
             ]
         })
     }
@@ -1130,24 +1224,111 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
-    testFinalize998DefaultRoute() {
+    testChangeDetectorConstants() {
+        const result = {
+            test: 'test change detection constants',
+            success: false,
+            message: ''
+        };
+
+        const manualDefined = s.CHANGE_STRATEGY_MANUAL !== null && s.CHANGE_STRATEGY_MANUAL !== undefined;
+        const automaticDefined = s.CHANGE_STRATEGY_AUTOMATIC !== null && s.CHANGE_STRATEGY_AUTOMATIC !== undefined;
+
+        result.success = manualDefined && automaticDefined;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize999DefaultRoute() {
         const result = {
             test: 'test default route',
             success: false,
             message: ''
         };
 
-        addRoute('.*', { component: new TestDefaultRouteComponent1(), root: 'testdefaultroute' });
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            if (window.globalAsyncCount === 0) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
 
-        route('abcdefghijklmnopqrstuvwxyz');
+                addRoute('.*', { component: new TestDefaultRouteComponent1(), root: 'testdefaultroute' });
 
-        const ele = document.getElementById('testdefaultroute');
-        const correctTextAfterRoute = ele && ele.childNodes && ele.childNodes.length === 1 && ele.innerText === 'Default route content.';
+                route('abcdefghijklmnopqrstuvwxyz');
 
-        result.success = ele && correctTextAfterRoute;
+                const ele = document.getElementById('testdefaultroute');
+                const correctTextAfterRoute = ele && ele.childNodes && ele.childNodes.length === 1 && ele.innerText === 'Default route content.';
 
-        window.globalTestResults.push(result);
-        window.globalTestCount++;
+                result.success = ele && correctTextAfterRoute;
+
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+                window.globalAsyncCount--;
+            }
+
+            attempts++;
+
+            if (attempts === 50 && window.globalAsyncCount > 0) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+
+                clearInterval(waitForStableInterval);
+                window.globalAsyncCount--;
+            }
+        }, 500);
+    }
+
+    testFinalize996WrapDetector() {
+        const result = {
+            test: 'test wrap function with change detector',
+            success: false,
+            message: ''
+        };
+
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            if (window.globalAsyncCount === 0) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
+
+                let state = getState();
+                state.wrapDetector = 0;
+                setState(state);
+
+                addRoute('wrapdetector', { component: new TestWrapDetectorComponent1(), root: 'testwrapdetector' });
+                route('wrapdetector');
+
+                state = getState();
+                const originalWrapCount = state.wrapDetector;
+
+                const someFunc = () => { console.log('Wrap detector'); };
+                const wrappedFunc = wrapWithChangeDetector(someFunc);
+
+                s.DETACHED_SET_TIMEOUT(() => {
+                    wrappedFunc();
+
+                    state = getState();
+                    const correctCount = state.wrapDetector === originalWrapCount + 1;
+
+                    result.success = correctCount;
+
+                    window.globalTestResults.push(result);
+                    window.globalTestCount++;
+                    window.globalAsyncCount--;
+                }, 100);
+            }
+
+            attempts++;
+
+            if (attempts === 50 && window.globalAsyncCount > 0) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+
+                clearInterval(waitForStableInterval);
+                window.globalAsyncCount--;
+            }
+        }, 500);
     }
 
     testFinalize999RemoveRoute() {
@@ -1170,6 +1351,121 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
+    testVersionTruthy() {
+        const result = {
+            test: 'test version truthy',
+            success: false,
+            message: ''
+        };
+
+        const slingVersion = version();
+
+        result.success = slingVersion !== null && slingVersion !== undefined;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize996ManualChangeDetection() {
+        const result = {
+            test: 'test manual change detection',
+            success: false,
+            message: ''
+        };
+
+        let state = getState();
+        state.manualChanges = 0;
+        setState(state);
+
+        const manualChangeComp = new TestManualChangeDetectionComponent1();
+
+        addRoute('manualchange', { component: manualChangeComp, root: 'testmanualchange' });
+        const attachDetector = false;
+        const params = {};
+        route('manualchange', params, attachDetector);
+
+        state = getState();
+        const changeCountCorrect = state.manualChanges === 1;
+
+        const buttonEle = document.getElementById('manualincrementbutton');
+        buttonEle.click();
+
+        state = getState();
+        const changeCountCorrect2 = state.manualChanges === 1;
+
+        detectChanges();
+
+        state = getState();
+        const changeCountCorrect3 = state.manualChanges === 1;
+
+        update('testmanualchange', manualChangeComp);
+
+        state = getState();
+        const changeCountCorrect4 = state.manualChanges === 2;
+
+        result.success = changeCountCorrect && changeCountCorrect2 && changeCountCorrect3 && changeCountCorrect4;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize998ManualChangeDetection() {
+        const result = {
+            test: 'test manual change detection strategy',
+            success: false,
+            message: ''
+        };
+
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            if (window.globalAsyncCount === 0) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
+
+                const attachDetector = true;
+                const params = {};
+                route('manualchange', params, attachDetector);
+
+                let state = getState();
+                const changeCountCorrect = state.manualChanges > 0;
+                const originalChangeCount = state.manualChanges;
+
+                setDetectionStrategy(s.CHANGE_STRATEGY_MANUAL);
+
+                const buttonEle = document.getElementById('manualincrementbutton');
+                buttonEle.click();
+
+                state = getState();
+                const changeCountCorrect2 = state.manualChanges === originalChangeCount;
+
+                setDetectionStrategy(s.CHANGE_STRATEGY_AUTOMATIC);
+
+                s.DETACHED_SET_TIMEOUT(() => {
+                    buttonEle.click();
+
+                    state = getState();
+                    const changeCountCorrect3 = state.manualChanges === originalChangeCount + 1;
+
+                    result.success = changeCountCorrect && changeCountCorrect2 && changeCountCorrect3;
+
+                    window.globalTestResults.push(result);
+                    window.globalTestCount++;
+                    window.globalAsyncCount--;
+                }, 100);
+            }
+
+            attempts++;
+
+            if (attempts === 50 && window.globalAsyncCount > 0) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+
+                clearInterval(waitForStableInterval);
+                window.globalAsyncCount--;
+            }
+        }, 500);
+    }
+
     testFinalize996SsrHydrate() {
         const result = {
             test: 'test SSR hydration',
@@ -1184,6 +1480,32 @@ export class GlobalTestRunner {
 
         s.DETACHED_SET_TIMEOUT(() => {
             const ssrDivEle = document.getElementById('ssrTest1');
+            const nodeDefined = ssrDivEle && ssrDivEle.childNodes;
+            const contentCorrect = nodeDefined && ssrDivEle.childNodes[0].textContent === 'Hydrated function called.';
+
+            result.success = contentCorrect;
+
+            window.globalTestResults.push(result);
+            window.globalTestCount++;
+        }, 0);
+    }
+
+    testFinalize996SsrHydrateWithThis() {
+        const result = {
+            test: 'test SSR hydration using this',
+            success: false,
+            message: ''
+        };
+
+        this.TestSsrHydrateComponent4 = TestSsrHydrateComponent4;
+        const boundHydrate = hydrate.bind(this, 'testssrhydrate2');
+        boundHydrate();
+
+        const buttonEle = document.getElementById('ssrTest4');
+        buttonEle.click();
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            const ssrDivEle = document.getElementById('ssrTest3');
             const nodeDefined = ssrDivEle && ssrDivEle.childNodes;
             const contentCorrect = nodeDefined && ssrDivEle.childNodes[0].textContent === 'Hydrated function called.';
 
@@ -1426,6 +1748,25 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
+    testFinalize996RouteSegments() {
+        const result = {
+            test: 'test get route segments',
+            success: false,
+            message: ''
+        };
+
+        route('basictest/5');
+
+        const segments = getRouteSegments();
+        const correctSegment1 = segments && segments.length > 0 && segments[0] === 'basictest';
+        const correctSegment2 = segments && segments.length > 1 && segments[1] === '5';
+
+        result.success = segments && correctSegment1 && correctSegment2;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
     testFinalize995DebouncedDetection() {
         const result = {
             test: 'test debounced change detection',
@@ -1457,12 +1798,13 @@ export class GlobalTestRunner {
 
                     window.globalTestResults.push(result);
                     window.globalTestCount++;
+                    window.globalAsyncCount--;
                 }, 100);
             }
 
             attempts++;
 
-            if (attempts === 25 && window.globalAsyncCount > 0) {
+            if (attempts === 50 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
                 window.globalAsyncCount--;
@@ -1557,7 +1899,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 25 && window.globalAsyncCount > 0) {
+            if (attempts === 50 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
                 window.globalAsyncCount--;
@@ -1614,7 +1956,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 25 && window.globalAsyncCount > 0) {
+            if (attempts === 50 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
                 window.globalAsyncCount--;
@@ -1690,7 +2032,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 25 && window.globalAsyncCount > 0) {
+            if (attempts === 50 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
                 window.globalAsyncCount--;
@@ -1767,7 +2109,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 25 && window.globalAsyncCount > 0) {
+            if (attempts === 50 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalAsyncCount--;
                 window.globalTestCount++;
@@ -2195,7 +2537,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 25 && window.globalAsyncCount > 0) {
+            if (attempts === 50 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -2808,7 +3150,7 @@ export class GlobalTestRunner {
 
             checkCount++;
 
-            if (checkCount === 100) {
+            if (checkCount === 500) {
                 this.removeProcessing();
                 this.showError();
                 clearInterval(checkInterval);

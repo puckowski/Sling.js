@@ -2,7 +2,7 @@
 
 # Sling
 
-Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **7.8KB minified, and less than 2.7KB gzipped**.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **8KB minified, and less than 3KB gzipped**.
 
 Sling creates and uses a virtual DOM to perform differential updates for fast rendering.
 
@@ -39,12 +39,9 @@ Because Sling is so lightweight, it can render thousands more nodes than Angular
 
 | Version                          |Number of nodes created |Average time       |Nodes per ms |
 |----------------------------------|------------------------|-------------------|-------------|
-|Sling Core 8.0.0 (w/Routing)      |1,000                   |20.290ms           |49.285       |
-|Sling Core 4.2.0 (w/Routing)      |1,000                   |23.414ms           |42.709       |
-|Sling Core 4.1.0 (w/Routing)      |1,000                   |32.502ms           |30.767       |
+|Sling Core 10.1.0                 |1,000                   |37.195ms           |26.885       |
 |Mithril.js 2.0.4                  |1,000                   |39.312ms           |25.437       |
-|Sling Core 4.0.2 (w/Routing)      |1,000                   |47.612ms           |21.003       |
-|Angular 10.1.6 (w/Routing)        |1,000                   |165.810ms          |6.030        |
+|Angular 10.1.6                    |1,000                   |165.810ms          |6.030        |
 
 Sling.js creates nodes **8.173** times faster than Angular.
 
@@ -60,14 +57,9 @@ for (let i = 0; i < 1000; ++i) {
 
 | Version                                                 |Number of nodes changed |Average time       |Nodes per ms |
 |---------------------------------------------------------|------------------------|-------------------|-------------|
-|Sling Core 8.0.0 (w/Routing)                             |1,000                   |17.052ms           |58.644       |
+|Sling Core 10.1.0                                        |1,000                   |17.197ms           |58.149       |
 |Mithril.js 2.0.4                                         |1,000                   |23.600ms           |42.372       |
-|Sling Core 4.2.0 (w/Routing)                             |1,000                   |35.893ms           |27.860       |
-|Sling Core 4.1.0 (w/Routing) Manual Change Detection     |1,000                   |54.448ms           |18.366       |
-|Sling Core 4.0.2 (w/Routing) Manual Change Detection     |1,000                   |75.682ms           |13.213       |
-|Sling Core 4.0.2 (w/Routing)                             |1,000                   |121.982ms          |8.197        |
-|Sling Core 4.1.0 (w/Routing)                             |1,000                   |100.556ms          |9.944        |
-|Angular 10.1.6 (w/Routing)                               |1,000                   |362.536ms          |2.758        |
+|Angular 10.1.6                                           |1,000                   |362.536ms          |2.758        |
 
 Sling.js changes nodes **21.263** times faster than Angular in automatic change detection mode.
 
@@ -83,15 +75,11 @@ for (let i = 0; i < 1000; ++i) {
 
 ## Performance (Network)
 
-Using simulated 3G network speeds, Sling Core 3.4.0 with routing loads **2.16** times faster than an Angular 10.1.6 project and **2.90** times faster than an Angular 10.1.6 project with routing.
-
-|Version                                  |Requests  |Async Time (3G network)|Total      |
-|-----------------------------------------|----------|-----------------------|-----------|
-|Sling Core 3.4.0                         |1         |2.18s                  |4.20KB     |
-|Sling Core 3.4.0 (w/Routing)             |1         |2.24s                  |5.10KB     |
-|Angular 9.0.7                            |3         |4.88s                  |144.10KB   |
-|Angular 10.1.6                           |3         |4.84s                  |143.00KB   |
-|Angular 10.1.6 (w/Routing)               |3         |6.51s                  |229.00KB   |
+|Version                                  |Requests  |Total      |
+|-----------------------------------------|----------|-----------|
+|Sling Core 10.1.1                        |1         |7.9KB      |
+|Mithril.js 2.0.4                         |1         |26.7KB     |
+|Angular 10.1.6                           |3         |143.00KB   |
 
 ## Add Sling
 
@@ -318,7 +306,7 @@ Returns Sling version number represented as a string.
 Example:
 
 ```javascript
-console.log(s.version); // '3.2.0'
+console.log(version()); // '10.1.1'
 ```
 
 ## resolveAll
