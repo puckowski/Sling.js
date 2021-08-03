@@ -730,6 +730,38 @@ class RouteBasicComponent {
     }
 }
 
+class OnBeforeRouteComponent {
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'onbeforeroutecomponent',
+            },
+            children: [
+                textNode('Text should appear after onBeforeRoute called.')
+            ]
+        })
+    }
+}
+
+class ConsumeClassComponent2 {
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'consumeclasscomponent',
+            },
+            children: [
+                textNode('Consume class test.')
+            ]
+        })
+    }
+}
+
+class ConsumeClassComponent1 {
+    view() {
+        return new ConsumeClassComponent2();
+    }
+}
+
 class RouteComplexComponent {
     view() {
         return markup('div', {
@@ -1219,6 +1251,50 @@ export class GlobalTestRunner {
         const correctText = divEle.textContent === 'Basic route taken.';
 
         result.success = correctText;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize996OnBeforeRoute() {
+        const result = {
+            test: 'test onBeforeRoute called before component mounted to DOM',
+            success: false,
+            message: ''
+        };
+
+        const checkMountedInDomFunc = () => {
+            const ele = document.getElementById('onbeforeroutecomponent');
+
+            const state = getState();
+            state.onBeforeRouteCorrect = ele && ele.children && ele.children.length === 0 && ele.textContent === '';
+            setState(state);
+        };
+
+        addRoute('onbeforeroute1', { component: new OnBeforeRouteComponent(), onBeforeRoute: checkMountedInDomFunc, root: 'onbeforeroutecomponent' });
+        route('onbeforeroute1');
+
+        const state = getState();
+
+        result.success = state.onBeforeRouteCorrect;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize996ConsumeClass() {
+        const result = {
+            test: 'test consume class',
+            success: false,
+            message: ''
+        };
+
+        addRoute('consumeclass', { component: new ConsumeClassComponent1(), root: 'consumeclasscomponent' });
+        route('consumeclass');
+
+        const ele = document.getElementById('consumeclasscomponent');
+
+        result.success = ele && ele.children && ele.children.length === 0 && ele.textContent === 'Consume class test.';
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
