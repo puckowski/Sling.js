@@ -4,7 +4,7 @@
 
 Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **8KB minified, and less than 3KB gzipped**.
 
-Sling creates and uses a virtual DOM to perform differential updates for fast rendering.
+Sling creates and uses an Incremental DOM to perform differential updates for fast rendering.
 
 Sling has an automatic change detection mechanism which updates your components for you.
 
@@ -524,6 +524,11 @@ Returns true if Sling change detector is attached for the given element ID ```el
 __void detachDetector ( eleId )__
 
 Detach the Sling change detector for the given element ID ```eleId```.
+
+## wrapWithChangeDetector
+__function wrapWithChangeDetector ( funcToWrap )__
+
+Wrap a function ```funcToWrap``` with a change detector call, so every time the function is called change detection is also run.
 
 # XHR API
 

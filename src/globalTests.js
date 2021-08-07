@@ -1,4 +1,4 @@
-import { detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll, getRouteSegments, hydrate, renderToString, removeRoute, version, update, setDetectionStrategy, wrapWithChangeDetector } from "../dist/sling.min";
+import { detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll, getRouteSegments, hydrate, renderToString, removeRoute, version, update, setDetectionStrategy, wrapWithChangeDetector, isDetectorAttached, detachDetector, getRoute } from "../dist/sling.min";
 import { FormControl, Observable } from '../dist/sling-reactive.min';
 
 class TestComponent1 {
@@ -88,6 +88,19 @@ class TestDestroyHookComponent {
             },
             children: [
                 textNode('Should be removed.')
+            ]
+        })
+    }
+}
+
+class TestDetachDetectorComponent {
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'testdetachdetectorcomponent',
+            },
+            children: [
+                textNode('Some plain text.')
             ]
         })
     }
@@ -1300,6 +1313,28 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
+    testFinalize996DetachDetector() {
+        const result = {
+            test: 'test consume class',
+            success: false,
+            message: ''
+        };
+
+        const detachDetectorComp = new TestDetachDetectorComponent();
+        mount('testdetachdetectorcomponent', detachDetectorComp, true);
+
+        const isCompAttached = isDetectorAttached('testdetachdetectorcomponent');
+
+        detachDetector('testdetachdetectorcomponent');
+
+        const isCompAttachedFinal = isDetectorAttached('testdetachdetectorcomponent');
+
+        result.success = isCompAttached && !isCompAttachedFinal;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
     testChangeDetectorConstants() {
         const result = {
             test: 'test change detection constants',
@@ -1460,6 +1495,8 @@ export class GlobalTestRunner {
         const params = {};
         route('manualchange', params, attachDetector);
 
+        const isCompAttached = isDetectorAttached('testmanualchange');
+
         state = getState();
         const changeCountCorrect = state.manualChanges === 1;
 
@@ -1479,7 +1516,7 @@ export class GlobalTestRunner {
         state = getState();
         const changeCountCorrect4 = state.manualChanges === 2;
 
-        result.success = changeCountCorrect && changeCountCorrect2 && changeCountCorrect3 && changeCountCorrect4;
+        result.success = changeCountCorrect && changeCountCorrect2 && changeCountCorrect3 && changeCountCorrect4 && !isCompAttached;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -1833,11 +1870,14 @@ export class GlobalTestRunner {
 
         route('basictest/5');
 
+        const currentRoute = getRoute();
+        const correctRoute = currentRoute === 'basictest/5';
+
         const segments = getRouteSegments();
         const correctSegment1 = segments && segments.length > 0 && segments[0] === 'basictest';
         const correctSegment2 = segments && segments.length > 1 && segments[1] === '5';
 
-        result.success = segments && correctSegment1 && correctSegment2;
+        result.success = segments && correctSegment1 && correctSegment2 && correctRoute;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -1901,11 +1941,14 @@ export class GlobalTestRunner {
         addRoute('complextest/:someId/static/:someParam', { component: new RouteComplexComponent(), root: 'routecomponent' });
         route('complextest/5/static/foo');
 
+        const currentRoute = getRoute();
+        const correctRoute = currentRoute === 'complextest/5/static/foo';
+
         const divEle = document.getElementById('routecomponent');
 
         const correctText = divEle.textContent === 'Complex route taken.';
 
-        result.success = correctText;
+        result.success = correctText && correctRoute;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
