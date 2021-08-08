@@ -547,7 +547,7 @@ class TestTrustDirectiveComponent1 {
         return markup('div', {
             attrs: {
                 id: 'testtrustdirective',
-                slTrustChildren: 'true'
+                sltrustchildren: 'true'
             },
             children: [
                 '<div>First child.</div>',
