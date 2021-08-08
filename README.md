@@ -197,9 +197,9 @@ Structural directives modify interactions with the DOM layout.
 
 |Directive            |Type      |Behavior                                                       |
 |---------------------|----------|---------------------------------------------------------------|
-|```slUseExisting```  |Structural|Create the element or, if it exists, use the existing element. |
-|```slNoChanges```    |Structural|Only perform change detection on element's children.           |
-|```slTrustChildren```|Structural|Render HTML string children.                                   |
+|```sluseexisting```  |Structural|Create the element or, if it exists, use the existing element. |
+|```slnochanges```    |Structural|Only perform change detection on element's children.           |
+|```sltrustchildren```|Structural|Render HTML string children.                                   |
 
 Example directive usage:
 
@@ -214,7 +214,7 @@ view() {
             markup('div', {
                 attrs: {
                     id: 'chartDiv',
-                    slUseExisting: 'true',
+                    sluseexisting: 'true',
                     style: 'width: 90vw;'
                 }
             })
