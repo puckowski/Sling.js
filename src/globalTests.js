@@ -243,6 +243,91 @@ class TestNestedAfterInitHookComponent3 {
     }
 }
 
+class TestNestedConsumeClassComponent1 {
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'testnestedconsume',
+            },
+            children: [
+                new TestNestedConsumeClassComponent2()
+            ]
+        })
+    }
+}
+
+class TestNestedConsumeClassComponent2 {
+    view() {
+        return markup('div', {
+            children: [
+                new TestNestedConsumeClassComponent3()
+            ]
+        })
+    }
+}
+
+class TestNestedConsumeClassComponent3 {
+    view() {
+        return markup('span', {
+            children: [
+                textNode('Consumed class text.')
+            ]
+        })
+    }
+}
+
+class TestNestedConsumeClassComponent4 {
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'testnestedconsume2',
+            },
+            children: [
+                new TestNestedConsumeClassComponent5()
+            ]
+        })
+    }
+}
+
+class TestNestedConsumeClassComponent5 {
+    view() {
+        return markup('div', {
+            children: [
+                new TestNestedConsumeClassComponent6()
+            ]
+        })
+    }
+}
+
+class TestNestedConsumeClassComponent6 {
+    slAfterInit() {
+        const state = getState();
+        state.nestedConsumeHook = true;
+        setState(state);
+    }
+
+    view() {
+        return markup('span', {
+            children: [
+                textNode('Consumed class text with hook.')
+            ]
+        })
+    }
+}
+
+class TestOnlySelfComponent1 {
+    view() {
+        return markup('iframe', {
+            attrs: {
+                frameborder: '0',
+                id: 'tryit-sling-iframe',
+                slonlyself: 'true',
+                style: 'background-color: rgb(255, 255, 255);'
+            }
+        })
+    }
+}
+
 class TestManualChangeDetectionComponent1 {
     constructor() {
         this.someValue = 0;
@@ -1639,6 +1724,90 @@ export class GlobalTestRunner {
         const compStr = renderToString(new TestSsrHydrateComponent1());
 
         result.success = compStr === '<div id="testssrhydrate" slssrclass="TestSsrHydrateComponent1"><button id="ssrTest2" onclick="">Test Hydrate</button><div id="ssrTest1">Hydrated function called.</div></div>';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize997OnlySelf() {
+        const result = {
+            test: 'test only self directive',
+            success: false,
+            message: ''
+        };
+
+        const onlySelfComp = new TestOnlySelfComponent1();
+        mount('tryit-sling-iframe', onlySelfComp);
+
+        const iframe = document.getElementById('tryit-sling-iframe');
+
+        const htmlContainer = (iframe.contentWindow) ? iframe.contentWindow : (iframe.contentDocument.document) ? iframe.contentDocument.document : iframe.contentDocument;
+        htmlContainer.document.open();
+        htmlContainer.document.write('<p>Hello, world!</p>');
+        htmlContainer.document.close();
+
+        detectChanges();
+
+        const iframeEle = document.getElementById('tryit-sling-iframe');
+
+        const correctBorder = iframeEle && iframeEle.getAttribute('frameborder') === '0';
+        const correctId = iframeEle && iframeEle.id === 'tryit-sling-iframe';
+        const onlySelfDirective = iframeEle && iframeEle.getAttribute('slonlyself') === 'true';
+        const correctStyle = iframeEle && iframeEle.style.cssText === 'background-color: rgb(255, 255, 255);';
+
+        result.success = correctBorder && correctId && onlySelfDirective && correctStyle;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize997NestedConsumeClass() {
+        const result = {
+            test: 'test nested consume class',
+            success: false,
+            message: ''
+        };
+
+        const nestedComp = new TestNestedConsumeClassComponent1();
+        mount('testnestedconsume', nestedComp);
+
+        const ele = document.getElementById('testnestedconsume');
+
+        const eleCorrect = ele && ele.tagName === 'DIV' && ele.children && ele.children.length === 1;
+        const childCorrect = ele && ele.children && ele.children.length > 0 && ele.children[0].tagName === 'DIV'
+            && ele.children[0].children && ele.children[0].children.length === 1;
+        const secondChildCorrect = ele && ele.children && ele.children.length > 0 && ele.children[0].children
+            && ele.children[0].children.length > 0 && ele.children[0].children[0].tagName === 'SPAN'
+            && ele.children[0].children[0].textContent === 'Consumed class text.';
+
+        result.success = eleCorrect && childCorrect && secondChildCorrect;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize997NestedConsumeClassWithHook() {
+        const result = {
+            test: 'test nested consume class hook called',
+            success: false,
+            message: ''
+        };
+
+        const nestedComp = new TestNestedConsumeClassComponent4();
+        mount('testnestedconsume2', nestedComp);
+
+        const state = getState();
+        const ele = document.getElementById('testnestedconsume2');
+
+        const eleCorrect = ele && ele.tagName === 'DIV' && ele.children && ele.children.length === 1;
+        const childCorrect = ele && ele.children && ele.children.length > 0 && ele.children[0].tagName === 'DIV'
+            && ele.children[0].children && ele.children[0].children.length === 1;
+        const secondChildCorrect = ele && ele.children && ele.children.length > 0 && ele.children[0].children
+            && ele.children[0].children.length > 0 && ele.children[0].children[0].tagName === 'SPAN'
+            && ele.children[0].children[0].textContent === 'Consumed class text with hook.';
+        const hookCalled = state.nestedConsumeHook === true;
+
+        result.success = eleCorrect && childCorrect && secondChildCorrect && hookCalled;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;

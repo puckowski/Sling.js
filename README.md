@@ -2,7 +2,7 @@
 
 # Sling
 
-Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **8KB minified, and less than 3KB gzipped**.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **9KB minified, and less than 3KB gzipped**.
 
 Sling creates and uses an Incremental DOM to perform differential updates for fast rendering.
 
@@ -198,7 +198,8 @@ Structural directives modify interactions with the DOM layout.
 |Directive            |Type      |Behavior                                                       |
 |---------------------|----------|---------------------------------------------------------------|
 |```sluseexisting```  |Structural|Create the element or, if it exists, use the existing element. |
-|```slnochanges```    |Structural|Only perform change detection on element's children.           |
+|```slonlychildren``` |Structural|Only perform change detection on element's children.           |
+|```slonlyself```     |Structural|Only perform change detection on the element and not children. |
 |```sltrustchildren```|Structural|Render HTML string children.                                   |
 
 Example directive usage:
