@@ -1241,6 +1241,149 @@ class TestRebindDetectionComponent2 {
     }
 }
 
+class PreviewComponent {
+
+    constructor() {
+        this.injectedList = 'Injected files: 2';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                style: 'padding: 0.25rem; color: rgb(204, 204, 204); max-height: inherit; overflow: auto; display: flex; flex-direction: column; height: calc(100% - 0.5rem);'
+            },
+            children: [
+                markup('h4', {
+                    attrs: {
+                        style: 'margin: 0px; flex: 1;'
+                    },
+                    children: [
+                        textNode('Preview')
+                    ]
+                }),
+                ...(this.injectedList.length > 16 ? [
+                    markup('div', {
+                        attrs: {
+                            style: 'background-color: rgb(46, 49, 56); padding: 0.25rem; flex: 1;'
+                        },
+                        children: [
+                            textNode(this.injectedList)
+                        ]
+                    })
+                ] : []),
+                markup('iframe', {
+                    attrs: {
+                        frameborder: '0',
+                        id: 'tryit-sling-iframe',
+                        slonlyself: 'true',
+                        ...this.injectedList.length > 16 && { style: 'background-color: #ffffff; width: 100%; flex: 14;' },
+                        ...this.injectedList.length <= 16 && { style: 'background-color: #ffffff; width: 100%; flex: 15;' }
+                    }
+                }),
+                markup('textarea', {
+                    attrs: {
+                        id: 'tryit-sling-console',
+                        slonlyself: 'true',
+                        style: 'width: 100%; flex: 4;',
+                        placeholder: 'Text will appear when logged'
+                    }
+                })
+            ]
+        });
+    }
+}
+
+class SourcePanelComponent {
+
+    constructor() {
+    }
+
+    slAfterInit() {
+        const state = getState();
+        state.sourcePanelAfterInit = true;
+        setState(state);
+    }
+
+    view() {
+        const file = {
+            index: 0,
+            name: 'test'
+        };
+
+        return markup('div', {
+            attrs: {
+                style: 'padding: 0.25rem; background-color: rgb(21, 24, 30); color: rgb(204, 204, 204); overflow: auto; height: calc(100% - 0.5rem); display: flex; flex-direction: column;'
+            },
+            children: [
+                markup('h4', {
+                    attrs: {
+                        style: 'margin: 0px; flex: 1;'
+                    },
+                    children: [
+                        ...(file ? [
+                            textNode('File ' + (file.index + 1) + ': ' + file.name)
+                        ] : []),
+                    ]
+                }),
+                markup('textarea', {
+                    attrs: {
+                        style: 'width: 100%; background-color: rgb(0, 0, 0); border: none; color: rgb(204, 204, 204); flex: 19;',
+                        id: 'tryit-sling-textarea'
+                    }
+                })
+            ]
+        });
+    }
+}
+
+class ContentPanelComponent {
+
+    constructor() {
+        this.previewComp = new PreviewComponent();
+        this.sourceComp = new SourcePanelComponent();
+    }
+
+    view() {
+        const state = getState();
+        const showPreview = state.showPreview;
+
+        return markup('div', {
+            attrs: {
+                id: 'divcontentpanel'
+            },
+            children: [
+                markup('div', {
+                    attrs: {
+                        style: 'display: flex; justify-content: space-between;'
+                    },
+                    children: [
+                        ...(showPreview === true ? [
+                            markup('div', {
+                                attrs: {
+                                    style: 'width: 88%; max-height: inherit;'
+                                },
+                                children: [
+                                    this.previewComp
+                                ]
+                            })
+                        ] : []),
+                        ...(showPreview === false ? [
+                            markup('div', {
+                                attrs: {
+                                    style: 'width: 88%; max-height: inherit;'
+                                },
+                                children: [
+                                    this.sourceComp
+                                ]
+                            })
+                        ] : []),
+                    ]
+                })
+            ]
+        });
+    }
+}
+
 export class GlobalTestRunner {
 
     constructor() {
@@ -1724,6 +1867,68 @@ export class GlobalTestRunner {
         const compStr = renderToString(new TestSsrHydrateComponent1());
 
         result.success = compStr === '<div id="testssrhydrate" slssrclass="TestSsrHydrateComponent1"><button id="ssrTest2" onclick="">Test Hydrate</button><div id="ssrTest1">Hydrated function called.</div></div>';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize997InsertBeforeDomStructure() {
+        const result = {
+            test: 'test insert before call on tag name change does not adversely impact DOM structure',
+            success: false,
+            message: ''
+        };
+
+        let state = getState();
+        state.showPreview = false;
+        setState(state);
+
+        const contentComp = new ContentPanelComponent();
+        mount('divcontentpanel', contentComp);
+
+        state = getState();
+        state.showPreview = true;
+        setState(state);
+
+        detectChanges();
+
+        const contentEle = document.getElementById('divcontentpanel');
+
+        state = getState();
+        const afterInitCalled = state.sourcePanelAfterInit === true;
+
+        const correctChild = contentEle && contentEle.children && contentEle.children.length === 1 
+        && contentEle.children[0].tagName === 'DIV';
+        const correctNestedChild = contentEle && contentEle.children && contentEle.children.length === 1 
+        && contentEle.children[0].children && contentEle.children[0].children.length === 1 && contentEle.children[0].children[0].tagName === 'DIV';
+
+        let nestedChild = null;
+        let previewChildren = null;
+        let hasPreviewChildren = false;
+
+        if (contentEle && contentEle.children && contentEle.children.length === 1 && contentEle.children[0].children 
+            && contentEle.children[0].children.length === 1) {
+            nestedChild = contentEle.children[0].children[0];
+
+            if (nestedChild && nestedChild.children && nestedChild.children.length === 1) {
+                hasPreviewChildren = true;
+                previewChildren = nestedChild.children[0];
+            }
+        }
+
+        let correctFirstEle = false;
+        let correctSecondEle = false;
+        let correctThirdEle = false;
+        let correctFourthEle = false;
+
+        if (hasPreviewChildren) {
+            correctFirstEle = previewChildren && previewChildren.children && previewChildren.children.length > 0 && previewChildren.children[0].tagName === 'H4';
+            correctSecondEle = previewChildren && previewChildren.children && previewChildren.children.length > 1 && previewChildren.children[1].tagName === 'DIV';
+            correctThirdEle = previewChildren && previewChildren.children && previewChildren.children.length > 2 && previewChildren.children[2].tagName === 'IFRAME';
+            correctFourthEle = previewChildren && previewChildren.children && previewChildren.children.length > 3 && previewChildren.children[3].tagName === 'TEXTAREA';
+        }
+
+        result.success = afterInitCalled && correctChild && correctNestedChild && hasPreviewChildren && correctFirstEle && correctSecondEle && correctThirdEle && correctFourthEle;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
