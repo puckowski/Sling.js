@@ -8,14 +8,18 @@
     "build": "webpack --mode development",
     "buildProd": "webpack --mode production",
     "devServer": "webpack-dev-server --content-base dist/",
-    "buildSlingCore": "terser --compress --mangle --output .\\dist\\sling.min.js -- .\\src\\sling\\core\\sling.js",
+    "buildAll": "npm run buildSlingCore && npm run buildSlingXhr && npm run buildSlingReactive && npm run buildEs5 && npm run buildEs5Min",
+    "buildEs5": "babel .\\dist\\sling.min.js --out-file .\\dist\\sling.es5.js --presets=@babel/preset-env",
+    "buildEs5Min": "terser --compress --mangle toplevel,reserved=['m'] --output .\\dist\\sling.min.es5.js -- .\\dist\\sling.es5.js",
+    "buildSlingCore": "terser --toplevel --compress --mangle toplevel,reserved=['m'] --output .\\dist\\sling.min.js -- .\\src\\sling\\core\\sling.js",
     "buildSlingCoreChange": "terser --compress --mangle --output .\\dist\\sling-change.min.js -- .\\src\\sling\\core\\sling-change.js",
     "buildSlingCoreRouter": "terser --compress --mangle --output .\\dist\\sling-router.min.js -- .\\src\\sling\\core\\sling-router.js",
     "buildSlingRouter": "terser --compress --mangle --output .\\dist\\sling-router.min.js -- .\\src\\sling\\core\\sling-router.js",
     "buildSlingChange": "terser --compress --mangle --output .\\dist\\sling-change.min.js -- .\\src\\sling\\core\\sling-change.js",
-    "buildSlingXhr": "terser --compress --mangle --output .\\dist\\sling-xhr.min.js -- .\\src\\sling\\xhr\\sling-xhr.js",
-    "buildSlingReactive": "terser --compress --mangle --output .\\dist\\sling-reactive.min.js -- .\\src\\sling\\reactive\\sling-reactive.js",
-    "buildSlingFull": "terser --compress --mangle --output .\\dist\\sling-full.min.js -- .\\dist\\sling-full.js"
+    "buildSlingXhr": "terser --compress --mangle toplevel --output .\\dist\\sling-xhr.min.js -- .\\src\\sling\\xhr\\sling-xhr.js",
+    "buildSlingReactive": "terser --compress --mangle toplevel --output .\\dist\\sling-reactive.min.js -- .\\src\\sling\\reactive\\sling-reactive.js",
+    "buildSlingFull": "terser --compress --mangle --output .\\dist\\sling-full.min.js -- .\\dist\\sling-full.js",
+    "buildSlingCoreExpanded": "terser --output .\\dist\\sling.min.js -- .\\src\\sling\\core\\sling.js"
   },
   "repository": {
     "type": "git",
@@ -34,8 +38,11 @@
   },
   "homepage": "https://github.com/puckowski/Sling.js#readme",
   "devDependencies": {
+    "@babel/cli": "^7.2.3",
     "@babel/core": "^7.7.4",
     "@babel/preset-env": "^7.7.4",
+    "@babel/preset-es2017": "^7.0.0-beta.53",
+    "@babel/register": "^7.4.0",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
     "copy-webpack-plugin": "^5.0.5",
@@ -53,6 +60,7 @@
     "webpack-dev-server": "^3.9.0"
   },
   "dependencies": {
+    "babel-preset-es2015": "^6.24.1",
     "terser-webpack-plugin": "^2.2.1"
   }
 }

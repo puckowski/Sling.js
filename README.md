@@ -197,10 +197,10 @@ Structural directives modify interactions with the DOM layout.
 
 |Directive            |Type      |Behavior                                                       |
 |---------------------|----------|---------------------------------------------------------------|
-|```sluseexisting```  |Structural|Create the element or, if it exists, use the existing element. |
-|```slonlychildren``` |Structural|Only perform change detection on element's children.           |
-|```slonlyself```     |Structural|Only perform change detection on the element and not children. |
-|```sltrustchildren```|Structural|Render HTML string children.                                   |
+|```useexisting```  |Structural|Create the element or, if it exists, use the existing element. |
+|```onlychildren``` |Structural|Only perform change detection on element's children.           |
+|```onlyself```     |Structural|Only perform change detection on the element and not children. |
+|```trustchildren```|Structural|Render HTML string children.                                   |
 
 Example directive usage:
 
@@ -215,9 +215,48 @@ view() {
             markup('div', {
                 attrs: {
                     id: 'chartDiv',
-                    sluseexisting: 'true',
+                    sldirective: 'useexisting',
                     style: 'width: 90vw;'
                 }
+            })
+        ]
+    })
+}
+```
+
+Another example of directive usage:
+
+```javascript
+view() {
+    return markup('div', {
+        attrs: {
+            id: 'divnav',
+        },
+        children: [
+            textNode('Select a route to navigate to.'),
+            markup('button', {
+                attrs: {
+                    onclick: this.navigateToHydrate.bind(this)
+                },
+                children: [
+                    textNode('Hydrate Route')
+                ]
+            }),
+            markup('button', {
+                attrs: {
+                    onclick: this.navigateToRoot.bind(this)
+                },
+                children: [
+                    textNode('Root Route')
+                ]
+            }),
+            markup('div', {
+                attrs: {
+                    sldirective: 'trustchildren'
+                    },
+                children: [
+                    textNode(this.ssrContent)
+                ]
             })
         ]
     })
@@ -819,6 +858,11 @@ __object subscribe( function(arrayData) { } )__
 
 Add a function that is automatically called when the underlying stream data changes. Returns the stream.
 
+## getHasSubscription
+__boolean getHasSubscription( functionToCheck )__
+
+Check if ```functionToCheck``` is in the list of subscribed functions. Returns true if ```functionToCheck``` is in the list, false otherwise.
+
 ## clearSubscription
 __object clearSubscription( functionToClear )__
 
@@ -874,6 +918,11 @@ __void subscribe ( listenerFunction )__
 
 Listener function will be automatically called whenever the underlying array data changes. Returns the observable.
 
+## getHasSubscription
+__boolean getHasSubscription( functionToCheck )__
+
+Check if ```functionToCheck``` is in the list of subscribed functions. Returns true if ```functionToCheck``` is in the list, false otherwise.
+
 ## clearSubscription
 __object clearSubscription( functionToClear )__
 
@@ -910,6 +959,11 @@ subject.subscribe(function (value) { console.log('Value: ' + value); });
 __void subscribe ( listenerFunction )__
 
 Listener function will be automatically called whenever the subject's value changes. Returns the behavior subject.
+
+## getHasSubscription
+__boolean getHasSubscription( functionToCheck )__
+
+Check if ```functionToCheck``` is in the list of subscribed functions. Returns true if ```functionToCheck``` is in the list, false otherwise.
 
 ## clearSubscription
 __object clearSubscription( functionToClear )__

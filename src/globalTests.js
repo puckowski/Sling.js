@@ -321,7 +321,7 @@ class TestOnlySelfComponent1 {
             attrs: {
                 frameborder: '0',
                 id: 'tryit-sling-iframe',
-                slonlyself: 'true',
+                sldirective: 'onlyself',
                 style: 'background-color: rgb(255, 255, 255);'
             }
         })
@@ -632,7 +632,7 @@ class TestTrustDirectiveComponent1 {
         return markup('div', {
             attrs: {
                 id: 'testtrustdirective',
-                sltrustchildren: 'true'
+                sldirective: 'trustchildren'
             },
             children: [
                 '<div>First child.</div>',
@@ -781,6 +781,46 @@ class TestTagChangeComponent {
                         })
                     ]
                 })
+            ]
+        })
+    }
+}
+
+class TestUpdateSingleComponent1 {
+    view() {
+        const state = getState();
+        const isTestSingle = state.testSingle;
+
+        return markup('div', {
+            attrs: {
+                id: 'testsinglecomponent1'
+            },
+            children: [
+                ...(isTestSingle === false ? [
+                    textNode('Is test single false.')
+                ] : [
+                    textNode('Is test single true.')
+                ])
+            ]
+        })
+    }
+}
+
+class TestUpdateSingleComponent2 {
+    view() {
+        const state = getState();
+        const isTestSingle = state.testSingle2;
+
+        return markup('div', {
+            attrs: {
+                id: 'testsinglecomponent2'
+            },
+            children: [
+                ...(isTestSingle === false ? [
+                    textNode('Is test single false.')
+                ] : [
+                    textNode('Is test single true.')
+                ])
             ]
         })
     }
@@ -1241,6 +1281,81 @@ class TestRebindDetectionComponent2 {
     }
 }
 
+class PartSupplyComponent {
+
+    constructor() {
+        this.data = [];
+        this.MOCK_DATA_MAX_VALUE_EXCLUSIVE = 101;
+        this.MOCK_DATA_MONTH_RANGE = 24;
+    }
+
+    formatMockDate(dateToFormat) {
+        if (dateToFormat.getMonth() === 0) {
+            return '12/' + dateToFormat.getDate() + '/' + dateToFormat.getFullYear();
+        } else {
+            return dateToFormat.getMonth() + '/' + dateToFormat.getDate() + '/' + dateToFormat.getFullYear();
+        }
+    }
+
+    getMockYData(targetMonths) {
+        const mockYData = [];
+
+        for (let i = 0; i < targetMonths; ++i) {
+            // Random [0 - 100]
+            mockYData.push(Math.floor(Math.random() * this.MOCK_DATA_MAX_VALUE_EXCLUSIVE));
+        }
+
+        return mockYData;
+    }
+
+    getMockXData(targetMonths) {
+        const mockXData = [];
+        const currentDate = new Date();
+
+        currentDate.setMonth(currentDate.getMonth() - targetMonths);
+
+        for (let i = 0; i < targetMonths; ++i) {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            mockXData.push(this.formatMockDate(currentDate));
+        }
+
+        return mockXData;
+    }
+
+    slOnInit() {
+        this.data = [
+            {
+                x: this.getMockXData(this.MOCK_DATA_MONTH_RANGE),
+                y: this.getMockYData(this.MOCK_DATA_MONTH_RANGE),
+                type: 'bar'
+            }
+        ];
+    }
+
+    slAfterInit() {
+        if (document.getElementById('chartDiv')) {
+            Plotly.newPlot('chartDiv', this.data, {}, { responsive: true, displaylogo: false });
+        }
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divsheetcontent'
+            },
+            children: [
+                markup('div', {
+                    attrs: {
+                        id: 'chartDiv',
+                        sldirective: 'useexsting',
+                        style: 'width: 90vw;'
+                    }
+                })
+            ]
+        })
+    }
+}
+
 class PreviewComponent {
 
     constructor() {
@@ -1275,7 +1390,7 @@ class PreviewComponent {
                     attrs: {
                         frameborder: '0',
                         id: 'tryit-sling-iframe',
-                        slonlyself: 'true',
+                        sldirective: 'onlyself',
                         ...this.injectedList.length > 16 && { style: 'background-color: #ffffff; width: 100%; flex: 14;' },
                         ...this.injectedList.length <= 16 && { style: 'background-color: #ffffff; width: 100%; flex: 15;' }
                     }
@@ -1283,7 +1398,7 @@ class PreviewComponent {
                 markup('textarea', {
                     attrs: {
                         id: 'tryit-sling-console',
-                        slonlyself: 'true',
+                        sldirective: 'onlyself',
                         style: 'width: 100%; flex: 4;',
                         placeholder: 'Text will appear when logged'
                     }
@@ -1588,7 +1703,9 @@ export class GlobalTestRunner {
 
         let attempts = 0;
         const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
-            if (window.globalAsyncCount === 0) {
+            const state = getState();
+
+            if (window.globalAsyncCount === 0 && window.globalTestCount >= state.testCount - 1) {
                 window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
 
@@ -1631,30 +1748,34 @@ export class GlobalTestRunner {
                 window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
 
-                let state = getState();
-                state.wrapDetector = 0;
-                setState(state);
-
-                addRoute('wrapdetector', { component: new TestWrapDetectorComponent1(), root: 'testwrapdetector' });
-                route('wrapdetector');
-
-                state = getState();
-                const originalWrapCount = state.wrapDetector;
-
-                const someFunc = () => { console.log('Wrap detector'); };
-                const wrappedFunc = wrapWithChangeDetector(someFunc);
-
                 s.DETACHED_SET_TIMEOUT(() => {
-                    wrappedFunc();
+                    let state = getState();
+                    state.wrapDetector = 0;
+                    setState(state);
 
-                    state = getState();
-                    const correctCount = state.wrapDetector === originalWrapCount + 1;
+                    addRoute('wrapdetector', { component: new TestWrapDetectorComponent1(), root: 'testwrapdetector' });
+                    route('wrapdetector');
 
-                    result.success = correctCount;
-
-                    window.globalTestResults.push(result);
-                    window.globalTestCount++;
-                    window.globalAsyncCount--;
+                    s.DETACHED_SET_TIMEOUT(() => {
+                        state = getState();
+                        const originalWrapCount = state.wrapDetector;
+    
+                        const someFunc = () => { console.log('Wrap detector'); };
+                        const wrappedFunc = wrapWithChangeDetector(someFunc);
+    
+                        wrappedFunc();
+    
+                        s.DETACHED_SET_TIMEOUT(() => {
+                            state = getState();
+                            const correctCount = state.wrapDetector === originalWrapCount + 1;
+    
+                            result.success = correctCount;
+    
+                            window.globalTestResults.push(result);
+                            window.globalTestCount++;
+                            window.globalAsyncCount--;
+                        }, 100);
+                    }, 100);
                 }, 100);
             }
 
@@ -1872,6 +1993,82 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
+    testFinalize997UseExsting() {
+        const result = {
+            test: 'test use existing directive',
+            success: false,
+            message: ''
+        };
+
+        mount('divsheetcontent', new PartSupplyComponent());
+
+        detectChanges();
+
+        let chartEle = document.getElementById('divsheetcontent');
+
+        if (chartEle && chartEle.children && chartEle.children.length > 0) {
+            chartEle = chartEle.children[0];
+        }
+
+        const classList = chartEle.classList;
+        const hasChartClass = classList.contains('js-plotly-plot');
+
+        let child = null;
+        let childHasClass1 = false;
+        let childHasClass2 = false;
+
+        if (chartEle && chartEle.children && chartEle.children.length > 0) {
+            child = chartEle.children[0];
+            childHasClass1 = child.classList.contains('plot-container');
+            childHasClass2 = child.classList.contains('plotly');
+        }
+
+        result.success = chartEle && chartEle.children && chartEle.children.length > 0 && hasChartClass && child && childHasClass1 && childHasClass2;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize997SingleComponentUpdate() {
+        const result = {
+            test: 'test update single component',
+            success: false,
+            message: ''
+        };
+
+        let state = getState();
+        state.testSingle = false;
+        state.testSingle2 = false;
+        setState(state);
+
+        mount('testsinglecomponent1', new TestUpdateSingleComponent1());
+        mount('testsinglecomponent2', new TestUpdateSingleComponent2());
+
+        let firstEle = document.getElementById('testsinglecomponent1');
+        const firstEleCorrect = firstEle && firstEle.textContent === 'Is test single false.';
+
+        let secondEle = document.getElementById('testsinglecomponent2');
+        const secondEleCorrect = secondEle && secondEle.textContent === 'Is test single false.';
+
+        state = getState();
+        state.testSingle = true;
+        state.testSingle2 = true;
+        setState(state);
+
+        detectChanges('testsinglecomponent1');
+
+        firstEle = document.getElementById('testsinglecomponent1');
+        const firstEleCorrect2 = firstEle && firstEle.textContent === 'Is test single true.';
+
+        secondEle = document.getElementById('testsinglecomponent2');
+        const secondEleCorrect2 = secondEle && secondEle.textContent === 'Is test single false.';
+
+        result.success = firstEleCorrect && secondEleCorrect && firstEleCorrect2 && secondEleCorrect2;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
     testFinalize997InsertBeforeDomStructure() {
         const result = {
             test: 'test insert before call on tag name change does not adversely impact DOM structure',
@@ -1897,16 +2094,16 @@ export class GlobalTestRunner {
         state = getState();
         const afterInitCalled = state.sourcePanelAfterInit === true;
 
-        const correctChild = contentEle && contentEle.children && contentEle.children.length === 1 
-        && contentEle.children[0].tagName === 'DIV';
-        const correctNestedChild = contentEle && contentEle.children && contentEle.children.length === 1 
-        && contentEle.children[0].children && contentEle.children[0].children.length === 1 && contentEle.children[0].children[0].tagName === 'DIV';
+        const correctChild = contentEle && contentEle.children && contentEle.children.length === 1
+            && contentEle.children[0].tagName === 'DIV';
+        const correctNestedChild = contentEle && contentEle.children && contentEle.children.length === 1
+            && contentEle.children[0].children && contentEle.children[0].children.length === 1 && contentEle.children[0].children[0].tagName === 'DIV';
 
         let nestedChild = null;
         let previewChildren = null;
         let hasPreviewChildren = false;
 
-        if (contentEle && contentEle.children && contentEle.children.length === 1 && contentEle.children[0].children 
+        if (contentEle && contentEle.children && contentEle.children.length === 1 && contentEle.children[0].children
             && contentEle.children[0].children.length === 1) {
             nestedChild = contentEle.children[0].children[0];
 
@@ -1921,6 +2118,17 @@ export class GlobalTestRunner {
         let correctThirdEle = false;
         let correctFourthEle = false;
 
+        let firstEleAttr1 = false;
+        let secondEleAttr1 = false;
+        let thirdEleAttr1 = false;
+        let thirdEleAttr2 = false;
+        let thirdEleAttr3 = false;
+        let thirdEleAttr4 = false;
+        let fourthEleAttr1 = false;
+        let fourthEleAttr2 = false;
+        let fourthEleAttr3 = false;
+        let fourthEleAttr4 = false;
+
         if (hasPreviewChildren) {
             correctFirstEle = previewChildren && previewChildren.children && previewChildren.children.length > 0 && previewChildren.children[0].tagName === 'H4';
             correctSecondEle = previewChildren && previewChildren.children && previewChildren.children.length > 1 && previewChildren.children[1].tagName === 'DIV';
@@ -1928,7 +2136,31 @@ export class GlobalTestRunner {
             correctFourthEle = previewChildren && previewChildren.children && previewChildren.children.length > 3 && previewChildren.children[3].tagName === 'TEXTAREA';
         }
 
-        result.success = afterInitCalled && correctChild && correctNestedChild && hasPreviewChildren && correctFirstEle && correctSecondEle && correctThirdEle && correctFourthEle;
+        if (correctFirstEle) {
+            firstEleAttr1 = previewChildren.children[0].getAttribute('style') !== null;
+        }
+
+        if (correctSecondEle) {
+            secondEleAttr1 = previewChildren.children[1].getAttribute('style') !== null;
+        }
+
+        if (correctThirdEle) {
+            thirdEleAttr1 = previewChildren.children[2].getAttribute('style') !== null;
+            thirdEleAttr2 = previewChildren.children[2].getAttribute('sldirective') !== null;
+            thirdEleAttr3 = previewChildren.children[2].getAttribute('id') !== null;
+            thirdEleAttr4 = previewChildren.children[2].getAttribute('frameborder') !== null;
+        }
+
+        if (correctFourthEle) {
+            fourthEleAttr1 = previewChildren.children[3].getAttribute('style') !== null;
+            fourthEleAttr2 = previewChildren.children[3].getAttribute('placeholder') !== null;
+            fourthEleAttr3 = previewChildren.children[3].getAttribute('sldirective') !== null;
+            fourthEleAttr4 = previewChildren.children[3].getAttribute('id') !== null;
+        }
+
+        result.success = afterInitCalled && correctChild && correctNestedChild && hasPreviewChildren && correctFirstEle && correctSecondEle && correctThirdEle && correctFourthEle
+            && firstEleAttr1 && secondEleAttr1 && thirdEleAttr1 && thirdEleAttr2 && thirdEleAttr3 && thirdEleAttr4 && fourthEleAttr1
+            && fourthEleAttr2 && fourthEleAttr3 && fourthEleAttr4;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -1957,7 +2189,7 @@ export class GlobalTestRunner {
 
         const correctBorder = iframeEle && iframeEle.getAttribute('frameborder') === '0';
         const correctId = iframeEle && iframeEle.id === 'tryit-sling-iframe';
-        const onlySelfDirective = iframeEle && iframeEle.getAttribute('slonlyself') === 'true';
+        const onlySelfDirective = iframeEle && iframeEle.getAttribute('sldirective') === 'onlyself';
         const correctStyle = iframeEle && iframeEle.style.cssText === 'background-color: rgb(255, 255, 255);';
 
         result.success = correctBorder && correctId && onlySelfDirective && correctStyle;
@@ -3624,8 +3856,15 @@ export class GlobalTestRunner {
                     return 1;
                 }
             });
+
+        const state = getState();
+        state.testCount = testFuncList.length;
+        setState(state);
+
         testFuncList.forEach(testFuncName => {
-            this[testFuncName]();
+            s.DETACHED_SET_TIMEOUT(() => {
+                this[testFuncName]();
+            }, 50);
         });
 
         const testCount = this.getAllFuncs(this).filter(key => key && key.startsWith('test')).filter(key => key && key !== 'dummyTest').length;
