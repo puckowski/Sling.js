@@ -868,6 +868,165 @@ class RouteBasicComponent {
     }
 }
 
+class OnDestroyCallTestComponent {
+    slOnDestroy() {
+        const state = getState();
+        if (!state.destroyCalls) state.destroyCalls = 1;
+        else state.destroyCalls++;
+        setState(state);
+    }
+
+    view() {
+        const state = getState();
+
+        return markup('div', {
+            attrs: {
+                id: 'destroycallcomponent'
+            },
+            children: [
+                textNode('Some plain text.'),
+                ...(state.onDestroyCall ? [markup('p', {
+                    children: [
+                        textNode('Flag set.'),
+                    ]
+                })] : []),
+                new OnDestroyCallTestComponent2()
+            ]
+        })
+    }
+}
+
+class OnDestroyCallTestComponent2 {
+    slOnDestroy() {
+        const state = getState();
+        if (!state.destroyCalls) state.destroyCalls = 1;
+        else state.destroyCalls++;
+        setState(state);
+    }
+
+    view() {
+        return markup('div', {
+            children: [
+                textNode('Some plain text.')
+            ]
+        })
+    }
+}
+
+class OnInitThisTestComponent {
+    constructor() {
+        this.value = 2;
+    }
+
+    slOnInit() {
+        const state = getState();
+        state.onInitThis = this.value === 2 ? true : false;
+        setState(state);
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'oninitthiscomponent'
+            },
+            children: [
+                textNode('Some plain text.')
+            ]
+        })
+    }
+}
+
+class DestroyHookCalledTestComponent {
+    view() {
+        const state = getState();
+
+        return markup('div', {
+            attrs: {
+                id: 'destroyhookcalledcomponent'
+            },
+            children: [
+                textNode('Some plain text.'),
+                ...(!state.forceDestroyHook ? [markup('p', {
+                    children: [
+                        new DestroyHookCalledTestComponent2()
+                    ]
+                })] : []),
+            ]
+        })
+    }
+}
+
+class DestroyHookCalledTestComponent2 {
+    slOnDestroy() {
+        const state = getState();
+        state.destroyHook2Called = true;
+        setState(state);
+    }
+
+    view() {
+        return markup('div', {
+            children: [
+                textNode('Some plain text.')
+            ]
+        })
+    }
+}
+
+class AfterInitCallTestComponent {
+    slAfterInit() {
+        const state = getState();
+        if (!state.initCalls) state.initCalls = 1;
+        else state.initCalls++;
+        setState(state);
+    }
+
+    view() {
+        const state = getState();
+
+        return markup('div', {
+            attrs: {
+                id: 'initcallcomponent',
+                style: 'color: blue;'
+            },
+            children: [
+                textNode('Some plain text.'),
+                ...(state.afterInitCall ? [markup('p', {
+                    children: [
+                        textNode('Flag set.'),
+                    ]
+                })] : []),
+            ]
+        })
+    }
+}
+
+class OnInitCallTestComponent {
+    slOnInit() {
+        const state = getState();
+        if (!state.onInitCalls) state.onInitCalls = 1;
+        else state.onInitCalls++;
+        setState(state);
+    }
+
+    view() {
+        const state = getState();
+
+        return markup('div', {
+            attrs: {
+                id: 'oninitcallcomponent'
+            },
+            children: [
+                textNode('Some plain text.'),
+                ...(state.onInitCall ? [markup('p', {
+                    children: [
+                        textNode('Flag set.'),
+                    ]
+                })] : []),
+            ]
+        })
+    }
+}
+
 class OnBeforeRouteComponent {
     view() {
         return markup('div', {
@@ -1759,18 +1918,18 @@ export class GlobalTestRunner {
                     s.DETACHED_SET_TIMEOUT(() => {
                         state = getState();
                         const originalWrapCount = state.wrapDetector;
-    
+
                         const someFunc = () => { console.log('Wrap detector'); };
                         const wrappedFunc = wrapWithChangeDetector(someFunc);
-    
+
                         wrappedFunc();
-    
+
                         s.DETACHED_SET_TIMEOUT(() => {
                             state = getState();
                             const correctCount = state.wrapDetector === originalWrapCount + 1;
-    
+
                             result.success = correctCount;
-    
+
                             window.globalTestResults.push(result);
                             window.globalTestCount++;
                             window.globalAsyncCount--;
@@ -1989,6 +2148,128 @@ export class GlobalTestRunner {
 
         result.success = compStr === '<div id="testssrhydrate" slssrclass="TestSsrHydrateComponent1"><button id="ssrTest2" onclick="">Test Hydrate</button><div id="ssrTest1">Hydrated function called.</div></div>';
 
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize997DestroyHookWithoutRouter() {
+        const result = {
+            test: 'test slOnDestroy hook called without router call',
+            success: false,
+            message: ''
+        };
+
+        let state = getState();
+        state.destroyHook2Called = false;
+        setState(state);
+
+        mount('destroyhookcalledcomponent', new DestroyHookCalledTestComponent());
+    
+        state = getState();
+        const initiallyFalse = state.destroyHook2Called === false;
+        state.forceDestroyHook = true;
+        setState(state);
+
+        detectChanges('destroyhookcalledcomponent');
+
+        state = getState();
+
+        result.success = initiallyFalse && state.destroyHook2Called === true;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize997OnInitThis() {
+        const result = {
+            test: 'test slOnInit this reference',
+            success: false,
+            message: ''
+        };
+
+        mount('oninitthiscomponent', new OnInitThisTestComponent());
+
+        const state = getState();
+
+        result.success = state.onInitThis === true;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize997OnDestroyCalls() {
+        const result = {
+            test: 'test slOnDestroy called correct number of times',
+            success: false,
+            message: ''
+        };
+
+        const originalRoute = getRoute();
+
+        addRoute('testdestroycalls', { component: new OnDestroyCallTestComponent(), root: 'destroycallcomponent' });
+        route('testdestroycalls');
+
+        let state = getState();
+        state.onDestroyCall = true;
+        setState(state);
+
+        detectChanges('destroycallcomponent');
+
+        route(originalRoute);
+
+        state = getState();
+        const destroyCalls = state.destroyCalls;
+
+        result.success = destroyCalls === 2;
+        
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize997AfterInitCalls() {
+        const result = {
+            test: 'test slAfterInit called correct number of times',
+            success: false,
+            message: ''
+        };
+
+        mount('initcallcomponent', new AfterInitCallTestComponent());
+
+        let state = getState();
+        state.afterInitCall = true;
+        setState(state);
+
+        detectChanges('initcallcomponent');
+
+        state = getState();
+        const initCalls = state.initCalls;
+
+        result.success = initCalls === 1;
+        
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize997OnInitCalls() {
+        const result = {
+            test: 'test slOnInit called correct number of times',
+            success: false,
+            message: ''
+        };
+
+        mount('oninitcallcomponent', new OnInitCallTestComponent());
+
+        let state = getState();
+        state.onInitCall = true;
+        setState(state);
+
+        detectChanges('oninitcallcomponent');
+
+        state = getState();
+        const initCalls = state.onInitCalls;
+
+        result.success = initCalls === 1;
+        
         window.globalTestResults.push(result);
         window.globalTestCount++;
     }
@@ -3827,6 +4108,10 @@ export class GlobalTestRunner {
         document.getElementById('runtestsbutton').outerHTML = '';
     }
 
+    sleep(milliseconds) {
+        return new Promise(resolve => setTimeout(resolve, milliseconds));
+    }
+
     run() {
         this.showProcessing();
 
@@ -3861,10 +4146,9 @@ export class GlobalTestRunner {
         state.testCount = testFuncList.length;
         setState(state);
 
-        testFuncList.forEach(testFuncName => {
-            s.DETACHED_SET_TIMEOUT(() => {
-                this[testFuncName]();
-            }, 50);
+        testFuncList.forEach(async testFuncName => {
+            this[testFuncName]();
+            await this.sleep(50);
         });
 
         const testCount = this.getAllFuncs(this).filter(key => key && key.startsWith('test')).filter(key => key && key !== 'dummyTest').length;

@@ -2,13 +2,15 @@
 
 # Sling
 
-Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **9KB minified, and less than 3KB gzipped**.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **10KB minified, and less than 4KB gzipped**.
 
 Sling creates and uses an Incremental DOM to perform differential updates for fast rendering.
 
 Sling has an automatic change detection mechanism which updates your components for you.
 
 Sling is structured using ECMAScript modules so that Sling code is tree shakeable to ultimately reduce bundle sizes.
+
+See: [slingjs.org](slingjs.org)
 
 ## Goals
 
@@ -551,9 +553,9 @@ __void setDetectionStrategy ( newDetectionStrategy )__
 Set the new change detection strategy.
 
 ## detectChanges
-__void detectChanges ( )__
+__void detectChanges ( eleId )__
 
-Trigger automatic change detection immediately.
+Trigger automatic change detection immediately. If eleId is undefined or null, change detection will be performed on all components.
 
 ## isDetectorAttached
 __boolean isDetectorAttached ( eleId )__
