@@ -896,6 +896,84 @@ class OnDestroyCallTestComponent {
     }
 }
 
+class HooksGenericTestComponent {
+    slOnInit() {
+        const state = getState();
+        if (!state.genericOnInit) state.genericOnInit = 1;
+        else state.genericOnInit++;
+        setState(state);
+    }
+
+    slAfterInit() {
+        const state = getState();
+        if (!state.genericAfterInit) state.genericAfterInit = 1;
+        else state.genericAfterInit++;
+        setState(state);
+    }
+
+    view() {
+        const state = getState();
+        if (!state.renderCount) state.renderCount = 1;
+        else state.renderCount++;
+        setState(state);
+
+        return markup('div', {
+            attrs: {
+                id: 'hooksgenericcomponent'
+            },
+            children: [
+                textNode('Some plain text.'),
+                ...(state.genericHookTemplate ? [markup('p', {
+                    children: [
+                        textNode('More plain text.')
+                    ]
+                })] : [])
+            ]
+        })
+    }
+}
+
+class OnDestroyCallTemplateTestComponent {
+    constructor() {
+        this.comp = new OnDestroyCallTemplateTestComponent2();
+    }
+
+    view() {
+        const state = getState();
+
+        return markup('div', {
+            attrs: {
+                id: 'destroycalltemplatecomponent'
+            },
+            children: [
+                textNode('Some plain text.'),
+                ...(state.onDestroyCallTemplate ? [markup('p', {
+                    children: [
+                        this.comp
+                    ]
+                })] : [])
+            ]
+        })
+    }
+}
+
+class OnDestroyCallTemplateTestComponent2 {
+    slOnDestroy() {
+        const state = getState();
+        if (!state.destroyTemplateCalls) state.destroyTemplateCalls = 1;
+        else state.destroyTemplateCalls++;
+        setState(state);
+    }
+
+    view() {
+        return markup('div', {
+            children: [
+                textNode('Some plain text.')
+            ]
+        })
+    }
+}
+
 class OnDestroyCallTestComponent2 {
     slOnDestroy() {
         const state = getState();
@@ -1837,6 +1915,81 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
+    testStateExists() {
+        const result = {
+            test: 'test internal state exists',
+            success: false,
+            message: ''
+        };
+
+        const stateDefined = s._state;
+
+        result.success = stateDefined !== null && stateDefined !== undefined;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testDestroyFunctionMapExists() {
+        const result = {
+            test: 'test internal destroy function map exists',
+            success: false,
+            message: ''
+        };
+
+        const mapDefined = s._destroyFuncMap;
+
+        result.success = mapDefined !== null && mapDefined !== undefined;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testUpdateMapExists() {
+        const result = {
+            test: 'test internal update map exists',
+            success: false,
+            message: ''
+        };
+
+        const mapDefined = s._updateMap;
+
+        result.success = mapDefined !== null && mapDefined !== undefined;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testAfterInitListExists() {
+        const result = {
+            test: 'test internal slAfterInit list exists',
+            success: false,
+            message: ''
+        };
+
+        const listDefined = s._afterInitArr;
+
+        result.success = listDefined !== null && listDefined !== undefined;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testDestroyNodeMapExists() {
+        const result = {
+            test: 'test internal destroy node map exists',
+            success: false,
+            message: ''
+        };
+
+        const mapDefined = s._destroyNodeMap;
+
+        result.success = mapDefined !== null && mapDefined !== undefined;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
     testChangeDetectorConstants() {
         const result = {
             test: 'test change detection constants',
@@ -2152,6 +2305,66 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
+    testFinalize997GenericHooksCallCount() {
+        const result = {
+            test: 'test slOnInit and slAfterInit hooks are not called needlessly',
+            success: false,
+            message: ''
+        };
+
+        let state = getState();
+        state.genericHookTemplate = true;
+        setState(state);
+
+        mount('hooksgenericcomponent', new HooksGenericTestComponent());
+
+        state = getState();
+        const initCount = state.genericOnInit;
+        const afterInitCount = state.genericAfterInit;
+        state.genericHookTemplate = false;
+        setState(state);
+
+        detectChanges('hooksgenericcomponent');
+
+        state = getState();
+        const initCountFinal = state.genericOnInit;
+        const afterInitCountFinal = state.genericAfterInit;
+
+        result.success = initCount === 1 && afterInitCount === 1 && initCountFinal === 1 && afterInitCountFinal === 1;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize997DestroyHookByTemplate() {
+        const result = {
+            test: 'test slOnDestroy hook called for template changes',
+            success: false,
+            message: ''
+        };
+
+        let state = getState();
+        state.onDestroyCallTemplate = true;
+        state.destroyTemplateCalls = 0;
+        setState(state);
+
+        mount('destroycalltemplatecomponent', new OnDestroyCallTemplateTestComponent());
+
+        state = getState();
+        const originalCalls = state.destroyTemplateCalls;
+        state.onDestroyCallTemplate = false;
+
+        detectChanges('destroycalltemplatecomponent');
+
+        state = getState();
+        const finalCalls = state.destroyTemplateCalls;
+
+        result.success = originalCalls === 0 && finalCalls === 1;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
     testFinalize997DestroyHookWithoutRouter() {
         const result = {
             test: 'test slOnDestroy hook called without router call',
@@ -2164,7 +2377,7 @@ export class GlobalTestRunner {
         setState(state);
 
         mount('destroyhookcalledcomponent', new DestroyHookCalledTestComponent());
-    
+
         state = getState();
         const initiallyFalse = state.destroyHook2Called === false;
         state.forceDestroyHook = true;
@@ -2221,7 +2434,7 @@ export class GlobalTestRunner {
         const destroyCalls = state.destroyCalls;
 
         result.success = destroyCalls === 2;
-        
+
         window.globalTestResults.push(result);
         window.globalTestCount++;
     }
@@ -2245,7 +2458,7 @@ export class GlobalTestRunner {
         const initCalls = state.initCalls;
 
         result.success = initCalls === 1;
-        
+
         window.globalTestResults.push(result);
         window.globalTestCount++;
     }
@@ -2269,7 +2482,7 @@ export class GlobalTestRunner {
         const initCalls = state.onInitCalls;
 
         result.success = initCalls === 1;
-        
+
         window.globalTestResults.push(result);
         window.globalTestCount++;
     }
