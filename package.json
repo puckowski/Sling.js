@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "buildBrowser": "browserify .\\dist\\sling.min.es5.js --outfile .\\dist\\sling.nomodule.js",
     "build": "webpack --mode development",
     "buildProd": "webpack --mode production",
     "devServer": "webpack-dev-server --content-base dist/",
-    "buildAll": "npm run buildSlingCore && npm run buildSlingXhr && npm run buildSlingReactive && npm run buildEs5 && npm run buildEs5Min",
+    "buildAll": "npm run buildSlingCore && npm run buildSlingXhr && npm run buildSlingReactive && npm run buildEs5 && npm run buildEs5Min && npm run buildBrowser",
     "buildEs5": "babel .\\dist\\sling.min.js --out-file .\\dist\\sling.es5.js --presets=@babel/preset-env",
     "buildEs5Min": "terser --compress --mangle toplevel,reserved=['m'] --output .\\dist\\sling.min.es5.js -- .\\dist\\sling.es5.js",
     "buildSlingCore": "terser --toplevel --compress --mangle toplevel,reserved=['m'] --output .\\dist\\sling.min.js -- .\\src\\sling\\core\\sling.js",
@@ -56,6 +57,7 @@
     "webpack-dev-server": "^3.9.0"
   },
   "dependencies": {
-    "terser-webpack-plugin": "^2.2.1"
+    "terser-webpack-plugin": "^2.2.1",
+    "browserify": "^17.0.0"
   }
 }

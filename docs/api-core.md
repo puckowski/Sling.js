@@ -45,7 +45,7 @@ Terse alias for markup() function.
 ## textNode
 __string textNode( text )__
 
-Create a text node.
+Append a DOMString to a node.
 
 Example textNode call:
 
@@ -81,7 +81,7 @@ Returns Sling version number represented as a string.
 Example:
 
 ```javascript
-console.log(s.version); // '3.2.0'
+console.log(version()); // '10.1.1'
 ```
 
 ## resolveAll
@@ -106,6 +106,84 @@ resolveAll(requestPromises).then((results) => {
 });
 ```
 
+## hydrate
+__element hydrate ( rootElementId, attachDetector = true )__
+
+Attach event handlers to component on element with ID ```rootElementId``` in DOM.
+Returns root element in DOM.
+
+Sling will take over the static HTML sent by the server and manage change detection.
+
+In order to correctly hydrate static HTML sent by the server, the static HTML of the root element must contain two attributes. First, an ID must be specified so Sling can locate the component for hydration. Second, the attribute ```slssrclass``` must be specified. The value of ```slssrclass``` should be the class name of the view which manages the component. The class identified by ```slssrclass``` should be defined on the ```window``` object, or defined on the value of ```this```.
+
+Example:
+
+```javascript
+class TestSsrHydrateComponent1 {
+    hydratedFunction() {
+        const state = getState();
+        state.ishydrated = true;
+        setState(state);
+    }
+
+    view() {
+        const state = getState();
+        const isFuncCalled = state.ishydrated;
+
+        return markup('div', {
+            attrs: {
+                id: 'testssrhydrate',
+                slssrclass: 'TestSsrHydrateComponent1'
+            },
+            children: [
+                markup('button', {
+                    attrs: {
+                        id: 'ssrTest2',
+                        onclick: this.hydratedFunction.bind(this)
+                    },
+                    children: [
+                        textNode('Test Hydrate')
+                    ]
+                }),
+                markup('div', {
+                    attrs: {
+                        id: 'ssrTest1'
+                    },
+                    children: [
+                        ...(isFuncCalled === true ? [
+                            textNode('Hydrated function called.')
+                        ] : [
+                            textNode('SSR placeholder.')
+                        ])
+                    ]
+                })
+            ]
+        })
+    }
+}
+window.TestSsrHydrateComponent1 = TestSsrHydrateComponent1;
+
+hydrate('testssrhydrate');
+```
+
+By default, the Sling change detector is attached for the mounted component. Setting ```attachDetector``` to ```false``` prevents the change detector from being attached to this component. There are two convenience constants for change detection which are as follows:
+
+|Constant                        |Value      |
+|--------------------------------|-----------|
+|```s.CHANGE_DETECTOR_DETACHED```|```false```|
+|```s.CHANGE_DETECTOR_ATTACHED```|```true``` |
+
+## renderToString
+__string renderToString( component )__
+
+Renders a component into a HTML string.
+
+Example:
+
+```javascript
+const compStr = renderToString(new LoginComponent());
+```
+
 # Core Router API
 
 ## addRoute
@@ -115,25 +193,30 @@ Define a hash-based route that will replace element with ID ```elementId```'s co
 
 Below is a list of possible ```routeObj``` properties:
 
-|Property |Description                                                                |
-|---------|---------------------------------------------------------------------------|
-| root    |The ```id``` of the element to replace on route.                           |
-|component|The component to replace ```root```.                                       |
-|authGuard|A function that returns true if route action may be taken, otherwise false.|
-|authFail |Object with ```route``` property to route to on ```authGuard``` fail. Also may specify ```params```.|
+|Property          |Description                                                                                                                          |
+|------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+|root              |The ```id``` of the element to replace on route.                                                                                     |
+|component         |The component to replace ```root```.                                                                                                 |
+|onCanDeactivate   |A function that returns true if the current route may be navigated away from. Called before onActivationCheck.                       |
+|onActivationCheck |A function that returns true if route action may be taken, otherwise false.                                                          |
+|onActivationFail  |Object with ```route``` property to route to on ```onActivationCheck``` fail. Also may specify ```params``` and ```attachDetector```.|
+|onBeforeRoute     |Function to execute before taking route action. Called after onActivationCheck and before the route action is taken.                 |
 
 Example route definition:
 
 ```javascript
-route('all', { component:  new  TodoListComponent(), root:  'divTodoList' });
-route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList' });
-route('user/:userId', { component: new UserProfileComponent(), root: 'divUserProfile' });
+addRoute('all', { component:  new  TodoListComponent(), root:  'divTodoList' });
+addRoute('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList' });
+addRoute('user/:userId', { component: new UserProfileComponent(), root: 'divUserProfile' });
+addRoute('.*', { component: new DefaultRouteComponent(), root: 'divRouterOutlet' });
 ```
 
-Example ```authGuard``` definition:
+Note: Use '.*' for the default route. Routes are checked in the order they are registered with addRoute.
+
+Example ```onActivationCheck``` definition:
 
 ```javascript
-route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList', authGuard: function(proposedRoute) { console.log('This will prevent route to \'completed\'.'); return false; }, authFail: { route: 'all', params: { } } });
+route('completed', { component:  new  TodoListCompletedComponent(), root:  'divTodoList', onActivationCheck: function(proposedRoute) { console.log('This will prevent route to \'completed\'.'); return false; }, onActivationFail: { route: 'all', params: { } } });
 ```
 
 ## route
@@ -146,7 +229,18 @@ By default, the Sling change detector is attached for the mounted component. Set
 Example route call:
 
 ```javascript
-s.route('user/5'); // Activates component at root for route 'user/:userId'
+route('user/5'); // Activates component at root for route 'user/:userId'
+```
+
+## removeRoute
+__void removeRoute ( hashUrlRegEx )__
+
+Remove a route from the Sling router.
+
+Example:
+
+```javascript
+removeRoute('user/:userId');
 ```
 
 ## getRoute
@@ -192,9 +286,9 @@ __void setDetectionStrategy ( newDetectionStrategy )__
 Set the new change detection strategy.
 
 ## detectChanges
-__void detectChanges ( )__
+__void detectChanges ( eleId )__
 
-Trigger automatic change detection immediately.
+Trigger automatic change detection immediately. If eleId is undefined or null, change detection will be performed on all components.
 
 ## isDetectorAttached
 __boolean isDetectorAttached ( eleId )__
@@ -205,3 +299,8 @@ Returns true if Sling change detector is attached for the given element ID ```el
 __void detachDetector ( eleId )__
 
 Detach the Sling change detector for the given element ID ```eleId```.
+
+## wrapWithChangeDetector
+__function wrapWithChangeDetector ( funcToWrap )__
+
+Wrap a function ```funcToWrap``` with a change detector call, so every time the function is called change detection is also run.

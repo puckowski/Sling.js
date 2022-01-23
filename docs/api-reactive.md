@@ -53,6 +53,11 @@ __object subscribe( function(arrayData) { } )__
 
 Add a function that is automatically called when the underlying stream data changes. Returns the stream.
 
+## getHasSubscription
+__boolean getHasSubscription( functionToCheck )__
+
+Check if ```functionToCheck``` is in the list of subscribed functions. Returns true if ```functionToCheck``` is in the list, false otherwise.
+
 ## clearSubscription
 __object clearSubscription( functionToClear )__
 
@@ -108,6 +113,11 @@ __void subscribe ( listenerFunction )__
 
 Listener function will be automatically called whenever the underlying array data changes. Returns the observable.
 
+## getHasSubscription
+__boolean getHasSubscription( functionToCheck )__
+
+Check if ```functionToCheck``` is in the list of subscribed functions. Returns true if ```functionToCheck``` is in the list, false otherwise.
+
 ## clearSubscription
 __object clearSubscription( functionToClear )__
 
@@ -145,6 +155,11 @@ __void subscribe ( listenerFunction )__
 
 Listener function will be automatically called whenever the subject's value changes. Returns the behavior subject.
 
+## getHasSubscription
+__boolean getHasSubscription( functionToCheck )__
+
+Check if ```functionToCheck``` is in the list of subscribed functions. Returns true if ```functionToCheck``` is in the list, false otherwise.
+
 ## clearSubscription
 __object clearSubscription( functionToClear )__
 
@@ -164,3 +179,86 @@ Set the next value of the subject. All subscribers are automatically called. Ret
 __primitive|object getData( )__
 
 Get the underlying value.
+
+## FormControl
+__object FormControl( initialValue )__
+
+Returns a Sling form control. A form control is a value checked by attached validation functions that emits changes to subscribers.
+
+Example form control usage:
+
+```javascript
+const formControl = FormControl(200);
+
+const validatorFn1 = (val) => {
+	if (!isNaN(val) && isFinite(val)) {
+    	return null;
+    } else {
+    	return { nonNumeric: true };
+    }
+}
+
+formControl.setValidators([validatorFn1, validatorFn2]);
+
+formControl.getValueChanges().subscribe((value) => {
+	console.log(value);
+});
+
+const valid = formControl.getValid() === true;
+const pristine = formControl.getPristine() === true;
+const errors = formControl.getErrors();
+
+formControl.setValue(2);
+```
+
+## FormControl Functions
+
+## getValue
+__any getValue ( )__
+
+Get the current value of the form control.
+
+## getValid
+__boolean getValid ( )__
+
+Get the current validity status of the form control.
+
+## getDirty
+__boolean getDirty ( )__
+
+Returns true if the form control value has been changed.
+
+## getPristine
+__boolean getPristine ( )__
+
+Returns true if the form control value has not been changed.
+
+## getErrors
+__object[] getErrors ( )__
+
+Returns the list of error objects.
+
+## getError
+__object getError ( errorKey )__
+
+Return the error object identified by the given key, it it exists. Null otherwise.
+
+## getValueChanges
+__BehaviorSubject getValueChanges ( )__
+
+Returns the value changes BehaviorSubject which may be subscribed to on form control value change.
+
+## setValue
+__void setValue ( newValue )__
+
+Sets the new value of the form control.
+
+## setPristine
+__void setPristine ( )__
+
+Sets the form control as pristine.
+
+## setValidators
+__void setValidators ( validatorFnList )__
+
+Sets the validator functions of the form control. Each function accepts a value and returns null if valid or an object with a key.
