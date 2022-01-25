@@ -245,7 +245,7 @@ export class TestControllerComponent1 {
                                   children: [
                                       markup('h1', {
                                           children: [
-                                              textNode('Sling.js 13.01')
+                                              textNode('Sling.js')
                                           ]
                                       })
                                   ]
@@ -458,7 +458,7 @@ export class TestControllerComponent2 {
                                     children: [
                                         markup('h1', {
                                             children: [
-                                                textNode('Sling.js 13.01')
+                                                textNode('Sling.js')
                                             ]
                                         })
                                     ]
@@ -3798,6 +3798,55 @@ export class GlobalTestRunner {
         }, 500);
     }
 
+    testFinalize960XhrReuse() {
+        const result = {
+            test: 'test XMLHttpRequest object reuse with multiple send requests',
+            success: false,
+            message: ''
+        };
+
+        const xhr1 = new XMLHttpRequest();
+
+        xhr1.onload = function () {
+            console.log('testFinalize960XhrReuse XHR load completed');
+        
+            onloadCount++;
+            if (this.response !== null && this.response !== undefined && this.response !== '') responseNotEmptyCount++;
+
+            result.success = onloadCount === NUMBER_OF_REQUESTS && responseNotEmptyCount === NUMBER_OF_REQUESTS;
+            
+            if (onloadCount === NUMBER_OF_REQUESTS) {
+                addedResult = true;
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+            } else {
+                xhr1.open('GET', 'https://jsonplaceholder.typicode.com/users', true);
+
+                console.log('testFinalize960XhrReuse before send');
+                xhr1.send(null);
+                console.log('testFinalize960XhrReuse after send');
+            }
+        };
+
+        let onloadCount = 0;
+        let responseNotEmptyCount = 0;
+        let addedResult = false;
+        const NUMBER_OF_REQUESTS = 2;
+
+        xhr1.open('GET', 'https://jsonplaceholder.typicode.com/users', true);
+
+        console.log('testFinalize960XhrReuse before send');
+        xhr1.send(null);
+        console.log('testFinalize960XhrReuse after send');
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            if (!addedResult) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+            }
+        }, 12000);
+    }
+
     testFinalize960NestedClassRenderedToString() {
         const result = {
             test: 'test nested class rendered to string properly',
@@ -3807,7 +3856,7 @@ export class GlobalTestRunner {
 
         const compStr = renderToString(new TestControllerComponent2());
 
-        result.success = compStr === '<div class="container" id="main2"><div class="jumbotron"><div class="row"><div class="col-md-6"><h1>Sling.js 13.01</h1></div><div class="col-md-6"><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="run2" onclick="">Create 1,000 rows</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="runlots2" onclick="">Create 10,000 rows</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="add2" onclick="">Append 1,000 rows</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="update2" onclick="">Update every 10th row</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="clear2" onclick="">Clear</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="swaprows2" onclick="">Swap Rows</button></div></div></div></div><table class="table table-hover table-striped test-data" id="idcontrollertable2"><tbody><tr class="" onclick="" onremove=""><td class="col-md-1">1</td><td class="col-md-4"><a href="#" onclick="">pretty red table</a></td><td class="col-md-1"><a href="#" id="id-row-delete-1" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">2</td><td class="col-md-4"><a href="#" onclick="">clean orange pizza</a></td><td class="col-md-1"><a href="#" id="id-row-delete-2" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">3</td><td class="col-md-4"><a href="#" onclick="">important black cookie</a></td><td class="col-md-1"><a href="#" id="id-row-delete-3" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">4</td><td class="col-md-4"><a href="#" onclick="">short white desk</a></td><td class="col-md-1"><a href="#" id="id-row-delete-4" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">5</td><td class="col-md-4"><a href="#" onclick="">helpful brown chair</a></td><td class="col-md-1"><a href="#" id="id-row-delete-5" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">6</td><td class="col-md-4"><a href="#" onclick="">pretty purple mouse</a></td><td class="col-md-1"><a href="#" id="id-row-delete-6" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">7</td><td class="col-md-4"><a href="#" onclick="">clean brown sandwich</a></td><td class="col-md-1"><a href="#" id="id-row-delete-7" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">8</td><td class="col-md-4"><a href="#" onclick="">important pink car</a></td><td class="col-md-1"><a href="#" id="id-row-delete-8" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">9</td><td class="col-md-4"><a href="#" onclick="">short green house</a></td><td class="col-md-1"><a href="#" id="id-row-delete-9" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">10</td><td class="col-md-4"><a href="#" onclick="">helpful blue keyboard</a></td><td class="col-md-1"><a href="#" id="id-row-delete-10" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr></tbody></table><span class="preloadicon glyphicon glyphicon-remove" aria-hidden="true"></span></div>';
+        result.success = compStr === '<div class="container" id="main2"><div class="jumbotron"><div class="row"><div class="col-md-6"><h1>Sling.js</h1></div><div class="col-md-6"><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="run2" onclick="">Create 1,000 rows</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="runlots2" onclick="">Create 10,000 rows</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="add2" onclick="">Append 1,000 rows</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="update2" onclick="">Update every 10th row</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="clear2" onclick="">Clear</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="swaprows2" onclick="">Swap Rows</button></div></div></div></div><table class="table table-hover table-striped test-data" id="idcontrollertable2"><tbody><tr class="" onclick="" onremove=""><td class="col-md-1">1</td><td class="col-md-4"><a href="#" onclick="">pretty red table</a></td><td class="col-md-1"><a href="#" id="id-row-delete-1" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">2</td><td class="col-md-4"><a href="#" onclick="">clean orange pizza</a></td><td class="col-md-1"><a href="#" id="id-row-delete-2" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">3</td><td class="col-md-4"><a href="#" onclick="">important black cookie</a></td><td class="col-md-1"><a href="#" id="id-row-delete-3" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">4</td><td class="col-md-4"><a href="#" onclick="">short white desk</a></td><td class="col-md-1"><a href="#" id="id-row-delete-4" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">5</td><td class="col-md-4"><a href="#" onclick="">helpful brown chair</a></td><td class="col-md-1"><a href="#" id="id-row-delete-5" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">6</td><td class="col-md-4"><a href="#" onclick="">pretty purple mouse</a></td><td class="col-md-1"><a href="#" id="id-row-delete-6" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">7</td><td class="col-md-4"><a href="#" onclick="">clean brown sandwich</a></td><td class="col-md-1"><a href="#" id="id-row-delete-7" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">8</td><td class="col-md-4"><a href="#" onclick="">important pink car</a></td><td class="col-md-1"><a href="#" id="id-row-delete-8" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">9</td><td class="col-md-4"><a href="#" onclick="">short green house</a></td><td class="col-md-1"><a href="#" id="id-row-delete-9" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">10</td><td class="col-md-4"><a href="#" onclick="">helpful blue keyboard</a></td><td class="col-md-1"><a href="#" id="id-row-delete-10" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr></tbody></table><span class="preloadicon glyphicon glyphicon-remove" aria-hidden="true"></span></div>';
          
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -4407,6 +4456,7 @@ export class GlobalTestRunner {
         let attempts = 0;
         const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
             if (window.globalAsyncCount === 0) {
+                clearInterval(waitForStableInterval);
                 window.globalAsyncCount++;
                 mount('testfetchcomponent', new TestFetchChangeDetectionComponent());
 
@@ -4416,24 +4466,19 @@ export class GlobalTestRunner {
 
                 resolveAll(requestPromises).then((results) => {
                     const successfulPromises = results.filter(p => p.status === 'fulfilled');
-
                     const hadSuccess = successfulPromises && successfulPromises.length === 1;
 
-                    s.DETACHED_SET_TIMEOUT(() => {
-                        const ele = document.getElementById('testfetchcomponent');
+                    const ele = document.getElementById('testfetchcomponent');
 
-                        const stateObj = getState();
-                        const correctText = ele.textContent === 'Count: 1';
-                        const countIncremented = stateObj && stateObj.count === 2;
+                    const stateObj = getState();
+                    const correctText = ele.textContent === 'Count: 1';
+                    const countIncremented = stateObj && stateObj.count === 2;
 
-                        result.success = hadSuccess && correctText && countIncremented;
+                    result.success = hadSuccess && correctText && countIncremented;
 
-                        window.globalTestResults.push(result);
-                        window.globalTestCount++;
-
-                        clearInterval(waitForStableInterval);
-                        window.globalAsyncCount--;
-                    }, 100);
+                    window.globalTestResults.push(result);
+                    window.globalTestCount++;
+                    window.globalAsyncCount--;
                 });
             }
 
@@ -4646,6 +4691,7 @@ export class GlobalTestRunner {
         };
 
         let onloadCount = 0;
+        let responseNotEmptyCount = 0;
         let addedResult = false;
 
         const xhr1 = new XMLHttpRequest();
@@ -4655,7 +4701,9 @@ export class GlobalTestRunner {
             console.log('testXhrMultipleRequests XHR load completed');
         
             onloadCount++;
-            result.success = onloadCount === 2;
+            if (this.response !== undefined && this.response !== null && this.response !== '') responseNotEmptyCount++;
+
+            result.success = onloadCount === 2 && responseNotEmptyCount === 2;
             
             if (onloadCount === 2) {
                 addedResult = true;
@@ -4671,7 +4719,9 @@ export class GlobalTestRunner {
             console.log('testXhrMultipleRequests XHR load completed');
         
             onloadCount++;
-            result.success = onloadCount === 2;
+            if (this.response !== undefined && this.response !== null && this.response !== '') responseNotEmptyCount++;
+
+            result.success = onloadCount === 2 && responseNotEmptyCount === 2;
             
             if (onloadCount === 2) {
                 addedResult = true;
@@ -4705,7 +4755,7 @@ export class GlobalTestRunner {
 
         let onloadCount = 0;
         let addedResult = false;
-        const NUMBER_OF_REQUESTS = 11;
+        const NUMBER_OF_REQUESTS = 8;
 
         for (let i = 0; i < NUMBER_OF_REQUESTS; ++i) {
             const xhr1 = new XMLHttpRequest();
