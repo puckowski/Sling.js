@@ -2,39 +2,39 @@ import { detectChanges, getState, m, markup, mount, route, setState, textNode, a
 import { FormControl, Observable } from '../dist/sling-reactive.min';
 
 function _random(max, idx) {
-    return Math.round((idx / 100)*1000)%max;
+    return Math.round((idx / 100) * 1000) % max;
 }
 
 var Store = {
-    selected : undefined,
-    data : [],
-    id : 1,
-    remove: function(id) {
-        const idx = this.data.findIndex(d => d.id==id);
+    selected: undefined,
+    data: [],
+    id: 1,
+    remove: function (id) {
+        const idx = this.data.findIndex(d => d.id == id);
         this.data.splice(idx, 1);
     },
-    buildData: function(count = 10) {
+    buildData: function (count = 10) {
         var adjectives = ["pretty", "large", "big", "small", "tall", "short", "long", "handsome", "plain", "quaint", "clean", "elegant", "easy", "angry", "crazy", "helpful", "mushy", "odd", "unsightly", "adorable", "important", "inexpensive", "cheap", "expensive", "fancy"];
         var colours = ["red", "yellow", "blue", "green", "pink", "brown", "purple", "brown", "white", "black", "orange"];
         var nouns = ["table", "chair", "house", "bbq", "desk", "car", "pony", "cookie", "sandwich", "burger", "pizza", "mouse", "keyboard"];
         var data = [];
         for (var i = 0; i < count; i++)
-            data.push({id: this.id++, label: adjectives[_random(adjectives.length, i)] + " " + colours[_random(colours.length, i)] + " " + nouns[_random(nouns.length, i)] });
+            data.push({ id: this.id++, label: adjectives[_random(adjectives.length, i)] + " " + colours[_random(colours.length, i)] + " " + nouns[_random(nouns.length, i)] });
         return data;
     },
-    run: function() {
+    run: function () {
         this.data = this.buildData();
         this.selected = undefined;
     },
-    update: function(mod=10) {
-        for (let i=0;i<this.data.length;i+=10) {
+    update: function (mod = 10) {
+        for (let i = 0; i < this.data.length; i += 10) {
             this.data[i].label += ' !!!';
         }
     },
-    add: function() {
+    add: function () {
         this.data = [].concat(this.data, this.buildData(10));
     },
-    select: function(id) {
+    select: function (id) {
         this.selected = id;
     },
     runLots() {
@@ -46,44 +46,44 @@ var Store = {
         this.selected = undefined;
     },
     swapRows() {
-                if(this.data.length > 998) {
-                                var a = this.data[1];
-                                this.data[1] = this.data[998];
-                                this.data[998] = a;
-                }
+        if (this.data.length > 998) {
+            var a = this.data[1];
+            this.data[1] = this.data[998];
+            this.data[998] = a;
+        }
     }
 };
 
 var Store2 = {
-    selected : undefined,
-    data : [],
-    id : 1,
-    remove: function(id) {
-        const idx = this.data.findIndex(d => d.id==id);
+    selected: undefined,
+    data: [],
+    id: 1,
+    remove: function (id) {
+        const idx = this.data.findIndex(d => d.id == id);
         this.data.splice(idx, 1);
     },
-    buildData: function(count = 10) {
+    buildData: function (count = 10) {
         var adjectives = ["pretty", "large", "big", "small", "tall", "short", "long", "handsome", "plain", "quaint", "clean", "elegant", "easy", "angry", "crazy", "helpful", "mushy", "odd", "unsightly", "adorable", "important", "inexpensive", "cheap", "expensive", "fancy"];
         var colours = ["red", "yellow", "blue", "green", "pink", "brown", "purple", "brown", "white", "black", "orange"];
         var nouns = ["table", "chair", "house", "bbq", "desk", "car", "pony", "cookie", "sandwich", "burger", "pizza", "mouse", "keyboard"];
         var data = [];
         for (var i = 0; i < count; i++)
-            data.push({id: this.id++, label: adjectives[_random(adjectives.length, i)] + " " + colours[_random(colours.length, i)] + " " + nouns[_random(nouns.length, i)] });
+            data.push({ id: this.id++, label: adjectives[_random(adjectives.length, i)] + " " + colours[_random(colours.length, i)] + " " + nouns[_random(nouns.length, i)] });
         return data;
     },
-    run: function() {
+    run: function () {
         this.data = this.buildData();
         this.selected = undefined;
     },
-    update: function(mod=10) {
-        for (let i=0;i<this.data.length;i+=10) {
+    update: function (mod = 10) {
+        for (let i = 0; i < this.data.length; i += 10) {
             this.data[i].label += ' !!!';
         }
     },
-    add: function() {
+    add: function () {
         this.data = [].concat(this.data, this.buildData(10));
     },
-    select: function(id) {
+    select: function (id) {
         this.selected = id;
     },
     runLots() {
@@ -95,315 +95,422 @@ var Store2 = {
         this.selected = undefined;
     },
     swapRows() {
-                if(this.data.length > 998) {
-                                var a = this.data[1];
-                                this.data[1] = this.data[998];
-                                this.data[998] = a;
-                }
+        if (this.data.length > 998) {
+            var a = this.data[1];
+            this.data[1] = this.data[998];
+            this.data[998] = a;
+        }
     }
 };
 
+class TestDestroyAnimateComponent1 {
+    constructor() {
+        this.hide = false;
+        this.showhide = false;
+    }
+
+    slOnInit() {
+    }
+
+    slOnDestroy() {
+        this.hide = true;
+    }
+
+    hidetemplate() {
+        this.showhide = true;
+        this.hide = true;
+        const state = getState();
+        state.animatecdr = 0;
+        setState(state);
+    }
+
+    rehidetemplate() {
+        this.hide = false;
+        this.showhide = false;
+    }
+
+    view() {
+        const state = getState();
+
+        if (state.animatecdr !== null && state.animatecdr !== undefined) {
+            state.animatecdr++;
+            setState(state);
+        }
+
+        const mark = markup('div', {
+            attrs: {
+                id: 'divanimatedestroy',
+                ...this.showhide !== true && { class: 'visible' }
+            },
+            children: [
+                ...(this.hide === false ? [
+                    markup('h1', {
+                        attrs: {
+                            id: 'h1toanimate',
+                            slanimatedestroy: 'hide'
+                        },
+                        children: [
+                            textNode('Hello, world!'),
+                            markup('button', {
+                                attrs: {
+                                    id: 'startanimatedestroy',
+                                    onclick: this.hidetemplate.bind(this)
+                                },
+                                children: [
+                                    textNode('hide')
+                                ]
+                            })
+                        ]
+                    })
+
+                ] : [
+                    markup('button', {
+                        attrs: {
+                            onclick: this.rehidetemplate.bind(this)
+                        },
+                        children: [
+                            textNode('rehide')
+                        ]
+                    })
+                ])
+            ]
+        });
+
+        return mark;
+    }
+}
+
+export class TimeoutTestComponent1 {
+
+    constructor() {
+        this.count = 0;
+    }
+
+    slOnInit() {
+        const state = getState();
+        state.timeoutcdr = 0;
+        setState(state);
+    }
+
+    view() {
+        const state = getState();
+        state.timeoutcdr++;
+        setState(state);
+
+        this.count++;
+
+        return markup('div', {
+            attrs: {
+                id: 'divtimeoutcdr'
+            },
+            children: [
+                textNode('Timeout Component View Count: ' + this.count)
+            ]
+        });
+    }
+}
+
 export class TestRow1 {
-  constructor(id, classList, label, onclick, ondelete) {
-      this.id = id;
-      this.classList = classList;
-      this.label = label;
-      this.onclick = onclick;
-      this.ondelete = ondelete;
-  }
+    constructor(id, classList, label, onclick, ondelete) {
+        this.id = id;
+        this.classList = classList;
+        this.label = label;
+        this.onclick = onclick;
+        this.ondelete = ondelete;
+    }
 
-  slOnInit() {
-      this.click = function () {
-          const id = this.id;
-          this.onclick(id);
-      };
-      this.delete = function () {
-          const id = this.id;
-          this.ondelete(id);
-      };
-  }
+    slOnInit() {
+        this.click = function () {
+            const id = this.id;
+            this.onclick(id);
+        };
+        this.delete = function () {
+            const id = this.id;
+            this.ondelete(id);
+        };
+    }
 
-  view() {
-      return markup('tr', {
-          attrs: {
-              'class': this.classList,
-              onclick: this.click.bind(this),
-              onremove: this.delete.bind(this)
-          },
-          children: [
-              markup('td', {
-                  attrs: {
-                      'class': 'col-md-1'
-                  },
-                  children: [
-                      textNode(this.id)
-                  ]
-              }),
-              markup('td', {
-                  attrs: {
-                      'class': 'col-md-4',
-                  },
-                  children: [
-                      markup('a', {
-                          attrs: {
-                              'href': '#',
-                              onclick: this.click.bind(this)
-                          }, 
-                          children: [
-                              textNode(this.label)
-                          ]
-                      })
-                  ]
-              }),
-              markup('td', {
-                  attrs: {
-                      'class': 'col-md-1',
-                  },
-                  children: [
-                      markup('a', {
-                          attrs: {
-                              'href': '#',
-                              id: 'id-row-delete-' + String(this.id),
-                              onclick: this.delete.bind(this)
-                          },
-                          children: [
-                              markup('span', {
-                                  attrs: {
-                                      'class': 'glyphicon glyphicon-remove',
-                                      'aria-hidden': 'true'
-                                  }
-                              })
-                          ]
-                      })
-                  ]
-              }),
-              markup('td', {
-                  attrs: {
-                      'class': 'col-md-6'
-                  }
-              })
-          ]
-      });
-  }
+    view() {
+        return markup('tr', {
+            attrs: {
+                'class': this.classList,
+                onclick: this.click.bind(this),
+                onremove: this.delete.bind(this)
+            },
+            children: [
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-1'
+                    },
+                    children: [
+                        textNode(this.id)
+                    ]
+                }),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-4',
+                    },
+                    children: [
+                        markup('a', {
+                            attrs: {
+                                'href': '#',
+                                onclick: this.click.bind(this)
+                            },
+                            children: [
+                                textNode(this.label)
+                            ]
+                        })
+                    ]
+                }),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-1',
+                    },
+                    children: [
+                        markup('a', {
+                            attrs: {
+                                'href': '#',
+                                id: 'id-row-delete-' + String(this.id),
+                                onclick: this.delete.bind(this)
+                            },
+                            children: [
+                                markup('span', {
+                                    attrs: {
+                                        'class': 'glyphicon glyphicon-remove',
+                                        'aria-hidden': 'true'
+                                    }
+                                })
+                            ]
+                        })
+                    ]
+                }),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-6'
+                    }
+                })
+            ]
+        });
+    }
 }
 
 export class TestControllerComponent1 {
-  constructor() {
+    constructor() {
 
-  }
+    }
 
-  slOnInit() {
-      this.data = function () { return Store.data; };
-      this.selected = function () { return Store.selected; };
-      this.run = function () {
-          Store.run();
-      };
-      this.add = function () {
-          Store.add();
-      };
-      this.update = function () {
-          Store.update();
-      };
-      this.select = function (id) {
-          Store.select(id);
-      };
-      this.delete = function (id) {
-          Store.remove(id);
-      };
-      this.runLots = function () {
-          Store.runLots();
-      };
-      this.clear = function () {
-          Store.clear();
-      };
-      this.swapRows = function () {
-          Store.swapRows();
-      };
-  }
+    slOnInit() {
+        this.data = function () { return Store.data; };
+        this.selected = function () { return Store.selected; };
+        this.run = function () {
+            Store.run();
+        };
+        this.add = function () {
+            Store.add();
+        };
+        this.update = function () {
+            Store.update();
+        };
+        this.select = function (id) {
+            Store.select(id);
+        };
+        this.delete = function (id) {
+            Store.remove(id);
+        };
+        this.runLots = function () {
+            Store.runLots();
+        };
+        this.clear = function () {
+            Store.clear();
+        };
+        this.swapRows = function () {
+            Store.swapRows();
+        };
+    }
 
-  view() {
-      var ret = markup('div', {
-          attrs: {
-              'class': 'container',
-              'id': 'main'
-          },
-          children: [
-              markup('div', {
-                  attrs: {
-                      'class': 'jumbotron'
-                  },
-                  children: [
-                      markup('div', {
-                          attrs: {
-                              'class': 'row'
-                          },
-                          children: [
-                              markup('div', {
-                                  attrs: {
-                                      'class': 'col-md-6'
-                                  },
-                                  children: [
-                                      markup('h1', {
-                                          children: [
-                                              textNode('Sling.js')
-                                          ]
-                                      })
-                                  ]
-                              }),
-                              markup('div', {
-                                  attrs: {
-                                      'class': 'col-md-6'
-                                  },
-                                  children: [
-                                      markup('div', {
-                                          attrs: {
-                                              'class': 'col-sm-6 smallpad'
-                                          },
-                                          children: [
-                                              markup('button', {
-                                                  attrs: {
-                                                      'type': 'button',
-                                                      'class': 'btn btn-primary btn-block',
-                                                      'id': 'run',
-                                                      onclick: this.run.bind(this)
-                                                  },
-                                                  children: [
-                                                      textNode('Create 1,000 rows')
-                                                  ]
-                                              }),
+    view() {
+        var ret = markup('div', {
+            attrs: {
+                'class': 'container',
+                'id': 'main'
+            },
+            children: [
+                markup('div', {
+                    attrs: {
+                        'class': 'jumbotron'
+                    },
+                    children: [
+                        markup('div', {
+                            attrs: {
+                                'class': 'row'
+                            },
+                            children: [
+                                markup('div', {
+                                    attrs: {
+                                        'class': 'col-md-6'
+                                    },
+                                    children: [
+                                        markup('h1', {
+                                            children: [
+                                                textNode('Sling.js')
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                markup('div', {
+                                    attrs: {
+                                        'class': 'col-md-6'
+                                    },
+                                    children: [
+                                        markup('div', {
+                                            attrs: {
+                                                'class': 'col-sm-6 smallpad'
+                                            },
+                                            children: [
+                                                markup('button', {
+                                                    attrs: {
+                                                        'type': 'button',
+                                                        'class': 'btn btn-primary btn-block',
+                                                        'id': 'run',
+                                                        onclick: this.run.bind(this)
+                                                    },
+                                                    children: [
+                                                        textNode('Create 1,000 rows')
+                                                    ]
+                                                }),
 
-                                          ]
-                                      }),
-                                      markup('div', {
-                                          attrs: {
-                                              'class': 'col-sm-6 smallpad'
-                                          },
-                                          children: [
-                                              markup('button', {
-                                                  attrs: {
-                                                      'type': 'button',
-                                                      'class': 'btn btn-primary btn-block',
-                                                      'id': 'runlots',
-                                                      onclick: this.runLots.bind(this)
-                                                  },
-                                                  children: [
-                                                      textNode('Create 10,000 rows')
-                                                  ]
-                                              })
-                                          ]
-                                      }),
-                                      markup('div', {
-                                          attrs: {
-                                              'class': 'col-sm-6 smallpad'
-                                          },
-                                          children: [
-                                              markup('button', {
-                                                  attrs: {
-                                                      'type': 'button',
-                                                      'class': 'btn btn-primary btn-block',
-                                                      'id': 'add',
-                                                      onclick: this.add.bind(this)
-                                                  },
-                                                  children: [
-                                                      textNode('Append 1,000 rows')
-                                                  ]
-                                              }),
-                                          ]
-                                      }),
-                                      markup('div', {
-                                          attrs: {
-                                              'class': 'col-sm-6 smallpad'
-                                          },
-                                          children: [
-                                              markup('button', {
-                                                  attrs: {
-                                                      'type': 'button',
-                                                      'class': 'btn btn-primary btn-block',
-                                                      'id': 'update',
-                                                      onclick: this.update.bind(this)
-                                                  },
-                                                  children: [
-                                                      textNode('Update every 10th row')
-                                                  ]
-                                              }),
-                                          ]
-                                      }),
-                                      markup('div', {
-                                          attrs: {
-                                              'class': 'col-sm-6 smallpad'
-                                          },
-                                          children: [
-                                              markup('button', {
-                                                  attrs: {
-                                                      'type': 'button',
-                                                      'class': 'btn btn-primary btn-block',
-                                                      'id': 'clear',
-                                                      onclick: this.clear.bind(this)
-                                                  },
-                                                  children: [
-                                                      textNode('Clear')
-                                                  ]
-                                              }),
-                                          ]
-                                      }),
-                                      markup('div', {
-                                          attrs: {
-                                              'class': 'col-sm-6 smallpad'
-                                          },
-                                          children: [
-                                              markup('button', {
-                                                  attrs: {
-                                                      'type': 'button',
-                                                      'class': 'btn btn-primary btn-block',
-                                                      'id': 'swaprows',
-                                                      onclick: this.swapRows.bind(this)
-                                                  },
-                                                  children: [
-                                                      textNode('Swap Rows')
-                                                  ]
-                                              })
-                                          ]
-                                      })
-                                  ]
-                              })
-                          ]
-                      })
-                  ]
-              }),
-              markup('table', {
-                  attrs: {
-                      'class': 'table table-hover table-striped test-data',
-                      'id': 'idcontrollertable'
-                  },
-                  children: [
-                      markup('tbody', {
-                          children: [
-                              ...Array.from(this.data(), (d, i) => {
-                                  let sel = d.id === this.selected() ? 'danger' : '';
-                                  return new TestRow1(d.id, sel, d.label, this.select, this.delete)
-                              })
-                          ]
-                      })
-                  ]
-              }),
-              markup('span', {
-                  attrs: {
-                      'class': 'preloadicon glyphicon glyphicon-remove',
-                      'aria-hidden': 'true'
-                  }
-              })
-          ]
-      });
+                                            ]
+                                        }),
+                                        markup('div', {
+                                            attrs: {
+                                                'class': 'col-sm-6 smallpad'
+                                            },
+                                            children: [
+                                                markup('button', {
+                                                    attrs: {
+                                                        'type': 'button',
+                                                        'class': 'btn btn-primary btn-block',
+                                                        'id': 'runlots',
+                                                        onclick: this.runLots.bind(this)
+                                                    },
+                                                    children: [
+                                                        textNode('Create 10,000 rows')
+                                                    ]
+                                                })
+                                            ]
+                                        }),
+                                        markup('div', {
+                                            attrs: {
+                                                'class': 'col-sm-6 smallpad'
+                                            },
+                                            children: [
+                                                markup('button', {
+                                                    attrs: {
+                                                        'type': 'button',
+                                                        'class': 'btn btn-primary btn-block',
+                                                        'id': 'add',
+                                                        onclick: this.add.bind(this)
+                                                    },
+                                                    children: [
+                                                        textNode('Append 1,000 rows')
+                                                    ]
+                                                }),
+                                            ]
+                                        }),
+                                        markup('div', {
+                                            attrs: {
+                                                'class': 'col-sm-6 smallpad'
+                                            },
+                                            children: [
+                                                markup('button', {
+                                                    attrs: {
+                                                        'type': 'button',
+                                                        'class': 'btn btn-primary btn-block',
+                                                        'id': 'update',
+                                                        onclick: this.update.bind(this)
+                                                    },
+                                                    children: [
+                                                        textNode('Update every 10th row')
+                                                    ]
+                                                }),
+                                            ]
+                                        }),
+                                        markup('div', {
+                                            attrs: {
+                                                'class': 'col-sm-6 smallpad'
+                                            },
+                                            children: [
+                                                markup('button', {
+                                                    attrs: {
+                                                        'type': 'button',
+                                                        'class': 'btn btn-primary btn-block',
+                                                        'id': 'clear',
+                                                        onclick: this.clear.bind(this)
+                                                    },
+                                                    children: [
+                                                        textNode('Clear')
+                                                    ]
+                                                }),
+                                            ]
+                                        }),
+                                        markup('div', {
+                                            attrs: {
+                                                'class': 'col-sm-6 smallpad'
+                                            },
+                                            children: [
+                                                markup('button', {
+                                                    attrs: {
+                                                        'type': 'button',
+                                                        'class': 'btn btn-primary btn-block',
+                                                        'id': 'swaprows',
+                                                        onclick: this.swapRows.bind(this)
+                                                    },
+                                                    children: [
+                                                        textNode('Swap Rows')
+                                                    ]
+                                                })
+                                            ]
+                                        })
+                                    ]
+                                })
+                            ]
+                        })
+                    ]
+                }),
+                markup('table', {
+                    attrs: {
+                        'class': 'table table-hover table-striped test-data',
+                        'id': 'idcontrollertable'
+                    },
+                    children: [
+                        markup('tbody', {
+                            children: [
+                                ...Array.from(this.data(), (d, i) => {
+                                    let sel = d.id === this.selected() ? 'danger' : '';
+                                    return new TestRow1(d.id, sel, d.label, this.select, this.delete)
+                                })
+                            ]
+                        })
+                    ]
+                }),
+                markup('span', {
+                    attrs: {
+                        'class': 'preloadicon glyphicon glyphicon-remove',
+                        'aria-hidden': 'true'
+                    }
+                })
+            ]
+        });
 
-      return ret;
-  }
+        return ret;
+    }
 }
 
 export class TestControllerComponent2 {
     constructor() {
-  
+
     }
-  
+
     slOnInit() {
         this.data = function () { return Store2.data; };
         this.selected = function () { return Store2.selected; };
@@ -433,7 +540,7 @@ export class TestControllerComponent2 {
         };
         this.run();
     }
-  
+
     view() {
         var ret = markup('div', {
             attrs: {
@@ -484,7 +591,7 @@ export class TestControllerComponent2 {
                                                         textNode('Create 1,000 rows')
                                                     ]
                                                 }),
-  
+
                                             ]
                                         }),
                                         markup('div', {
@@ -607,10 +714,10 @@ export class TestControllerComponent2 {
                 })
             ]
         });
-  
+
         return ret;
     }
-  }
+}
 
 class TestComponent1 {
     view() {
@@ -745,7 +852,7 @@ class TestRemountComponent1 {
 }
 
 class TestNestedDestroyHookComponent2 {
-   slOnDestroy() {
+    slOnDestroy() {
         const state = getState();
         state.nestedDestroy = true;
         setState(state);
@@ -967,7 +1074,7 @@ class TestManualChangeDetectionComponent1 {
                     children: [
                         textNode('Increment Some Value')
                     ]
-               })
+                })
             ]
         })
     }
@@ -1438,7 +1545,7 @@ class TestUpdateSingleComponent2 {
 }
 
 class AuthFailComponent {
-   view() {
+    view() {
         return markup('div', {
             attrs: {
                 id: 'authcomponent',
@@ -1994,7 +2101,7 @@ class TestRebindDetectionComplexComponent {
                             },
                             children: [
                                 ...Array.from(this.fakeChildArray, (fakeChildFlag) =>
-                                   markup('div', {
+                                    markup('div', {
                                         children: [
                                             ...(fakeChildFlag === 1 ? [markup('button', {
                                                 attrs: {
@@ -2397,7 +2504,7 @@ export class GlobalTestRunner {
             window.globalAsyncCount++;
             setTimeout(() => {
                 window.globalAsyncCount--;
-               const fakeEle = document.getElementById('fakeEle1');
+                const fakeEle = document.getElementById('fakeEle1');
                 initiallyExists = fakeEle !== null && fakeEle !== undefined;
             }, 25);
 
@@ -2666,7 +2773,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-       const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
             if (window.globalAsyncCount === 0) {
                 window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
@@ -2931,7 +3038,7 @@ export class GlobalTestRunner {
 
         mount('hooksgenericcomponent', new HooksGenericTestComponent());
 
-       state = getState();
+        state = getState();
         const initCount = state.genericOnInit;
         const afterInitCount = state.genericAfterInit;
         state.genericHookTemplate = false;
@@ -3389,7 +3496,7 @@ export class GlobalTestRunner {
 
         result.success = correctChildCount;
 
-       window.globalTestResults.push(result);
+        window.globalTestResults.push(result);
         window.globalTestCount++;
     }
 
@@ -3448,7 +3555,7 @@ export class GlobalTestRunner {
         const origEle = document.getElementById('testnestedafterinithook');
         const correctOriginalText = origEle && origEle.childNodes && origEle.childNodes.length > 0 && origEle.innerText === 'Root component markup.\nNested after init and on init hooks.';
         const rootAfterInitCalled = state.rootAfterInit === true;
-       const nestedAfterInitCalled = state.nestedAfterInit === true;
+        const nestedAfterInitCalled = state.nestedAfterInit === true;
         const rootOnInitCalled = state.rootOnInit === true;
         const nestedOnInitCalled = state.nestedOnInit === true;
 
@@ -3615,19 +3722,32 @@ export class GlobalTestRunner {
 
                 mount('testdebouncecomponent', new TestDebounceDetectionComponent());
                 const buttonEle = document.getElementById('debounceToggleButton');
-                buttonEle.click();
-                buttonEle.click();
-                buttonEle.click();
-                buttonEle.click();
-                buttonEle.click();
+
+                state = getState();
+                const originalCount = state.debounce;
 
                 s.DETACHED_SET_TIMEOUT(() => {
-                    state = getState();
-                    result.success = state.debounce === 2;
+                    const startTime = new Date();
 
-                    window.globalTestResults.push(result);
-                    window.globalTestCount++;
-                    window.globalAsyncCount--;
+                    buttonEle.click();
+                    buttonEle.click();
+                    buttonEle.click();
+                    buttonEle.click();
+                    buttonEle.click();
+
+                    const endTime = new Date();
+                    const ellapsedMillis = endTime - startTime;
+                    const changeCycles = Math.ceil(ellapsedMillis / 17.0);
+
+                    s.DETACHED_SET_TIMEOUT(() => {
+                        state = getState();
+                        // Initial mount, one call for 5 clicks, plus final debounced call
+                        result.success = state.debounce === originalCount + changeCycles + 1;
+
+                        window.globalTestResults.push(result);
+                        window.globalTestCount++;
+                        window.globalAsyncCount--;
+                    }, 100);
                 }, 100);
             }
 
@@ -3705,7 +3825,7 @@ export class GlobalTestRunner {
 
                             removeElementsButton.click();
 
-                           s.DETACHED_SET_TIMEOUT(() => {
+                            s.DETACHED_SET_TIMEOUT(() => {
                                 const rowsRestoredCorrect = rowEle && rowEle.children.length === 3;
 
                                 ele.click();
@@ -3770,20 +3890,71 @@ export class GlobalTestRunner {
                 const domStrButton = document.getElementById('domStringButton');
                 domStrButton.click();
 
-                const correctChildCount = domStrRoot && domStrRoot.children && domStrRoot.children.length === 2;
-                const correctDivCount = domStrRoot && domStrRoot.children && domStrRoot.children.length === 2
-                    && domStrRoot.children[1].childNodes && domStrRoot.children[1].childNodes.length === 1;
-                const correctTag = domStrRoot && domStrRoot.children && domStrRoot.children.length === 2
-                    && domStrRoot.children[1].childNodes.tagName === undefined;
+                s.DETACHED_SET_TIMEOUT(() => {
+                    const correctChildCount = domStrRoot && domStrRoot.children && domStrRoot.children.length === 2;
+                    const correctDivCount = domStrRoot && domStrRoot.children && domStrRoot.children.length === 2
+                        && domStrRoot.children[1].childNodes && domStrRoot.children[1].childNodes.length === 1;
+                    const correctTag = domStrRoot && domStrRoot.children && domStrRoot.children.length === 2
+                        && domStrRoot.children[1].childNodes.tagName === undefined;
 
-                result.success = correctOriginalChildCount && correctOriginalDivCount && correctOriginalTag && correctOriginalTag2
-                    && correctChildCount && correctDivCount && correctTag;
+                    result.success = correctOriginalChildCount && correctOriginalDivCount && correctOriginalTag && correctOriginalTag2
+                        && correctChildCount && correctDivCount && correctTag;
 
+                    window.globalTestResults.push(result);
+                    window.globalTestCount++;
+                    window.globalAsyncCount--;
+
+                    clearInterval(waitForStableInterval);
+                }, 100);
+            }
+
+            attempts++;
+
+            if (attempts === 50 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
                 window.globalAsyncCount--;
 
                 clearInterval(waitForStableInterval);
+            }
+        }, 500);
+    }
+
+    testFinalize960AnimateDestroy() {
+        const result = {
+            test: 'test animation of element before destroy',
+            success: false,
+            message: ''
+        };
+
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            if (window.globalAsyncCount === 0) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
+                mount('divanimatedestroy', new TestDestroyAnimateComponent1());
+
+                const originalEle = document.getElementById('h1toanimate');
+                const originallyExists = originalEle !== null && originalEle !== undefined && originalEle.tagName === 'H1';
+
+                const startAnimateButton = document.getElementById('startanimatedestroy');
+                startAnimateButton.click();
+
+                s.DETACHED_SET_TIMEOUT(() => {
+                    const delayedEle = document.getElementById('h1toanimate');
+                    const delayedExists = delayedEle !== null && delayedEle !== undefined && delayedEle.tagName === 'H1';
+
+                    s.DETACHED_SET_TIMEOUT(() => {
+                        const deletedEle = document.getElementById('h1toanimate');
+                        const deletedSuccess = deletedEle == undefined || deletedEle === null;
+
+                        result.success = originallyExists && delayedExists && deletedSuccess;
+
+                        window.globalTestResults.push(result);
+                        window.globalTestCount++;
+                        window.globalAsyncCount--;
+                    }, 1001);
+                }, 1000);
             }
 
             attempts++;
@@ -3809,12 +3980,12 @@ export class GlobalTestRunner {
 
         xhr1.onload = function () {
             console.log('testFinalize960XhrReuse XHR load completed');
-        
+
             onloadCount++;
             if (this.response !== null && this.response !== undefined && this.response !== '') responseNotEmptyCount++;
 
             result.success = onloadCount === NUMBER_OF_REQUESTS && responseNotEmptyCount === NUMBER_OF_REQUESTS;
-            
+
             if (onloadCount === NUMBER_OF_REQUESTS) {
                 addedResult = true;
                 window.globalTestResults.push(result);
@@ -3847,6 +4018,45 @@ export class GlobalTestRunner {
         }, 12000);
     }
 
+    testFinalize960TimeoutFunctionTriggersChanges() {
+        const result = {
+            test: 'test setTimeout function argument triggers change detection',
+            success: false,
+            message: ''
+        };
+
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            if (window.globalAsyncCount === 0) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
+
+                mount('divtimeoutcdr', new TimeoutTestComponent1());
+
+                setTimeout(() => {
+                    const state = getState();
+                    const cdrcount = state.timeoutcdr;
+
+                    result.success = cdrcount === 2;
+
+                    window.globalTestResults.push(result);
+                    window.globalTestCount++;
+                    window.globalAsyncCount--;
+                }, 250);
+            }
+
+            attempts++;
+
+            if (attempts === 50 && window.globalAsyncCount > 0) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+                window.globalAsyncCount--;
+
+                clearInterval(waitForStableInterval);
+            }
+        }, 500);
+    }
+
     testFinalize960NestedClassRenderedToString() {
         const result = {
             test: 'test nested class rendered to string properly',
@@ -3857,7 +4067,7 @@ export class GlobalTestRunner {
         const compStr = renderToString(new TestControllerComponent2());
 
         result.success = compStr === '<div class="container" id="main2"><div class="jumbotron"><div class="row"><div class="col-md-6"><h1>Sling.js</h1></div><div class="col-md-6"><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="run2" onclick="">Create 1,000 rows</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="runlots2" onclick="">Create 10,000 rows</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="add2" onclick="">Append 1,000 rows</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="update2" onclick="">Update every 10th row</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="clear2" onclick="">Clear</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="swaprows2" onclick="">Swap Rows</button></div></div></div></div><table class="table table-hover table-striped test-data" id="idcontrollertable2"><tbody><tr class="" onclick="" onremove=""><td class="col-md-1">1</td><td class="col-md-4"><a href="#" onclick="">pretty red table</a></td><td class="col-md-1"><a href="#" id="id-row-delete-1" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">2</td><td class="col-md-4"><a href="#" onclick="">clean orange pizza</a></td><td class="col-md-1"><a href="#" id="id-row-delete-2" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">3</td><td class="col-md-4"><a href="#" onclick="">important black cookie</a></td><td class="col-md-1"><a href="#" id="id-row-delete-3" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">4</td><td class="col-md-4"><a href="#" onclick="">short white desk</a></td><td class="col-md-1"><a href="#" id="id-row-delete-4" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">5</td><td class="col-md-4"><a href="#" onclick="">helpful brown chair</a></td><td class="col-md-1"><a href="#" id="id-row-delete-5" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">6</td><td class="col-md-4"><a href="#" onclick="">pretty purple mouse</a></td><td class="col-md-1"><a href="#" id="id-row-delete-6" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">7</td><td class="col-md-4"><a href="#" onclick="">clean brown sandwich</a></td><td class="col-md-1"><a href="#" id="id-row-delete-7" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">8</td><td class="col-md-4"><a href="#" onclick="">important pink car</a></td><td class="col-md-1"><a href="#" id="id-row-delete-8" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">9</td><td class="col-md-4"><a href="#" onclick="">short green house</a></td><td class="col-md-1"><a href="#" id="id-row-delete-9" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">10</td><td class="col-md-4"><a href="#" onclick="">helpful blue keyboard</a></td><td class="col-md-1"><a href="#" id="id-row-delete-10" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr></tbody></table><span class="preloadicon glyphicon glyphicon-remove" aria-hidden="true"></span></div>';
-         
+
         window.globalTestResults.push(result);
         window.globalTestCount++;
     }
@@ -3892,9 +4102,9 @@ export class GlobalTestRunner {
                     s.DETACHED_SET_TIMEOUT(() => {
                         tableEle = document.getElementById('idcontrollertable');
                         tbodyEle = tableEle.children[0];
-    
+
                         const correctRowCountAfterDelete = tbodyEle && tbodyEle.children && tbodyEle.children.length === 9;
-    
+
                         result.success = correctRowCount && correctRowCountAfterDelete;
 
                         window.globalTestResults.push(result);
@@ -3965,7 +4175,7 @@ export class GlobalTestRunner {
                                     const correctDiv3 = rowEle && rowEle.children.length === 5 && rowEle.children[2].textContent === 'Mode: 0 some markup and a text node';
                                     const correctDiv4 = rowEle && rowEle.children.length === 5 && rowEle.children[3].textContent === 'Toggle';
                                     const correctDiv5 = rowEle && rowEle.children.length === 5 && rowEle.children[4].textContent === 'Mode: 0 some markup and a text node';
-    
+
                                     const changeDetectionCalled = stateObj.count4 && stateObj.count4 === 6;
 
                                     result.success = updateCountCorrect && rowsReducedCorrect && rowsRestoredCorrect && changeDetectionCalled
@@ -4282,7 +4492,7 @@ export class GlobalTestRunner {
 
     block(millis = 18) {
         return new Promise(resolve => {
-            setTimeout(() => {
+            s.DETACHED_SET_TIMEOUT(() => {
                 resolve(true);
             }, millis);
         });
@@ -4328,7 +4538,7 @@ export class GlobalTestRunner {
             clearNotesButton.click();
 
             window.globalAsyncCount++;
-            setTimeout(() => {
+            s.DETACHED_SET_TIMEOUT(() => {
                 window.globalAsyncCount--;
                 eles = document.querySelectorAll('.input-group-text input');
 
@@ -4370,7 +4580,7 @@ export class GlobalTestRunner {
         mount('testcomponent2', new TestComponent2());
 
         window.globalAsyncCount++;
-        setTimeout(() => {
+        s.DETACHED_SET_TIMEOUT(() => {
             window.globalAsyncCount--;
             let ele = document.getElementById('testcomponent2');
             const firstPass = ele.textContent === 'Hello, world! Count: 1';
@@ -4414,7 +4624,7 @@ export class GlobalTestRunner {
             let changeCorrect = rowChildren.length > 0 && rowChildren[0].tagName === 'INPUT' && rowChildren[0].childNodes.length === 0;
             let changeInputCorrect = rowChildren.length > 0 && rowChildren[0].value === 'true';
 
-           result.success = initialCorrect && initialTdCorrect && changeCorrect && changeInputCorrect;
+            result.success = initialCorrect && initialTdCorrect && changeCorrect && changeInputCorrect;
 
             window.globalTestResults.push(result);
             window.globalTestCount++;
@@ -4699,12 +4909,12 @@ export class GlobalTestRunner {
 
         xhr1.onload = function () {
             console.log('testXhrMultipleRequests XHR load completed');
-        
+
             onloadCount++;
             if (this.response !== undefined && this.response !== null && this.response !== '') responseNotEmptyCount++;
 
             result.success = onloadCount === 2 && responseNotEmptyCount === 2;
-            
+
             if (onloadCount === 2) {
                 addedResult = true;
                 window.globalTestResults.push(result);
@@ -4717,12 +4927,12 @@ export class GlobalTestRunner {
 
         xhr2.onload = function () {
             console.log('testXhrMultipleRequests XHR load completed');
-        
+
             onloadCount++;
             if (this.response !== undefined && this.response !== null && this.response !== '') responseNotEmptyCount++;
 
             result.success = onloadCount === 2 && responseNotEmptyCount === 2;
-            
+
             if (onloadCount === 2) {
                 addedResult = true;
                 window.globalTestResults.push(result);
@@ -4760,20 +4970,20 @@ export class GlobalTestRunner {
         for (let i = 0; i < NUMBER_OF_REQUESTS; ++i) {
             const xhr1 = new XMLHttpRequest();
             xhr1.open('GET', 'https://jsonplaceholder.typicode.com/users', true);
-    
+
             xhr1.onload = function () {
                 console.log('testXhrMultipleRequestsAutomated XHR load completed');
-            
+
                 onloadCount++;
                 result.success = onloadCount === NUMBER_OF_REQUESTS;
-                
+
                 if (onloadCount === NUMBER_OF_REQUESTS) {
                     addedResult = true;
                     window.globalTestResults.push(result);
                     window.globalTestCount++;
                 }
             };
-    
+
             console.log('testXhrMultipleRequestsAutomated before send');
             xhr1.send(null);
             console.log('testXhrMultipleRequestsAutomated after send');
@@ -4799,7 +5009,7 @@ export class GlobalTestRunner {
         const xhr = new XMLHttpRequest();
         xhr.open('GET', 'https://jsonplaceholder.typicode.com/posts', true);
 
-        xhr.onreadystatechange = function() { 
+        xhr.onreadystatechange = function () {
             try {
                 console.log('testXhrMaximumCallStackExceeded onready before send');
                 xhr.open('GET', 'https://jsonplaceholder.typicode.com/posts', true);
@@ -4814,7 +5024,7 @@ export class GlobalTestRunner {
 
         xhr.onload = function () {
             console.log('testXhrMaximumCallStackExceeded XHR load completed');
-        
+
             result.success = true;
 
             s.DETACHED_SET_TIMEOUT(() => {
@@ -5197,7 +5407,7 @@ export class GlobalTestRunner {
     }
 
     sleep(milliseconds) {
-        return new Promise(resolve => setTimeout(resolve, milliseconds));
+        return new Promise(resolve => s.DETACHED_SET_TIMEOUT(resolve, milliseconds));
     }
 
     run() {
@@ -5244,7 +5454,7 @@ export class GlobalTestRunner {
         let checkCount = 0;
         let startTime = new Date();
 
-        const checkInterval = setInterval(() => {
+        const checkInterval = s.DETACHED_SET_INTERVAL(() => {
             if (window.globalTestCount === testCount) {
                 this.removeProcessing();
                 this.createResultList(new Date() - startTime);
@@ -5252,7 +5462,7 @@ export class GlobalTestRunner {
                 this.removeRunTestsButton();
             }
 
-           checkCount++;
+            checkCount++;
 
             if (checkCount === 500) {
                 this.removeProcessing();
