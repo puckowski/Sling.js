@@ -2,7 +2,7 @@
 
 # Sling
 
-Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **10KB minified, and less than 4KB gzipped**.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **12KB minified, and less than 4KB gzipped**.
 
 Sling creates and uses an Incremental DOM to perform differential updates for fast rendering.
 
@@ -275,32 +275,32 @@ Another example of directive usage:
 
 ```javascript
 view() {
-        return markup('div', {
-            attrs: {
-                ...this.showhide !== true && { class: 'visible' }
-            },
-            children: [
-                ...(this.hide === false ? [
-                    markup('h1', {
-                        attrs: {
-                            slanimatedestroy: 'hide'
-                        },
-                        children: [
-                            textNode('Hello, world!'),
-                            markup('button', {
-                                attrs: {
-                                    onclick: this.hideTemplate.bind(this)
-                                },
-                                children: [
-                                    textNode('Hide')
-                                ]
-                            })
-                        ]
-                    })
-                ] : [
-                ])
-            ]
-        });
+    return markup('div', {
+        attrs: {
+        	...this.showhide !== true && { class: 'visible' }
+        },
+        children: [
+            ...(this.hide === false ? [
+                markup('h1', {
+                    attrs: {
+                        slanimatedestroy: 'hide'
+                    },
+                    children: [
+                        textNode('Hello, world!'),
+                        markup('button', {
+                            attrs: {
+                                onclick: this.hideTemplate.bind(this)
+                            },
+                            children: [
+                                textNode('Hide')
+                            ]
+                        })
+                    ]
+                })
+            ] : [
+            ])
+        ]
+    });
 }			
 ```
 
