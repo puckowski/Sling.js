@@ -204,6 +204,12 @@ Structural directives modify interactions with the DOM layout.
 |```onlyself```     |Structural|Only perform change detection on the element and not children. |
 |```trustchildren```|Structural|Render HTML string children.                                   |
 
+Attribute directives change the appearance or behavior of a DOM element.
+
+|Directive               |Type      |Behavior                                                           |
+|------------------------|----------|-------------------------------------------------------------------|
+|```slanimatedestroy```  |Attribute |Wait for CSS class animation to finish before removal from the DOM.|
+
 Example directive usage:
 
 ```javascript
@@ -263,6 +269,39 @@ view() {
         ]
     })
 }
+```
+
+Another example of directive usage:
+
+```javascript
+view() {
+        return markup('div', {
+            attrs: {
+                ...this.showhide !== true && { class: 'visible' }
+            },
+            children: [
+                ...(this.hide === false ? [
+                    markup('h1', {
+                        attrs: {
+                            slanimatedestroy: 'hide'
+                        },
+                        children: [
+                            textNode('Hello, world!'),
+                            markup('button', {
+                                attrs: {
+                                    onclick: this.hideTemplate.bind(this)
+                                },
+                                children: [
+                                    textNode('Hide')
+                                ]
+                            })
+                        ]
+                    })
+                ] : [
+                ])
+            ]
+        });
+}			
 ```
 
 # Core API
