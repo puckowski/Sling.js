@@ -1,4 +1,4 @@
-import { detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll, getRouteSegments, hydrate, renderToString, removeRoute, version, update, setDetectionStrategy, wrapWithChangeDetector, isDetectorAttached, detachDetector, getRoute } from "../dist/sling.min";
+import { renderElement, detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll, getRouteSegments, hydrate, renderToString, removeRoute, version, update, setDetectionStrategy, wrapWithChangeDetector, isDetectorAttached, detachDetector, getRoute } from "../dist/sling.min";
 import { FormControl, Observable } from '../dist/sling-reactive.min';
 
 function _random(max, idx) {
@@ -82,6 +82,153 @@ var Store2 = {
     },
     add: function () {
         this.data = [].concat(this.data, this.buildData(10));
+    },
+    select: function (id) {
+        this.selected = id;
+    },
+    runLots() {
+        this.data = this.buildData(10000);
+        this.selected = undefined;
+    },
+    clear() {
+        this.data = [];
+        this.selected = undefined;
+    },
+    swapRows() {
+        if (this.data.length > 998) {
+            var a = this.data[1];
+            this.data[1] = this.data[998];
+            this.data[998] = a;
+        }
+    }
+};
+
+var Store3 = {
+    selected: undefined,
+    data: [],
+    id: 1,
+    remove: function (id) {
+        const idx = this.data.findIndex(d => d.id == id);
+        this.data.splice(idx, 1);
+    },
+    buildData: function (count = 8) {
+        var adjectives = ["pretty", "large", "big", "small", "tall", "short", "long", "handsome", "plain", "quaint", "clean", "elegant", "easy", "angry", "crazy", "helpful", "mushy", "odd", "unsightly", "adorable", "important", "inexpensive", "cheap", "expensive", "fancy"];
+        var colours = ["red", "yellow", "blue", "green", "pink", "brown", "purple", "brown", "white", "black", "orange"];
+        var nouns = ["table", "chair", "house", "bbq", "desk", "car", "pony", "cookie", "sandwich", "burger", "pizza", "mouse", "keyboard"];
+        var data = [];
+        for (var i = 0; i < count; i++)
+            data.push({ id: this.id++, label: adjectives[_random(adjectives.length, i)] + " " + colours[_random(colours.length, i)] + " " + nouns[_random(nouns.length, i)] });
+        return data;
+    },
+    run: function () {
+        this.data = this.buildData();
+        this.selected = undefined;
+    },
+    update: function (mod = 10) {
+        for (let i = 0; i < this.data.length; i += 10) {
+            this.data[i].label += ' !!!';
+        }
+    },
+    add: function () {
+        this.data = [].concat(this.data, this.buildData(8));
+    },
+    select: function (id) {
+        this.selected = id;
+    },
+    runLots() {
+        this.data = this.buildData(10000);
+        this.selected = undefined;
+    },
+    clear() {
+        this.data = [];
+        this.selected = undefined;
+    },
+    swapRows() {
+        if (this.data.length > 998) {
+            var a = this.data[1];
+            this.data[1] = this.data[998];
+            this.data[998] = a;
+        }
+    }
+};
+
+var Store4 = {
+    selected: undefined,
+    data: [],
+    id: 1,
+    remove: function (id) {
+        const idx = this.data.findIndex(d => d.id == id);
+        this.data.splice(idx, 1);
+    },
+    buildData: function (count = 8) {
+        var adjectives = ["pretty", "large", "big", "small", "tall", "short", "long", "handsome", "plain", "quaint", "clean", "elegant", "easy", "angry", "crazy", "helpful", "mushy", "odd", "unsightly", "adorable", "important", "inexpensive", "cheap", "expensive", "fancy"];
+        var colours = ["red", "yellow", "blue", "green", "pink", "brown", "purple", "brown", "white", "black", "orange"];
+        var nouns = ["table", "chair", "house", "bbq", "desk", "car", "pony", "cookie", "sandwich", "burger", "pizza", "mouse", "keyboard"];
+        var data = [];
+        for (var i = 0; i < count; i++)
+            data.push({ id: this.id++, label: adjectives[_random(adjectives.length, i)] + " " + colours[_random(colours.length, i)] + " " + nouns[_random(nouns.length, i)] });
+        return data;
+    },
+    run: function () {
+        this.data = this.buildData();
+        this.selected = undefined;
+    },
+    update: function (mod = 10) {
+        for (let i = 0; i < this.data.length; i += 10) {
+            this.data[i].label += ' !!!';
+        }
+    },
+    add: function () {
+        this.data = [].concat(this.data, this.buildData(8));
+    },
+    select: function (id) {
+        this.selected = id;
+    },
+    runLots() {
+        this.data = this.buildData(10000);
+        this.selected = undefined;
+    },
+    clear() {
+        this.data = [];
+        this.selected = undefined;
+    },
+    swapRows() {
+        if (this.data.length > 998) {
+            var a = this.data[1];
+            this.data[1] = this.data[998];
+            this.data[998] = a;
+        }
+    }
+};
+
+var Store5 = {
+    selected: undefined,
+    data: [],
+    id: 1,
+    remove: function (id) {
+        const idx = this.data.findIndex(d => d.id == id);
+        this.data.splice(idx, 1);
+    },
+    buildData: function (count = 8) {
+        var adjectives = ["pretty", "large", "big", "small", "tall", "short", "long", "handsome", "plain", "quaint", "clean", "elegant", "easy", "angry", "crazy", "helpful", "mushy", "odd", "unsightly", "adorable", "important", "inexpensive", "cheap", "expensive", "fancy"];
+        var colours = ["red", "yellow", "blue", "green", "pink", "brown", "purple", "brown", "white", "black", "orange"];
+        var nouns = ["table", "chair", "house", "bbq", "desk", "car", "pony", "cookie", "sandwich", "burger", "pizza", "mouse", "keyboard"];
+        var data = [];
+        for (var i = 0; i < count; i++)
+            data.push({ id: this.id++, label: adjectives[_random(adjectives.length, i)] + " " + colours[_random(colours.length, i)] + " " + nouns[_random(nouns.length, i)] });
+        return data;
+    },
+    run: function () {
+        this.data = this.buildData();
+        this.selected = undefined;
+    },
+    update: function (mod = 10) {
+        for (let i = 0; i < this.data.length; i += 10) {
+            this.data[i].label += ' !!!';
+        }
+    },
+    add: function () {
+        this.data = [].concat(this.data, this.buildData(8));
     },
     select: function (id) {
         this.selected = id;
@@ -2454,10 +2601,721 @@ class ContentPanelComponent {
     }
 }
 
+class TestRenderElement1 {
+
+    view() {
+        return markup('span', {
+            children: [
+                textNode('Hello')
+            ]
+        });
+    }
+}
+
+class TestRenderElement2 {
+
+    constructor() {
+        const state = getState();
+        if (state.rendertoele1 === undefined) {
+            state.rendertoele1 = 0;
+        }
+        setState(state);
+    }
+
+    slOnInit() {
+        const state = getState();
+        if (state.rendertoele1 === undefined) {
+            state.rendertoele1 = 0;
+        }
+        state.rendertoele1++;
+        setState(state);
+    }
+
+    view() {
+        return markup('span', {
+            children: [
+                textNode('Hello')
+            ]
+        });
+    }
+}
+
+class TestRenderElement4 {
+
+    constructor() {
+        const state = getState();
+        if (state.rendertoele3 === undefined) {
+            state.rendertoele3 = 0;
+        }
+        setState(state);
+    }
+
+    slOnInit() {
+        const state = getState();
+        if (state.rendertoele3 === undefined) {
+            state.rendertoele3 = 0;
+        }
+        state.rendertoele3++;
+        setState(state);
+    }
+
+    view() {
+        return markup('span', {
+            children: [
+                textNode('Hello')
+            ]
+        });
+    }
+}
+
+class TestRenderElement6 {
+
+    constructor() {
+        const state = getState();
+        if (state.rendertoele4 === undefined) {
+            state.rendertoele4 = 0;
+        }
+        setState(state);
+    }
+
+    slOnDestroy() {
+        const state = getState();
+        if (state.rendertoele4 === undefined) {
+            state.rendertoele4 = 0;
+        }
+        state.rendertoele4++;
+        setState(state);
+    }
+
+    view() {
+        return markup('span', {
+            children: [
+                textNode('Hello')
+            ]
+        });
+    }
+}
+
+export class TestRenderElement3 {
+    constructor() {
+        this.data = function () { return Store3.data; };
+        this.selected = function () { return Store3.selected; };
+        this.run = function () {
+            Store3.run();
+        };
+        this.add = function () {
+            Store3.add();
+        };
+        this.update = function () {
+            Store3.update();
+        };
+        this.select = function (id) {
+            Store3.select(id);
+        };
+        this.delete = function (id) {
+            Store3.remove(id);
+        };
+        this.runLots = function () {
+            Store3.runLots();
+        };
+        this.clear = function () {
+            Store3.clear();
+        };
+        this.swapRows = function () {
+            Store3.swapRows();
+        };
+
+        this.add();
+    }
+
+    updateRow(ctx, v) {
+        if (this.$foo === undefined) {
+            this.$foo = this.childNodes[1];
+            this.$label = this.children[2].childNodes[0];
+        }
+
+        this.children[2].children[0].onclick = wrapWithChangeDetector(ctx.delete.bind(this, v.id));
+
+        if (this.$label.childNodes[0].data !== v.label) {
+            this.$label.removeChild(this.$label.childNodes[0]);
+            this.$label.append(v.label);
+        }
+        const idStr = String(v.id);
+        if (this.$foo.childNodes[0].data !== idStr) {
+            this.$foo.removeChild(this.$foo.childNodes[0]);
+            this.$foo.append(v.id);
+        }
+        var className = (v.id === ctx.selected()) ? 'danger' : ''
+        if (this.className !== className) this.className = className
+    }
+
+    makeRow(d) {
+        let $label;
+
+        const node = markup('tr', {
+            attrs: {
+                ...d.id === this.selected() && { class: 'danger' },
+                onclick: this.select.bind(this, d.id),
+                onremove: this.delete.bind(this, d.id)
+            },
+            children: [
+                new TestRenderElement4(),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-1'
+                    },
+                    children: [
+                        textNode(d.id)
+                    ]
+                }),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-4',
+                    },
+                    children: [
+                        markup('a', {
+                            attrs: {
+                                'href': '#',
+                                onclick: this.select.bind(this, d.id)
+                            },
+                            children: [
+                                textNode(d.label)
+                            ]
+                        })
+                    ]
+                }),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-1',
+                    },
+                    children: [
+                        markup('a', {
+                            attrs: {
+                                'href': '#',
+                                onclick: this.delete.bind(this, d.id)
+                            },
+                            children: [
+                                markup('span', {
+                                    attrs: {
+                                        'class': 'glyphicon glyphicon-remove',
+                                        'aria-hidden': 'true'
+                                    }
+                                })
+                            ]
+                        })
+                    ]
+                }),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-6'
+                    }
+                })
+            ]
+        });
+
+        return node;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'class': 'container',
+                'id': 'rendertoelement3'
+            },
+            children: [
+                markup('table', {
+                    attrs: {
+                        'class': 'table table-hover table-striped test-data'
+                    },
+                    children: [
+                        markup('tbody', {
+                            attrs: {
+                                'slfor': 'myfor2:data:makeRow:updateRow'
+                            }
+                        })
+                    ]
+                })
+            ]
+        });
+    }
+}
+
+
+export class TestRenderElement5 {
+    constructor() {
+        this.data = function () { return Store4.data; };
+        this.selected = function () { return Store4.selected; };
+        this.run = function () {
+            Store4.run();
+        };
+        this.add = function () {
+            Store4.add();
+        };
+        this.update = function () {
+            Store4.update();
+        };
+        this.select = function (id) {
+            Store4.select(id);
+        };
+        this.delete = function (id) {
+            Store4.remove(id);
+        };
+        this.runLots = function () {
+            Store4.runLots();
+        };
+        this.clear = function () {
+            Store4.clear();
+        };
+        this.swapRows = function () {
+            Store4.swapRows();
+        };
+
+        if (this.data().length === 0) {
+            this.add();
+        }
+
+        this.show = true;
+    }
+
+    updateRow(ctx, v) {
+        if (this.$foo === undefined) {
+            this.$foo = this.childNodes[1];
+            this.$label = this.children[2].childNodes[0];
+        }
+
+        this.children[2].children[0].onclick = wrapWithChangeDetector(ctx.delete.bind(this, v.id));
+
+        if (this.$label.childNodes[0].data !== v.label) {
+            this.$label.removeChild(this.$label.childNodes[0]);
+            this.$label.append(v.label);
+        }
+        const idStr = String(v.id);
+        if (this.$foo.childNodes[0].data !== idStr) {
+            this.$foo.removeChild(this.$foo.childNodes[0]);
+            this.$foo.append(v.id);
+        }
+        var className = (v.id === ctx.selected()) ? 'danger' : ''
+        if (this.className !== className) this.className = className
+    }
+
+    makeRow(d) {
+        let $label;
+
+        const node = markup('tr', {
+            attrs: {
+                ...d.id === this.selected() && { class: 'danger' },
+                onclick: this.select.bind(this, d.id),
+                onremove: this.delete.bind(this, d.id)
+            },
+            children: [
+                new TestRenderElement6(),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-1'
+                    },
+                    children: [
+                        textNode(d.id)
+                    ]
+                }),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-4',
+                    },
+                    children: [
+                        markup('a', {
+                            attrs: {
+                                'href': '#',
+                                onclick: this.select.bind(this, d.id)
+                            },
+                            children: [
+                                textNode(d.label)
+                            ]
+                        })
+                    ]
+                }),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-1',
+                    },
+                    children: [
+                        markup('a', {
+                            attrs: {
+                                'href': '#',
+                                onclick: this.delete.bind(this, d.id)
+                            },
+                            children: [
+                                markup('span', {
+                                    attrs: {
+                                        'class': 'glyphicon glyphicon-remove',
+                                        'aria-hidden': 'true'
+                                    }
+                                })
+                            ]
+                        })
+                    ]
+                }),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-6'
+                    }
+                })
+            ]
+        });
+
+        return node;
+    }
+
+    hideSlFor() {
+        this.show = false;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'class': 'container',
+                'id': 'rendertoelement4'
+            },
+            children: [
+                markup('table', {
+                    attrs: {
+                        'class': 'table table-hover table-striped test-data'
+                    },
+                    children: [
+                        markup('button', {
+                            attrs: {
+                                onclick: this.hideSlFor.bind(this),
+                                'id': 'renderele4btn'
+                            },
+                            children: [
+                                textNode('Hide slFor')
+                            ]
+                        }),
+                        ...(this.show === true ? [
+                            markup('tbody', {
+                                attrs: {
+                                    'slfor': 'myfor3:data:makeRow:updateRow'
+                                }
+                            })
+                        ] : [])
+                    ]
+                })
+            ]
+        });
+    }
+}
+
+
+export class TestRenderHydrate1 {
+    constructor() {
+        this.data = function () { return Store5.data; };
+        this.selected = function () { return Store5.selected; };
+        this.run = function () {
+            Store5.run();
+        };
+        this.add = function () {
+            Store5.add();
+        };
+        this.update = function () {
+            Store5.update();
+        };
+        this.select = function (id) {
+            Store5.select(id);
+        };
+        this.delete = function (id) {
+            Store5.remove(id);
+        };
+        this.runLots = function () {
+            Store5.runLots();
+        };
+        this.clear = function () {
+            Store5.clear();
+        };
+        this.swapRows = function () {
+            Store5.swapRows();
+        };
+
+        if (this.data().length === 0) {
+            this.add();
+        }
+    }
+
+    updateRow(ctx, v) {
+        if (this.$foo === undefined) {
+            this.$foo = this.childNodes[0];
+            this.$label = this.children[1].childNodes[0];
+        }
+
+        this.children[2].children[0].onclick = wrapWithChangeDetector(ctx.delete.bind(this, v.id));
+
+        if (this.$label.childNodes[0].data !== v.label) {
+            this.$label.removeChild(this.$label.childNodes[0]);
+            this.$label.append(v.label);
+        }
+        const idStr = String(v.id);
+        if (this.$foo.childNodes[0].data !== idStr) {
+            this.$foo.removeChild(this.$foo.childNodes[0]);
+            this.$foo.append(v.id);
+        }
+        var className = (v.id === ctx.selected()) ? 'danger' : ''
+        if (this.className !== className) this.className = className
+    }
+
+    makeRow(d) {
+        let $label;
+
+        const node = markup('tr', {
+            attrs: {
+                ...d.id === this.selected() && { class: 'danger' },
+                onclick: this.select.bind(this, d.id),
+                onremove: this.delete.bind(this, d.id)
+            },
+            children: [
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-1'
+                    },
+                    children: [
+                        textNode(d.id)
+                    ]
+                }),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-4',
+                    },
+                    children: [
+                        markup('a', {
+                            attrs: {
+                                'href': '#',
+                                onclick: this.select.bind(this, d.id)
+                            },
+                            children: [
+                                textNode(d.label)
+                            ]
+                        })
+                    ]
+                }),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-1',
+                    },
+                    children: [
+                        markup('a', {
+                            attrs: {
+                                'href': '#',
+                                onclick: this.delete.bind(this, d.id)
+                            },
+                            children: [
+                                markup('span', {
+                                    attrs: {
+                                        'class': 'glyphicon glyphicon-remove',
+                                        'aria-hidden': 'true'
+                                    }
+                                })
+                            ]
+                        })
+                    ]
+                }),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-6'
+                    }
+                })
+            ]
+        });
+
+        return node;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'class': 'container',
+                'id': 'divrenderhydrate',
+                'slssrclass': 'TestRenderHydrate1'
+            },
+            children: [
+                markup('table', {
+                    attrs: {
+                        'class': 'table table-hover table-striped test-data'
+                    },
+                    children: [
+                        markup('tbody', {
+                            attrs: {
+                                'slfor': 'myfor4:data:makeRow:updateRow'
+                            }
+                        })
+                    ]
+                })
+            ]
+        });
+    }
+}
+
 export class GlobalTestRunner {
 
     constructor() {
         this.someClassMember = 123;
+    }
+
+    testRenderHydrate() {
+        const result = {
+            test: 'test render element with hydrate',
+            success: false,
+            message: ''
+        };
+
+        window.TestRenderHydrate1 = TestRenderHydrate1;
+        hydrate('divrenderhydrate');
+
+        const eleDiv = document.getElementById('divrenderhydrate');
+        const tbody = eleDiv.querySelector('tbody');
+
+        const originalTrCount = tbody.querySelectorAll('tr').length;
+
+        if (tbody && tbody.children && tbody.children.length > 1) {
+            const tr = tbody.children[1];
+
+            if (tr && tr.children && tr.children.length > 2 && tr.children[2].children && tr.children[2].children.length > 0) {
+                // 3rd <td> and first <a>
+                const deleteEle = tr.children[2].children[0];
+
+                if (deleteEle) {
+                    deleteEle.click();
+
+                    s.DETACHED_SET_TIMEOUT(() => {
+                        const finalTrCount = tbody.querySelectorAll('tr').length;
+
+                        if (finalTrCount === originalTrCount - 1) {
+                            result.success = true;
+                        }
+
+                        window.globalTestResults.push(result);
+                        window.globalTestCount++;
+                    }, 100);
+                }
+            }
+        }
+    }
+
+    testRenderElementWithClass3() {
+        const result = {
+            test: 'test render element function with class and after init hook',
+            success: false,
+            message: ''
+        };
+
+        let state = getState();
+        const correctHookCount = state.rendertoele3 === undefined;
+
+        mount('rendertoelement3', new TestRenderElement3());
+
+        state = getState();
+        const correctHookCountAfter = state.rendertoele3 === 8;
+
+        result.success = correctHookCount && correctHookCountAfter;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testRenderElementWithClass4() {
+        const result = {
+            test: 'test render element function with class and on destroy hook',
+            success: false,
+            message: ''
+        };
+
+        let state = getState();
+        const correctHookCount = state.rendertoele4 === undefined;
+
+        mount('rendertoelement4', new TestRenderElement5());
+
+        const hideBtn = document.getElementById('renderele4btn');
+        hideBtn.click();
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            state = getState();
+            const correctHookCountAfter = state.rendertoele4 === 8;
+    
+            result.success = correctHookCount && correctHookCountAfter;
+    
+            window.globalTestResults.push(result);
+            window.globalTestCount++;
+        }, 100);
+    }
+
+    testRenderElementWithClass2() {
+        const result = {
+            test: 'test render element function with class and on init hook',
+            success: false,
+            message: ''
+        };
+
+        const nodeMarkup = markup('tr', {
+            attrs: {
+                'style': 'color:red;',
+                'class': 'some-fake-class',
+                onclick: this.dummyOnClickFunction
+            },
+            children: [
+                new TestRenderElement2()
+            ]
+        });
+
+        let state = getState();
+        const correctHookCount = state.rendertoele1 === 0;
+
+        const node = renderElement(nodeMarkup);
+
+        const correctTag = node.tagName && node.tagName === 'TR';
+        const correctStyle = node.getAttribute('style') === 'color:red;';
+        const correctClass = node.getAttribute('class') === 'some-fake-class';
+        const correctChildren = node.children && node.children.length === 1;
+        const correctChildren2 = node.children && node.children.length === 1 && node.children[0].tagName === 'SPAN' && node.children[0].childNodes.length === 1
+            && node.children[0].childNodes[0].data === 'Hello';
+        const correctOnClick = node.onclick && typeof node.onclick === 'function';
+
+        state = getState();
+        const correctHookCountAfter = state.rendertoele1 === 1;
+
+        result.success = correctTag && correctStyle && correctClass && correctChildren && correctOnClick && correctChildren2
+            && correctHookCount && correctHookCountAfter;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testRenderElementWithClass1() {
+        const result = {
+            test: 'test render element function with class text node',
+            success: false,
+            message: ''
+        };
+
+        const nodeMarkup = markup('tr', {
+            attrs: {
+                'style': 'color:red;',
+                'class': 'some-fake-class',
+                onclick: this.dummyOnClickFunction
+            },
+            children: [
+                new TestRenderElement1()
+            ]
+        });
+        const node = renderElement(nodeMarkup);
+
+        const correctTag = node.tagName && node.tagName === 'TR';
+        const correctStyle = node.getAttribute('style') === 'color:red;';
+        const correctClass = node.getAttribute('class') === 'some-fake-class';
+        const correctChildren = node.children && node.children.length === 1;
+        const correctChildren2 = node.children && node.children.length === 1 && node.children[0].tagName === 'SPAN' && node.children[0].childNodes.length === 1
+            && node.children[0].childNodes[0].data === 'Hello';
+        const correctOnClick = node.onclick && typeof node.onclick === 'function';
+
+        result.success = correctTag && correctStyle && correctClass && correctChildren && correctOnClick && correctChildren2;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
     }
 
     testSlingExists() {
@@ -3829,19 +4687,22 @@ export class GlobalTestRunner {
                                 const rowsRestoredCorrect = rowEle && rowEle.children.length === 3;
 
                                 ele.click();
-                                const correctDiv1 = rowEle && rowEle.children.length === 3 && rowEle.children[0].textContent === 'Mode: 0';
-                                const correctDiv2 = rowEle && rowEle.children.length === 3 && rowEle.children[1].textContent === 'Mode: 0';
-                                const correctDiv3 = rowEle && rowEle.children.length === 3 && rowEle.children[2].textContent === 'Mode: 0';
 
                                 s.DETACHED_SET_TIMEOUT(() => {
-                                    const changeDetectionCalled = stateObj.count2 && stateObj.count2 === 6;
+                                    const correctDiv1 = rowEle && rowEle.children.length === 3 && rowEle.children[0].textContent === 'Mode: 0';
+                                    const correctDiv2 = rowEle && rowEle.children.length === 3 && rowEle.children[1].textContent === 'Mode: 0';
+                                    const correctDiv3 = rowEle && rowEle.children.length === 3 && rowEle.children[2].textContent === 'Mode: 0';
 
-                                    result.success = updateCountCorrect && rowsReducedCorrect && rowsRestoredCorrect && changeDetectionCalled
-                                        && correctDiv1 && correctDiv2 && correctDiv3;
+                                    s.DETACHED_SET_TIMEOUT(() => {
+                                        const changeDetectionCalled = stateObj.count2 && stateObj.count2 === 6;
 
-                                    window.globalTestResults.push(result);
-                                    window.globalTestCount++;
-                                    window.globalAsyncCount--;
+                                        result.success = updateCountCorrect && rowsReducedCorrect && rowsRestoredCorrect && changeDetectionCalled
+                                            && correctDiv1 && correctDiv2 && correctDiv3;
+
+                                        window.globalTestResults.push(result);
+                                        window.globalTestCount++;
+                                        window.globalAsyncCount--;
+                                    }, 200);
                                 }, 200);
                             }, 200);
                         }, 200);
@@ -3920,6 +4781,41 @@ export class GlobalTestRunner {
         }, 500);
     }
 
+    dummyOnClickFunction() {
+        console.log('Testing...');
+    }
+
+    testRenderElement() {
+        const result = {
+            test: 'test render element function',
+            success: false,
+            message: ''
+        };
+
+        const nodeMarkup = markup('tr', {
+            attrs: {
+                'style': 'color:red;',
+                'class': 'some-fake-class',
+                onclick: this.dummyOnClickFunction
+            },
+            children: [
+                textNode('Hello, world!')
+            ]
+        });
+        const node = renderElement(nodeMarkup);
+
+        const correctTag = node.tagName && node.tagName === 'TR';
+        const correctStyle = node.getAttribute('style') === 'color:red;';
+        const correctClass = node.getAttribute('class') === 'some-fake-class';
+        const correctChildren = node.childNodes && node.childNodes.length === 1 && node.childNodes[0].data === 'Hello, world!';
+        const correctOnClick = node.onclick && typeof node.onclick === 'function';
+
+        result.success = correctTag && correctStyle && correctClass && correctChildren && correctOnClick;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
     testFinalize960AnimateDestroy() {
         const result = {
             test: 'test animation of element before destroy',
@@ -3953,7 +4849,7 @@ export class GlobalTestRunner {
                         window.globalTestResults.push(result);
                         window.globalTestCount++;
                         window.globalAsyncCount--;
-                    }, 1001);
+                    }, 1200);
                 }, 1000);
             }
 
@@ -4320,7 +5216,7 @@ export class GlobalTestRunner {
                 }
 
                 window.globalTestCount++;
-            }, 300);
+            }, 600);
         }
 
         window.globalTestResults.push(result);
@@ -4438,7 +5334,7 @@ export class GlobalTestRunner {
             message: ''
         };
 
-        if (s && s._updateMap && s._updateMap.size === 5) {
+        if (s && s._updateMap && s._updateMap.size === 8) {
             result.success = true;
         }
 
