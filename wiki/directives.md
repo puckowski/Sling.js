@@ -1,11 +1,14 @@
+## Directives
+
 Structural directives modify interactions with the DOM layout.
 
 |Directive            |Type      |Behavior                                                       |
 |---------------------|----------|---------------------------------------------------------------|
-|```useexisting```  |Structural|Create the element or, if it exists, use the existing element. |
-|```onlychildren``` |Structural|Only perform change detection on element's children.           |
-|```onlyself```     |Structural|Only perform change detection on the element and not children. |
-|```trustchildren```|Structural|Render HTML string children.                                   |
+|```useexisting```  |Structural|Create the element or, if it exists, use the existing element.    |
+|```onlychildren``` |Structural|Only perform change detection on element's children.              |
+|```onlyself```     |Structural|Only perform change detection on the element and not children.    |
+|```trustchildren```|Structural|Render HTML string children.                                      |
+|```slfor```        |Structural|Render a named list using a node factory and an update function.  |
 
 Attribute directives change the appearance or behavior of a DOM element.
 
@@ -105,4 +108,151 @@ view() {
         ]
     });
 }			
+```
+
+Example of ``slfor``` directive usage:
+
+```javascript
+export class TestRenderElement3 {
+    constructor() {
+        this.data = function () { return Store3.data; };
+        this.selected = function () { return Store3.selected; };
+        this.run = function () {
+            Store3.run();
+        };
+        this.add = function () {
+            Store3.add();
+        };
+        this.update = function () {
+            Store3.update();
+        };
+        this.select = function (id) {
+            Store3.select(id);
+        };
+        this.delete = function (id) {
+            Store3.remove(id);
+        };
+        this.runLots = function () {
+            Store3.runLots();
+        };
+        this.clear = function () {
+            Store3.clear();
+        };
+        this.swapRows = function () {
+            Store3.swapRows();
+        };
+
+        this.add();
+    }
+
+    updateRow(ctx, v) {
+        if (this.$id === undefined) {
+            this.$fid = this.childNodes[1];
+            this.$label = this.children[2].childNodes[0];
+        }
+
+        this.children[2].children[0].onclick = wrapWithChangeDetector(ctx.delete.bind(this, v.id));
+
+        if (this.$label.childNodes[0].data !== v.label) {
+            this.$label.removeChild(this.$label.childNodes[0]);
+            this.$label.append(v.label);
+        }
+	
+        const idStr = String(v.id);
+        
+	if (this.$id.childNodes[0].data !== idStr) {
+            this.$id.removeChild(this.$foo.childNodes[0]);
+            this.$id.append(v.id);
+        }
+	
+        var className = (v.id === ctx.selected()) ? 'danger' : ''
+        if (this.className !== className) this.className = className
+    }
+
+    makeRow(d) {
+        return markup('tr', {
+            attrs: {
+                ...d.id === this.selected() && { class: 'danger' },
+                onclick: this.select.bind(this, d.id),
+                onremove: this.delete.bind(this, d.id)
+            },
+            children: [
+                new TestRenderElement4(),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-1'
+                    },
+                    children: [
+                        textNode(d.id)
+                    ]
+                }),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-4',
+                    },
+                    children: [
+                        markup('a', {
+                            attrs: {
+                                'href': '#',
+                                onclick: this.select.bind(this, d.id)
+                            },
+                            children: [
+                                textNode(d.label)
+                            ]
+                        })
+                    ]
+                }),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-1',
+                    },
+                    children: [
+                        markup('a', {
+                            attrs: {
+                                'href': '#',
+                                onclick: this.delete.bind(this, d.id)
+                            },
+                            children: [
+                                markup('span', {
+                                    attrs: {
+                                        'class': 'glyphicon glyphicon-remove',
+                                        'aria-hidden': 'true'
+                                    }
+                                })
+                            ]
+                        })
+                    ]
+                }),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-6'
+                    }
+                })
+            ]
+        });
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'class': 'container',
+                'id': 'rendertoelement3'
+            },
+            children: [
+                markup('table', {
+                    attrs: {
+                        'class': 'table table-hover table-striped test-data'
+                    },
+                    children: [
+                        markup('tbody', {
+                            attrs: {
+                                'slfor': 'myfor:data:makeRow:updateRow'
+                            }
+                        })
+                    ]
+                })
+            ]
+        });
+    }
+}
 ```
