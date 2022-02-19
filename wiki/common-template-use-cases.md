@@ -17,6 +17,27 @@ children: [
 ]
 ```
 
+For an alternative to Angular's ```*ngFor``` or Vue's ```v-for```, use the following as an example:
+
+```javascript
+view() {
+    return markup('h1', {
+        attrs: {
+            id: 'divRouterOutlet'
+        },
+	children: [
+            ...this.list.map(i => {
+                return markup('p', {
+                    children: [
+                        textNode(i)
+                    ]
+                })
+            })
+	]
+    });
+}
+```
+
 To conditionally apply an attribute to an element, use the following as an example:
 
 ```javascript
