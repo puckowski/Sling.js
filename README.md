@@ -199,10 +199,11 @@ Structural directives modify interactions with the DOM layout.
 
 |Directive            |Type      |Behavior                                                       |
 |---------------------|----------|---------------------------------------------------------------|
-|```useexisting```  |Structural|Create the element or, if it exists, use the existing element. |
-|```onlychildren``` |Structural|Only perform change detection on element's children.           |
-|```onlyself```     |Structural|Only perform change detection on the element and not children. |
-|```trustchildren```|Structural|Render HTML string children.                                   |
+|```useexisting```  |Structural|Create the element or, if it exists, use the existing element.    |
+|```onlychildren``` |Structural|Only perform change detection on element's children.              |
+|```onlyself```     |Structural|Only perform change detection on the element and not children.    |
+|```trustchildren```|Structural|Render HTML string children.                                      |
+|```slfor```        |Structural|Render a named list using a node factory and an update function.  |
 
 Attribute directives change the appearance or behavior of a DOM element.
 
@@ -304,6 +305,153 @@ view() {
 }			
 ```
 
+Example of ``slfor``` directive usage:
+
+```javascript
+export class TestRenderElement3 {
+    constructor() {
+        this.data = function () { return Store3.data; };
+        this.selected = function () { return Store3.selected; };
+        this.run = function () {
+            Store3.run();
+        };
+        this.add = function () {
+            Store3.add();
+        };
+        this.update = function () {
+            Store3.update();
+        };
+        this.select = function (id) {
+            Store3.select(id);
+        };
+        this.delete = function (id) {
+            Store3.remove(id);
+        };
+        this.runLots = function () {
+            Store3.runLots();
+        };
+        this.clear = function () {
+            Store3.clear();
+        };
+        this.swapRows = function () {
+            Store3.swapRows();
+        };
+
+        this.add();
+    }
+
+    updateRow(ctx, v) {
+        if (this.$id === undefined) {
+            this.$fid = this.childNodes[1];
+            this.$label = this.children[2].childNodes[0];
+        }
+
+        this.children[2].children[0].onclick = wrapWithChangeDetector(ctx.delete.bind(this, v.id));
+
+        if (this.$label.childNodes[0].data !== v.label) {
+            this.$label.removeChild(this.$label.childNodes[0]);
+            this.$label.append(v.label);
+        }
+	
+        const idStr = String(v.id);
+        
+	if (this.$id.childNodes[0].data !== idStr) {
+            this.$id.removeChild(this.$foo.childNodes[0]);
+            this.$id.append(v.id);
+        }
+	
+        var className = (v.id === ctx.selected()) ? 'danger' : ''
+        if (this.className !== className) this.className = className
+    }
+
+    makeRow(d) {
+        return markup('tr', {
+            attrs: {
+                ...d.id === this.selected() && { class: 'danger' },
+                onclick: this.select.bind(this, d.id),
+                onremove: this.delete.bind(this, d.id)
+            },
+            children: [
+                new TestRenderElement4(),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-1'
+                    },
+                    children: [
+                        textNode(d.id)
+                    ]
+                }),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-4',
+                    },
+                    children: [
+                        markup('a', {
+                            attrs: {
+                                'href': '#',
+                                onclick: this.select.bind(this, d.id)
+                            },
+                            children: [
+                                textNode(d.label)
+                            ]
+                        })
+                    ]
+                }),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-1',
+                    },
+                    children: [
+                        markup('a', {
+                            attrs: {
+                                'href': '#',
+                                onclick: this.delete.bind(this, d.id)
+                            },
+                            children: [
+                                markup('span', {
+                                    attrs: {
+                                        'class': 'glyphicon glyphicon-remove',
+                                        'aria-hidden': 'true'
+                                    }
+                                })
+                            ]
+                        })
+                    ]
+                }),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-6'
+                    }
+                })
+            ]
+        });
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'class': 'container',
+                'id': 'rendertoelement3'
+            },
+            children: [
+                markup('table', {
+                    attrs: {
+                        'class': 'table table-hover table-striped test-data'
+                    },
+                    children: [
+                        markup('tbody', {
+                            attrs: {
+                                'slfor': 'myfor:data:makeRow:updateRow'
+                            }
+                        })
+                    ]
+                })
+            ]
+        });
+    }
+}
+```
+
 # Core API
 
 ## setState 
@@ -378,6 +526,15 @@ By default, the Sling change detector is attached for the mounted component. Set
 __void update ( rootElementId, component )__
 
 Updates the component mounted at element with ID ```rootElementId```.
+
+## renderElement
+__HTMLElement renderElement ( { tagName, attrs, children } )__
+
+Render a DOM node from markup.
+
+```javascript
+const node = renderElement(markup('p', { children: [ textNode('Hello, world!') ] }));
+```
 
 ## version
 __string version( )__
@@ -488,6 +645,55 @@ Example:
 
 ```javascript
 const compStr = renderToString(new LoginComponent());
+```
+
+## slFor
+
+Below is an example of ```slFor``` structural directive usage.
+
+```javascript
+attrs: {
+    'slfor': 'myfor:data:makeRow:updateRow'
+}
+```
+
+Arguments:
+1. Name of list (must be unique)
+2. The data list or function to retrieve data list. Must be a property of the enclosing class.
+3. The node factory. May return DOM node or Sling markup.
+4. The node update function.
+
+### Node Factory
+
+The node factory receives a list item as the first argument.
+
+Below is an example node factory function:
+
+```javascript
+makeRow(listItem) {
+    return renderElement(markup('p', { children: [ textNode(listItem.id) ] }));
+}
+```
+
+### Node Update Function
+
+The node update function receives a reference to the object which constructed the row as the first argument and a list item as the second argument. The current DOM node is referenced by ```this```.
+
+Below is an example of a node update function:
+
+```javascript
+updateRow(context, listItem) {
+    if (this.$label === undefined) {
+    	this.$label = this.children[0];
+    }
+    
+    this.children[1].onclick = wrapWithChangeDetector(context.deleteRow.bind(this, listItem.id));
+    
+    if (this.$label.childNodes[0].data !== listItem.id) {
+    	this.$label.removeChild(this.$label.childNodes[0]);
+        this.$label.append(listItem.id);
+    }
+}
 ```
 
 # Core Router API
