@@ -250,6 +250,55 @@ var Store5 = {
     }
 };
 
+var Store6 = {
+    selected: undefined,
+    data: [],
+    id: 1,
+    remove: function (id) {
+        const idx = this.data.findIndex(d => d.id == id);
+        this.data.splice(idx, 1);
+    },
+    buildData: function (count = 10) {
+        var adjectives = ["pretty", "large", "big", "small", "tall", "short", "long", "handsome", "plain", "quaint", "clean", "elegant", "easy", "angry", "crazy", "helpful", "mushy", "odd", "unsightly", "adorable", "important", "inexpensive", "cheap", "expensive", "fancy"];
+        var colours = ["red", "yellow", "blue", "green", "pink", "brown", "purple", "brown", "white", "black", "orange"];
+        var nouns = ["table", "chair", "house", "bbq", "desk", "car", "pony", "cookie", "sandwich", "burger", "pizza", "mouse", "keyboard"];
+        var data = [];
+        for (var i = 0; i < count; i++)
+            data.push({ id: this.id++, label: adjectives[_random(adjectives.length, i)] + " " + colours[_random(colours.length, i)] + " " + nouns[_random(nouns.length, i)] });
+        return data;
+    },
+    run: function () {
+        this.data = this.buildData();
+        this.selected = undefined;
+    },
+    update: function (mod = 10) {
+        for (let i = 0; i < this.data.length; i += 10) {
+            this.data[i].label += ' !!!';
+        }
+    },
+    add: function () {
+        this.data = [].concat(this.data, this.buildData(10));
+    },
+    select: function (id) {
+        this.selected = id;
+    },
+    runLots() {
+        this.data = this.buildData(10000);
+        this.selected = undefined;
+    },
+    clear() {
+        this.data = [];
+        this.selected = undefined;
+    },
+    swapRows() {
+        if (this.data.length > 998) {
+            var a = this.data[1];
+            this.data[1] = this.data[998];
+            this.data[998] = a;
+        }
+    }
+};
+
 class TestDestroyAnimateComponent1 {
     constructor() {
         this.hide = false;
@@ -3151,10 +3200,767 @@ export class TestRenderHydrate1 {
     }
 }
 
+export class TestSlForCleanupComponent1 {
+    constructor() {
+        this.show = true;
+        this.data = ['a', 'b', 'c'];
+    }
+
+    makeRow(data) {
+        return markup('p', {
+            children: [
+                textNode(data)
+            ]
+        });
+    }
+
+    updateRow(context, data) {
+        if (this.childNodes[0].data !== data) {
+            this.removeChild(this.childNodes[0]);
+            this.append(data);
+        }
+    }
+
+    hideList() {
+        this.show = false;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divslforcleanup'
+            },
+            children: [
+                ...(this.show === true ? [
+                    markup('div', {
+                        attrs: {
+                            'slfor': 'cleanupfor:data:makeRow:updateRow'
+                        }
+                    })
+                ] : []),
+                markup('button', {
+                    attrs: {
+                        onclick: this.hideList.bind(this),
+                        id: 'slforcleanupbtn'
+                    },
+                    children: [
+                        textNode('Hide List')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestSlForCleanupComponent2 {
+    constructor() {
+        this.show = true;
+        this.data = ['a', 'b', 'c'];
+    }
+
+    makeRow(data) {
+        return markup('p', {
+            children: [
+                textNode(data)
+            ]
+        });
+    }
+
+    updateRow(context, data) {
+        if (this.childNodes[0].data !== data) {
+            this.removeChild(this.childNodes[0]);
+            this.append(data);
+        }
+    }
+
+    hideList() {
+        this.show = false;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divslforcleanup2'
+            },
+            children: [
+                ...(this.show === true ? [
+                    markup('div', {
+                        attrs: {
+                            'slfor': 'cleanupfor2:data:makeRow:updateRow'
+                        },
+                        childen: [
+                            textNode('Testing...'),
+                            markup('span', {
+                                attrs: {
+                                    'slfor': 'cleanupfor3:data:makeRow:updateRow'
+                                }
+                            })
+                        ]
+                    })
+                ] : []),
+                markup('button', {
+                    attrs: {
+                        onclick: this.hideList.bind(this),
+                        id: 'slforcleanupbtn2'
+                    },
+                    children: [
+                        textNode('Hide List')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestManualChangeDetectionComponent2 {
+    constructor() {
+        this.data = function () { return Store6.data; };
+        this.selected = function () { return Store6.selected; };
+        this.run = function () {
+            Store6.run();
+        };
+        this.add = function () {
+            Store6.add();
+        };
+        this.update = function () {
+            Store6.update();
+        };
+        this.select = function (id) {
+            Store6.select(id);
+        };
+        this.delete = function (id) {
+            Store6.remove(id);
+        };
+        this.runLots = function () {
+            Store6.runLots();
+        };
+        this.clear = function () {
+            Store6.clear();
+        };
+        this.swapRows = function () {
+            Store6.swapRows();
+        };
+
+        this.add();
+    }
+
+    updateTableRow(context, d) {
+        if (this.$label.childNodes[0].data !== d.label) {
+            this.$label.removeChild(this.$label.childNodes[0]);
+            this.$label.append(d.label);
+        }
+
+        this.children[2].children[0].onclick = wrapWithChangeDetector(context.delete.bind(this, d.id));
+
+        const idStr = String(d.id);
+
+        if (this.$id.childNodes[0].data !== idStr) {
+            this.$id.removeChild(this.$id.childNodes[0]);
+            this.$id.append(d.id);
+        }
+
+        const className = (d.id === context.selected()) ? 'danger' : '';
+
+        if (this.className !== className) {
+            this.className = className;
+        }
+    }
+
+    makeTableRow(d) {
+        const rootNode = renderElement(markup('tr', {
+            attrs: {
+                ...d.id === this.selected() && { class: 'danger' },
+                onclick: this.select.bind(this, d.id),
+                onremove: this.delete.bind(this, d.id)
+            },
+            children: [
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-1'
+                    },
+                    children: [
+                        textNode(d.id)
+                    ]
+                }),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-4',
+                    },
+                    children: [
+                        markup('a', {
+                            attrs: {
+                                'href': '#',
+                                onclick: this.select.bind(this, d.id)
+                            },
+                            children: [
+                                textNode(d.label)
+                            ]
+                        })
+                    ]
+                }),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-1',
+                    },
+                    children: [
+                        markup('a', {
+                            attrs: {
+                                'href': '#',
+                                onclick: this.delete.bind(this, d.id)
+                            },
+                            children: [
+                                markup('span', {
+                                    attrs: {
+                                        'class': 'glyphicon glyphicon-remove',
+                                        'aria-hidden': 'true'
+                                    }
+                                })
+                            ]
+                        })
+                    ]
+                }),
+                markup('td', {
+                    attrs: {
+                        'class': 'col-md-6'
+                    }
+                })
+            ]
+        }));
+
+        rootNode.$label = rootNode.children[1].children[0];
+        rootNode.$id = rootNode.children[0];
+
+        return rootNode;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'class': 'container',
+                'id': 'divtestmanual1'
+            },
+            children: [
+                markup('div', {
+                    attrs: {
+                        'class': 'jumbotron'
+                    },
+                    children: [
+                        markup('div', {
+                            attrs: {
+                                'class': 'row'
+                            },
+                            children: [
+                                markup('div', {
+                                    attrs: {
+                                        'class': 'col-md-6'
+                                    },
+                                    children: [
+                                        markup('h1', {
+                                            children: [
+                                                textNode('Sling.js 14.0.0')
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                markup('div', {
+                                    attrs: {
+                                        'class': 'col-md-6'
+                                    },
+                                    children: [
+                                        markup('div', {
+                                            attrs: {
+                                                'class': 'col-sm-6 smallpad'
+                                            },
+                                            children: [
+                                                markup('button', {
+                                                    attrs: {
+                                                        'type': 'button',
+                                                        'class': 'btn btn-primary btn-block',
+                                                        'id': 'run',
+                                                        onclick: this.run.bind(this)
+                                                    },
+                                                    children: [
+                                                        textNode('Create 1,000 rows')
+                                                    ]
+                                                }),
+
+                                            ]
+                                        }),
+                                        markup('div', {
+                                            attrs: {
+                                                'class': 'col-sm-6 smallpad'
+                                            },
+                                            children: [
+                                                markup('button', {
+                                                    attrs: {
+                                                        'type': 'button',
+                                                        'class': 'btn btn-primary btn-block',
+                                                        'id': 'runlots',
+                                                        onclick: this.runLots.bind(this)
+                                                    },
+                                                    children: [
+                                                        textNode('Create 10,000 rows')
+                                                    ]
+                                                })
+                                            ]
+                                        }),
+                                        markup('div', {
+                                            attrs: {
+                                                'class': 'col-sm-6 smallpad'
+                                            },
+                                            children: [
+                                                markup('button', {
+                                                    attrs: {
+                                                        'type': 'button',
+                                                        'class': 'btn btn-primary btn-block',
+                                                        'id': 'add',
+                                                        onclick: this.add.bind(this)
+                                                    },
+                                                    children: [
+                                                        textNode('Append 1,000 rows')
+                                                    ]
+                                                }),
+                                            ]
+                                        }),
+                                        markup('div', {
+                                            attrs: {
+                                                'class': 'col-sm-6 smallpad'
+                                            },
+                                            children: [
+                                                markup('button', {
+                                                    attrs: {
+                                                        'type': 'button',
+                                                        'class': 'btn btn-primary btn-block',
+                                                        'id': 'update',
+                                                        onclick: this.update.bind(this)
+                                                    },
+                                                    children: [
+                                                        textNode('Update every 10th row')
+                                                    ]
+                                                }),
+                                            ]
+                                        }),
+                                        markup('div', {
+                                            attrs: {
+                                                'class': 'col-sm-6 smallpad'
+                                            },
+                                            children: [
+                                                markup('button', {
+                                                    attrs: {
+                                                        'type': 'button',
+                                                        'class': 'btn btn-primary btn-block',
+                                                        'id': 'clear',
+                                                        onclick: this.clear.bind(this)
+                                                    },
+                                                    children: [
+                                                        textNode('Clear')
+                                                    ]
+                                                }),
+                                            ]
+                                        }),
+                                        markup('div', {
+                                            attrs: {
+                                                'class': 'col-sm-6 smallpad'
+                                            },
+                                            children: [
+                                                markup('button', {
+                                                    attrs: {
+                                                        'type': 'button',
+                                                        'class': 'btn btn-primary btn-block',
+                                                        'id': 'swaprows',
+                                                        onclick: this.swapRows.bind(this)
+                                                    },
+                                                    children: [
+                                                        textNode('Swap Rows')
+                                                    ]
+                                                })
+                                            ]
+                                        })
+                                    ]
+                                })
+                            ]
+                        })
+                    ]
+                }),
+                markup('table', {
+                    attrs: {
+                        'class': 'table table-hover table-striped test-data'
+                    },
+                    children: [
+                        markup('tbody', {
+                            attrs: {
+                                'slfor': 'bodyfor:data:makeTableRow:updateTableRow'
+                            }
+                        })
+                    ]
+                }),
+                markup('span', {
+                    attrs: {
+                        'class': 'preloadicon glyphicon glyphicon-remove',
+                        'aria-hidden': 'true'
+                    }
+                })
+            ]
+        });
+    }
+}
+
+class RenderToStringConditional1 {
+    constructor() {
+        this.show = true;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divrendertostring1'
+            },
+            children: [
+                ...(this.show === true ? [textNode('Hello')] : []),
+                textNode(', world!')
+            ]
+        })
+    }
+}
+
+class RenderToStringConditional2 {
+    constructor() {
+        this.show = false;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divrendertostring2'
+            },
+            children: [
+                ...(this.show === true ? [textNode('Hello')] : []),
+                textNode(', world!')
+            ]
+        })
+    }
+}
+
+class HydrateSlForComponent1 {
+    constructor() {
+        this.list = ['a', 'b', 'c', 'd', 'e'];
+
+        const state = getState();
+        state.hydrateslformake = 0;
+        state.hydrateslforupdate = 0;
+        setState(state);
+    }
+
+    makeRow(data) {
+        const state = getState();
+        state.hydrateslformake++;
+        setState(state);
+
+        return markup('p', {
+            children: [
+                textNode(data)
+            ]
+        });
+    }
+
+    updateRow(context, data) {
+        const state = getState();
+        state.hydrateslforupdate++;
+        setState(state);
+
+        if (this.childNodes[0].data !== data) {
+            this.removeChild(this.childNodes[0]);
+            this.append(data);
+        }
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divhydrateslfor1'
+            },
+            children: [
+                markup('div', {
+                    attrs: {
+                        'slfor': 'hydratefor:list:makeRow:updateRow'
+                    }
+                })
+            ]
+        });
+    }
+}
+
+class NamedSlForComponent1 {
+    constructor() {
+        this.list = ['a', 'b', 'c'];
+    }
+
+    slOnInit() {
+        this.makeRow.slfor = 'make';
+        this.updateRow.slfor = 'update';
+        this.getData.slfor = 'data';
+    }
+
+    getData() {
+        return this.list;
+    }
+
+    makeRow(data) {
+        return markup('p', {
+            children: [
+                textNode(data)
+            ]
+        });
+    }
+
+    updateRow(context, data) {
+        if (this.childNodes[0].data !== data) {
+            this.removeChild(this.childNodes[0]);
+            this.append(data);
+        }
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divnamedslfor1'
+            },
+            children: [
+                markup('div', {
+                    attrs: {
+                        'slfornamed': 'namedfor:data:make:update'
+                    }
+                })
+            ]
+        });
+    }
+}
+
+export class TestSlForCleanupComponent3 {
+    constructor() {
+        this.show = true;
+        this.data = ['a', 'b', 'c'];
+    }
+
+    slOnInit() {
+        this.getData.slfor = 'data';
+        this.makeRow.slfor = 'make';
+        this.updateRow.slfor = 'update';
+    }
+
+    getData() {
+        return this.data;
+    }
+
+    makeRow(data) {
+        return markup('p', {
+            children: [
+                textNode(data)
+            ]
+        });
+    }
+
+    updateRow(context, data) {
+        if (this.childNodes[0].data !== data) {
+            this.removeChild(this.childNodes[0]);
+            this.append(data);
+        }
+    }
+
+    hideList() {
+        this.show = false;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divslforcleanup3'
+            },
+            children: [
+                ...(this.show === true ? [
+                    markup('div', {
+                        attrs: {
+                            'slfornamed': 'cleanupfornamed:data:make:update'
+                        }
+                    })
+                ] : []),
+                markup('button', {
+                    attrs: {
+                        onclick: this.hideList.bind(this),
+                        id: 'slfornamedcleanupbtn'
+                    },
+                    children: [
+                        textNode('Hide List')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class GlobalTestRunner {
 
     constructor() {
         this.someClassMember = 123;
+    }
+
+    testFinalize100NamedSlForDirectiveRender() {
+        const result = {
+            test: 'test named slFor directive render',
+            success: false,
+            message: ''
+        };
+
+        const compStr = renderToString(new NamedSlForComponent1());
+
+        result.success = compStr === '<div id="divnamedslfor1"><div slfornamed="namedfor:data:make:update"><p>a</p><p>b</p><p>c</p></div></div>';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100NamedSlForDirective() {
+        const result = {
+            test: 'test named slFor directive',
+            success: false,
+            message: ''
+        };
+
+        mount('divnamedslfor1', new NamedSlForComponent1());
+
+        const rootEle = document.getElementById('divnamedslfor1');
+        const childDiv = rootEle.children[0];
+        const pChildren = childDiv.querySelectorAll('p');
+
+        result.success = childDiv && pChildren && pChildren.length === 3 && pChildren[0].textContent === 'a'
+            && pChildren[1].textContent === 'b' && pChildren[2].textContent === 'c';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100HydrateSlForCounts() {
+        const result = {
+            test: 'test hydrate slfor markup with correct update and make counts',
+            success: false,
+            message: ''
+        };
+
+        window.HydrateSlForComponent1 = HydrateSlForComponent1;
+        hydrate('divhydrateslfor1');
+
+        const state = getState();
+        const makeCountCorrect = state.hydrateslformake === 2;
+        const updateCountCorrect = state.hydrateslforupdate === 3;
+
+        result.success = makeCountCorrect && updateCountCorrect;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testRenderToStringConditional() {
+        const result = {
+            test: 'test render to string with truthy conditional in template',
+            success: false,
+            message: ''
+        };
+
+        const compStr = renderToString(new RenderToStringConditional1());
+
+        result.success = compStr === '<div id="divrendertostring1">Hello, world!</div>';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testRenderToStringConditional2() {
+        const result = {
+            test: 'test render to string with falsy conditional in template',
+            success: false,
+            message: ''
+        };
+
+        const compStr = renderToString(new RenderToStringConditional2());
+
+        result.success = compStr === '<div id="divrendertostring2">, world!</div>';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100NamedSlForCleanup() {
+        const result = {
+            test: 'test named slFor cleanup',
+            success: false,
+            message: ''
+        };
+
+        mount('divslforcleanup3', new TestSlForCleanupComponent3());
+
+        const originalExists = s._structureForMap.has('cleanupfornamed');
+
+        const hideBtn = document.getElementById('slfornamedcleanupbtn');
+        hideBtn.click();
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            const existsAfterHide = s._structureForMap.has('cleanupfornamed');
+
+            result.success = originalExists === true && existsAfterHide === false;
+
+            window.globalTestResults.push(result);
+            window.globalTestCount++;
+        }, 100);
+    }
+
+    testFinalize100SlForCleanup() {
+        const result = {
+            test: 'test slFor cleanup with multiple directives',
+            success: false,
+            message: ''
+        };
+
+        mount('divslforcleanup2', new TestSlForCleanupComponent2());
+
+        const originalExists = s._structureForMap.has('cleanupfor2');
+        const originalExists2 = s._structureForMap.has('cleanupfor3');
+
+        const hideBtn = document.getElementById('slforcleanupbtn2');
+        hideBtn.click();
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            const existsAfterHide = s._structureForMap.has('cleanupfor2');
+            const existsAfterHide2 = s._structureForMap.has('cleanupfor3');
+
+            result.success = originalExists === true && originalExists2 === true && existsAfterHide === false && existsAfterHide2 === false;
+
+            window.globalTestResults.push(result);
+            window.globalTestCount++;
+        }, 100);
+    }
+
+    testFinalize100SlForCleanup() {
+        const result = {
+            test: 'test slFor cleanup',
+            success: false,
+            message: ''
+        };
+
+        mount('divslforcleanup', new TestSlForCleanupComponent1());
+
+        const originalExists = s._structureForMap.has('cleanupfor');
+
+        const hideBtn = document.getElementById('slforcleanupbtn');
+        hideBtn.click();
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            const existsAfterHide = s._structureForMap.has('cleanupfor');
+
+            result.success = originalExists === true && existsAfterHide === false;
+
+            window.globalTestResults.push(result);
+            window.globalTestCount++;
+        }, 100);
     }
 
     testRenderHydrate() {
@@ -3236,9 +4042,9 @@ export class GlobalTestRunner {
         s.DETACHED_SET_TIMEOUT(() => {
             state = getState();
             const correctHookCountAfter = state.rendertoele4 === 8;
-    
+
             result.success = correctHookCount && correctHookCountAfter;
-    
+
             window.globalTestResults.push(result);
             window.globalTestCount++;
         }, 100);
@@ -3316,6 +4122,71 @@ export class GlobalTestRunner {
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
+    }
+
+    testFinalize100ManualChangeDetection() {
+        const result = {
+            test: 'test delete with manual change detection mode',
+            success: false,
+            message: ''
+        };
+
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            if (window.globalAsyncCount === 0) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
+
+                setDetectionStrategy(s.CHANGE_STRATEGY_MANUAL);
+
+                mount('divtestmanual1', new TestManualChangeDetectionComponent2());
+
+                setDetectionStrategy(s.CHANGE_STRATEGY_AUTOMATIC);
+
+                const rootEle = document.getElementById('divtestmanual1');
+                const tbody = rootEle.querySelector('tbody');
+
+                const originalTrCount = rootEle.querySelectorAll('tr');
+
+                if (tbody && tbody.children && tbody.children.length > 0) {
+                    const tr = tbody.children[0];
+
+                    if (tr && tr.children && tr.children.length > 2) {
+                        const deleteTd = tr.children[2];
+
+                        if (deleteTd && deleteTd.children && deleteTd.children.length > 0) {
+                            const deleteEle = deleteTd.children[0];
+
+                            if (deleteEle) {
+                                deleteEle.click();
+
+                                s.DETACHED_SET_TIMEOUT(() => {
+                                    const finalTrCount = rootEle.querySelectorAll('tr');
+
+                                    if (originalTrCount.length === finalTrCount.length) {
+                                        result.success = true;
+                                    }
+
+                                    window.globalTestResults.push(result);
+                                    window.globalTestCount++;
+                                    window.globalAsyncCount--;
+                                }, 100);
+                            }
+                        }
+                    }
+                }
+            }
+
+            attempts++;
+
+            if (attempts === 50 && window.globalAsyncCount > 0) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+
+                clearInterval(waitForStableInterval);
+                window.globalAsyncCount--;
+            }
+        }, 500);
     }
 
     testSlingExists() {
@@ -3802,8 +4673,8 @@ export class GlobalTestRunner {
                         window.globalTestResults.push(result);
                         window.globalTestCount++;
                         window.globalAsyncCount--;
-                    }, 100);
-                }, 100);
+                    }, 25);
+                }, 25);
             }
 
             attempts++;
