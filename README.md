@@ -204,6 +204,7 @@ Structural directives modify interactions with the DOM layout.
 |```onlyself```     |Structural|Only perform change detection on the element and not children.    |
 |```trustchildren```|Structural|Render HTML string children.                                      |
 |```slfor```        |Structural|Render a named list using a node factory and an update function.  |
+|```slfornamed```        |Structural|Render a named list using a node factory and an update function. This directive may be used instead of ```slfor``` where function names are minified in builds.  |
 
 Attribute directives change the appearance or behavior of a DOM element.
 
@@ -528,13 +529,15 @@ __void update ( rootElementId, component )__
 Updates the component mounted at element with ID ```rootElementId```.
 
 ## renderElement
-__HTMLElement renderElement ( { tagName, attrs, children } )__
+__HTMLElement renderElement ( { tagName, attrs, children }, isDetached = false )__
 
 Render a DOM node from markup.
 
 ```javascript
 const node = renderElement(markup('p', { children: [ textNode('Hello, world!') ] }));
 ```
+
+Set ```isDetached``` to ```true``` if the created DOM node will not be attached to the DOM and managed by Sling.js.
 
 ## version
 __string version( )__
@@ -692,6 +695,65 @@ updateRow(context, listItem) {
     if (this.$label.childNodes[0].data !== listItem.id) {
     	this.$label.removeChild(this.$label.childNodes[0]);
         this.$label.append(listItem.id);
+    }
+}
+```
+
+## Named slFor
+
+For builds where function names are minified, the structural directive ```slfornamed``` may be used instead of ```slfor```. 
+
+The structural directive ```slfornamed``` takes arguments which are ```slfor``` property values of functions belonging to an object. The ```slfor``` property is typically set on functions in the ```slOnInit``` lifecycle hook.
+
+One difference between ```slfor``` and ```slfornamed``` is that for ```slfornamed``` every argument must reference a function identified by ```slfor```. The data list can not be a simple property.
+
+Below is an example of ```slfornamed``` usage.
+
+```javascript
+
+class NamedSlForComponent1 {
+    constructor() {
+        this.list = ['a', 'b', 'c'];
+    }
+
+    slOnInit() {
+        this.makeRow.slfor = 'make';
+        this.updateRow.slfor = 'update';
+        this.getData.slfor = 'data';
+    }
+
+    getData() {
+        return this.list;
+    }
+
+    makeRow(data) {
+        return markup('p', {
+            children: [
+                textNode(data)
+            ]
+        });
+    }
+
+    updateRow(context, data) {
+        if (this.childNodes[0].data !== data) {
+            this.removeChild(this.childNodes[0]);
+            this.append(data);
+        }
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divnamedslfor1'
+            },
+            children: [
+                markup('div', {
+                    attrs: {
+                        'slfornamed': 'namedfor:data:make:update'
+                    }
+                })
+            ]
+        });
     }
 }
 ```
