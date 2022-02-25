@@ -3798,10 +3798,136 @@ export class TestSlForCleanupComponent3 {
     }
 }
 
+
+export class TestSlForMapComponent1 {
+    constructor() {
+        this.data = ['a', 'b', 'c'];
+    }
+
+    slOnInit() {
+        this.getData.slfor = 'data';
+        this.makeRow.slfor = 'make';
+        this.updateRow.slfor = 'update';
+    }
+
+    slOnDestroy() {
+        console.log('Named slFor destroy hook...');
+    }
+
+    getData() {
+        return this.data;
+    }
+
+    makeRow(data) {
+        return markup('p', {
+            children: [
+                textNode(data)
+            ]
+        });
+    }
+
+    updateRow(context, data) {
+        if (this.childNodes[0].data !== data) {
+            this.removeChild(this.childNodes[0]);
+            this.append(data);
+        }
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divslfornamedmap'
+            },
+            children: [
+                markup('div', {
+                    attrs: {
+                        'slfornamed': 'cleanupfornamedmap:data:make:update'
+                    }
+                })
+            ]
+        })
+    }
+}
+
+export class TestEleDestroyMapComponent1 {
+    constructor() {
+        
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'diveledestroymap1'
+            },
+            children: [
+                markup('p', {
+                    children: [
+                        textNode('Destroy Map Test')
+                    ]
+                }),
+                new TestSlForMapComponent1()
+            ]
+        })
+    }
+}
+
 export class GlobalTestRunner {
 
     constructor() {
         this.someClassMember = 123;
+    }
+
+    isElement(obj) {
+        try {
+            //Using W3 DOM2 (works for FF, Opera and Chrome)
+            return obj instanceof HTMLElement;
+        }
+        catch (e) {
+            //Browsers not supporting W3 DOM2 don't have HTMLElement and
+            //an exception is thrown and we end up here. Testing some
+            //properties that all elements have (works on IE7)
+            return (typeof obj === "object") &&
+                (obj.nodeType === 1) && (typeof obj.style === "object") &&
+                (typeof obj.ownerDocument === "object");
+        }
+    }
+
+    testFinalize100ElementDestroyMapByRoute() {
+        const result = {
+            test: 'test element destroy map by route',
+            success: false,
+            message: ''
+        };
+
+        const originalCount = s._destroyNodeMap.get('diveledestroymap1') ? s._destroyNodeMap.get('diveledestroymap1').length : 0;
+
+        mount('diveledestroymap1', new TestEleDestroyMapComponent1());
+
+        const finalCount = s._destroyNodeMap.get('diveledestroymap1') ? s._destroyNodeMap.get('diveledestroymap1').length : 0;
+
+        result.success = finalCount === originalCount + 1;
+       
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100NamedSlForMapCount() {
+        const result = {
+            test: 'test named slFor directive internal map count and correctness',
+            success: false,
+            message: ''
+        };
+
+        mount('divslfornamedmap', new TestSlForMapComponent1());
+
+        const namedList = s._structureForMap.get('cleanupfornamedmap');
+
+        const nodesCorrect = namedList && namedList.map && this.isElement(namedList.map[0]) && this.isElement(namedList.map[1]) && this.isElement(namedList.map[2]);
+
+        result.success = namedList && namedList.map && Object.keys(namedList.map).length === 3 && nodesCorrect;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
     }
 
     testFinalize100NamedSlForDirectiveRender() {
