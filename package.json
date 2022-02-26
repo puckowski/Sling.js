@@ -9,7 +9,7 @@
     "build": "webpack --mode development",
     "buildProd": "webpack --mode production",
     "devServer": "webpack-dev-server --content-base dist/",
-    "buildAll": "npm run buildSlingCore && npm run buildSlingXhr && npm run buildSlingReactive && npm run buildEs5 && npm run buildEs5Min && npm run buildBrowser",
+    "buildAll": "npm run buildSlingCore && npm run buildSlingXhr && npm run buildSlingReactive && npm run buildEs5 && npm run buildEs5Min && npm run buildBrowser && npm run buildProd",
     "buildEs5": "babel .\\dist\\sling.min.js --out-file .\\dist\\sling.es5.js --presets=@babel/preset-env",
     "buildEs5Min": "terser --compress --mangle toplevel,reserved=['m'] --output .\\dist\\sling.min.es5.js -- .\\dist\\sling.es5.js",
     "buildSlingCore": "terser --toplevel --compress --mangle toplevel,reserved=['m'] --output .\\dist\\sling.min.js -- .\\src\\sling\\core\\sling.js",

@@ -4067,6 +4067,48 @@ export class TestLifecycleHookConsumedComponent1 {
     }
 }
 
+export class TestRenderDetachedComponent1 {
+    constructor() {
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divtestrenderdetached1'
+            },
+            children: [
+                markup('p', {
+                    children: [
+                        textNode('Test Render Detached'),
+                        new TestRenderDetachedComponent2()
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestRenderDetachedComponent2 {
+    constructor() {
+    }
+
+    slOnDestroy() {
+        console.log('Render detached destroy...');
+    }
+
+    view() {
+        return markup('div', {
+            children: [
+                markup('p', {
+                    children: [
+                        textNode('Render Detached Destroy Component')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class GlobalTestRunner {
 
     constructor() {
@@ -4086,6 +4128,26 @@ export class GlobalTestRunner {
                 (obj.nodeType === 1) && (typeof obj.style === "object") &&
                 (typeof obj.ownerDocument === "object");
         }
+    }
+
+    testFinalize100RenderDetachedConsumeComponent() {
+        const result = {
+            test: 'test render detached consumes component but does not mount',
+            success: false,
+            message: ''
+        };
+
+        const currentRoute = s._router.mountRoute;
+        const destroyEleList = s._destroyNodeMap.get(currentRoute) ? s._destroyNodeMap.get(currentRoute).length : 0;
+
+        const compStr = renderElement(new TestRenderDetachedComponent1().view(), true);
+
+        const destroyEleListFinal = s._destroyNodeMap.get(currentRoute) ? s._destroyNodeMap.get(currentRoute).length : 0;
+
+        result.success = destroyEleList === destroyEleListFinal;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
     }
 
     testFinalize100LifecycleHooksConsumedProperly() {
