@@ -3798,7 +3798,6 @@ export class TestSlForCleanupComponent3 {
     }
 }
 
-
 export class TestSlForMapComponent1 {
     constructor() {
         this.data = ['a', 'b', 'c'];
@@ -3851,7 +3850,7 @@ export class TestSlForMapComponent1 {
 
 export class TestEleDestroyMapComponent1 {
     constructor() {
-        
+
     }
 
     view() {
@@ -3866,6 +3865,203 @@ export class TestEleDestroyMapComponent1 {
                     ]
                 }),
                 new TestSlForMapComponent1()
+            ]
+        })
+    }
+}
+
+export class TestRenderNamedSlForComponent2 {
+    constructor() {
+        this.data = ['a', 'b', 'c'];
+        this.show = true;
+        this.secondShow = false;
+    }
+
+    slOnInit() {
+        this.getData.slfor = 'data';
+        this.makeRow.slfor = 'make';
+        this.updateRow.slfor = 'update';
+    }
+
+    slOnDestroy() {
+        console.log('Named slFor destroy hook...');
+    }
+
+    getData() {
+        return this.data;
+    }
+
+    makeRow(data) {
+        return markup('p', {
+            children: [
+                ...(this.show === true ? [
+                    markup('span', {
+                        children: [
+                            markup('kbd', {
+                                children: [
+                                    textNode('Ctrl')
+                                ]
+                            }),
+                            markup('ul', {
+                                children: [
+                                    markup('li', {
+                                        children: [
+                                            textNode('Konnichiwa')
+                                        ]
+                                    }),
+                                    markup('li', {
+                                        children: [
+                                            textNode('Guten Tag')
+                                        ]
+                                    })
+                                ]
+                            })
+                        ]
+                    })
+                ] : []),
+                ...(this.secondShow === true ? [
+                    textNode('Bonjour')
+                ] : []),
+                markup('form', {
+                    children: [
+                        markup('fieldset', {
+                            children: [
+                                markup('legend', {
+                                    children: [
+                                        textNode('Choose your favorite monster')
+                                    ]
+                                }),
+                                markup('input', {
+                                    attrs: {
+                                        'type': 'radio',
+                                        'name': 'monster',
+                                        'id': 'kraken'
+                                    }
+                                }),
+                                markup('label', {
+                                    attrs: {
+                                        'for': 'kraken'
+                                    },
+                                    children: [
+                                        textNode('Kraken')
+                                    ]
+                                }),
+                                markup('div', {
+                                    attrs: {
+                                        'sldirective': 'trustchildren'
+                                    },
+                                    children: [
+                                        textNode('<br>')
+                                    ]
+                                }),
+                                markup('input', {
+                                    attrs: {
+                                        'type': 'radio',
+                                        'name': 'monster',
+                                        'id': 'sasquatch'
+                                    }
+                                }),
+                                markup('label', {
+                                    attrs: {
+                                        'for': 'sasquatch'
+                                    },
+                                    children: [
+                                        textNode('Sasquatch')
+                                    ]
+                                })
+                            ]
+                        })
+                    ]
+                })
+            ]
+        });
+    }
+
+    updateRow(context, data) {
+        
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divslfornamedrender2'
+            },
+            children: [
+                markup('div', {
+                    attrs: {
+                        'slfornamed': 'namedslforrender:data:make:update'
+                    }
+                })
+            ]
+        })
+    }
+}
+
+export class TestLifecycleHookConsumedComponent2 {
+    constructor() {
+        this.count1 = 0;
+        this.count2 = 0;
+        this.count3 = 0;
+    }
+
+    slOnInit() {
+        this.count1++;
+    }
+
+    slAfterInit() {
+        this.count2++;
+    }
+
+    slOnDestroy() {
+        this.count3++;
+    }
+
+    view() {
+        return markup('div', {
+            children: [
+                markup('p', {
+                    children: [
+                        textNode('Consumed Lifecycle Component')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestLifecycleHookConsumedComponent1 {
+    constructor() {
+        this.show = true;
+    }
+    
+    onHide() {
+        this.show = false;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divlifecycleconsumed1'
+            },
+            children: [
+                ...(this.show === true ? [
+                    markup('p', {
+                        children: [
+                            textNode('Lifecycle Hook Test')
+                        ]
+                    }),
+                    new TestLifecycleHookConsumedComponent2(),
+                    markup('button', {
+                        attrs: {
+                            'id': 'lifecyclehookconsumedbtn',
+                            onclick: this.onHide.bind(this)
+                        },
+                        children: [
+                            textNode('Hide Children')
+                        ]
+                    })
+                ] : [])
+                
             ]
         })
     }
@@ -3892,6 +4088,48 @@ export class GlobalTestRunner {
         }
     }
 
+    testFinalize100LifecycleHooksConsumedProperly() {
+        const result = {
+            test: 'test consumed component lifecycle hooks called and bound to model properly',
+            success: false,
+            message: ''
+        };
+
+        mount('divlifecycleconsumed1', new TestLifecycleHookConsumedComponent1());
+
+        const btnEle = document.getElementById('lifecyclehookconsumedbtn');
+
+        if (btnEle) {
+            btnEle.click();
+
+            s.DETACHED_SET_TIMEOUT(() => {
+                // If no exceptions thrown
+                result.success = true;
+
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+            }, 100);
+        } else {            
+            window.globalTestResults.push(result);
+            window.globalTestCount++;
+        }
+    }
+
+    testFinalize100RenderComplexNamedSlFor() {
+        const result = {
+            test: 'test render to string of complex slFor',
+            success: false,
+            message: ''
+        };
+
+        const compStr = renderToString(new TestRenderNamedSlForComponent2());
+
+        result.success = compStr === '<div id="divslfornamedrender2"><div slfornamed="namedslforrender:data:make:update"><p><span><kbd>Ctrl</kbd><ul><li>Konnichiwa</li><li>Guten Tag</li></ul></span><form><fieldset><legend>Choose your favorite monster</legend><input type="radio" name="monster" id="kraken"></input><label for="kraken">Kraken</label><div sldirective="trustchildren"><br></div><input type="radio" name="monster" id="sasquatch"></input><label for="sasquatch">Sasquatch</label></fieldset></form></p><p><span><kbd>Ctrl</kbd><ul><li>Konnichiwa</li><li>Guten Tag</li></ul></span><form><fieldset><legend>Choose your favorite monster</legend><input type="radio" name="monster" id="kraken"></input><label for="kraken">Kraken</label><div sldirective="trustchildren"><br></div><input type="radio" name="monster" id="sasquatch"></input><label for="sasquatch">Sasquatch</label></fieldset></form></p><p><span><kbd>Ctrl</kbd><ul><li>Konnichiwa</li><li>Guten Tag</li></ul></span><form><fieldset><legend>Choose your favorite monster</legend><input type="radio" name="monster" id="kraken"></input><label for="kraken">Kraken</label><div sldirective="trustchildren"><br></div><input type="radio" name="monster" id="sasquatch"></input><label for="sasquatch">Sasquatch</label></fieldset></form></p></div></div>';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
     testFinalize100ElementDestroyMapByRoute() {
         const result = {
             test: 'test element destroy map by route',
@@ -3906,7 +4144,7 @@ export class GlobalTestRunner {
         const finalCount = s._destroyNodeMap.get('diveledestroymap1') ? s._destroyNodeMap.get('diveledestroymap1').length : 0;
 
         result.success = finalCount === originalCount + 1;
-       
+
         window.globalTestResults.push(result);
         window.globalTestCount++;
     }
