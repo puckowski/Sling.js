@@ -4109,6 +4109,91 @@ export class TestRenderDetachedComponent2 {
     }
 }
 
+export class TestChildViewConsumedComponent2 {
+    constructor() {
+    }
+
+    view() {
+        const state = getState();
+        if (state.childviewconsume === undefined) state.childviewconsume = 1;
+        else state.childviewconsume++;
+        setState(state);
+
+        return markup('p', {
+            children: [
+                markup('kbd', {
+                    children: [
+                        textNode('Tab')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestChildViewConsumedComponent1 {
+    constructor() {
+        this.childComp = new TestChildViewConsumedComponent2();
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divchildviewconsume1'
+            },
+            children: [
+                markup('p', {
+                    children: [
+                        textNode('Test Child View Consumed'),
+                        this.childComp.view()
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestChildViewConsumedComponent3 {
+    constructor() {
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divchildviewconsume2'
+            },
+            children: [
+                markup('p', {
+                    children: [
+                        textNode('Test Child View Consumed'),
+                        new TestChildViewConsumedComponent2().view()
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestConsumeStringComponent1 {
+    constructor() {
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divconsumestring1'
+            },
+            children: [
+                markup('kbd', {
+                    children: [
+                        'Shift'
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class GlobalTestRunner {
 
     constructor() {
@@ -4128,6 +4213,83 @@ export class GlobalTestRunner {
                 (obj.nodeType === 1) && (typeof obj.style === "object") &&
                 (typeof obj.ownerDocument === "object");
         }
+    }
+
+    testFinalize100ConsumeStringInTemplate() {
+        const result = {
+            test: 'test consuming a string in a template',
+            success: false,
+            message: ''
+        };
+
+        mount('divconsumestring1', new TestConsumeStringComponent1());
+
+        const rootEle = document.getElementById('divconsumestring1');
+
+        const rootAndChild = rootEle && rootEle.children && rootEle.children.length === 1;
+        const kbdEle = rootAndChild && rootEle.children[0].tagName === 'KBD';
+        const kbdContent = kbdEle && rootEle.children[0].textContent === 'Shift';
+
+        result.success = rootAndChild && kbdEle && kbdContent;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100ChildViewConsumedProperlyWithoutProperty() {
+        const result = {
+            test: 'test child view is consumed properly without passing an object and without property',
+            success: false,
+            message: ''
+        };
+
+        let state = getState();
+        const originalViewCount = state.childviewconsume ? state.childviewconsume : 0;
+
+        mount('divchildviewconsume2', new TestChildViewConsumedComponent3());
+
+        state = getState();
+        const firstViewCount = state.childviewconsume ? state.childviewconsume : 0;
+
+        detectChanges('divchildviewconsume2');
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            state = getState();
+            const finalViewCount = state.childviewconsume ? state.childviewconsume : 0;
+    
+            result.success = firstViewCount > originalViewCount && finalViewCount > firstViewCount;
+    
+            window.globalTestResults.push(result);
+            window.globalTestCount++;
+        }, 100);
+    }
+
+    testFinalize100ChildViewConsumedProperly() {
+        const result = {
+            test: 'test child view is consumed properly without passing an object',
+            success: false,
+            message: ''
+        };
+
+        let state = getState();
+        const originalViewCount = state.childviewconsume ? state.childviewconsume : 0;
+
+        mount('divchildviewconsume1', new TestChildViewConsumedComponent1());
+
+        state = getState();
+        const firstViewCount = state.childviewconsume ? state.childviewconsume : 0;
+
+        detectChanges('divchildviewconsume1');
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            state = getState();
+            const finalViewCount = state.childviewconsume ? state.childviewconsume : 0;
+    
+            result.success = originalViewCount === 0 && firstViewCount > originalViewCount && finalViewCount > firstViewCount;
+    
+            window.globalTestResults.push(result);
+            window.globalTestCount++;
+        }, 100);
     }
 
     testFinalize100RenderDetachedConsumeComponent() {
