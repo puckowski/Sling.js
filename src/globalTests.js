@@ -1,4 +1,4 @@
-import { renderElement, detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll, getRouteSegments, hydrate, renderToString, removeRoute, version, update, setDetectionStrategy, wrapWithChangeDetector, isDetectorAttached, detachDetector, getRoute } from "../dist/sling.min";
+import { renderElementWithoutClass, renderElement, detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll, getRouteSegments, hydrate, renderToString, removeRoute, version, update, setDetectionStrategy, wrapWithChangeDetector, isDetectorAttached, detachDetector, getRoute } from "../dist/sling.min";
 import { FormControl, Observable } from '../dist/sling-reactive.min';
 
 function _random(max, idx) {
@@ -3288,7 +3288,7 @@ export class TestSlForCleanupComponent2 {
                         attrs: {
                             'slfor': 'cleanupfor2:data:makeRow:updateRow'
                         },
-                        childen: [
+                        children: [
                             textNode('Testing...'),
                             markup('span', {
                                 attrs: {
@@ -3978,7 +3978,7 @@ export class TestRenderNamedSlForComponent2 {
     }
 
     updateRow(context, data) {
-        
+
     }
 
     view() {
@@ -4033,7 +4033,7 @@ export class TestLifecycleHookConsumedComponent1 {
     constructor() {
         this.show = true;
     }
-    
+
     onHide() {
         this.show = false;
     }
@@ -4061,7 +4061,7 @@ export class TestLifecycleHookConsumedComponent1 {
                         ]
                     })
                 ] : [])
-                
+
             ]
         })
     }
@@ -4194,6 +4194,60 @@ export class TestConsumeStringComponent1 {
     }
 }
 
+export class TestRenderElementWithoutClassComponent1 {
+    constructor() {
+        this.data = ['a', 'b', 'c', 'd'];
+    }
+
+    slOnInit() {
+        this.getData.slfor = 'data';
+        this.makeRow.slfor = 'make';
+        this.updateRow.slfor = 'update';
+    }
+
+    getData() {
+        return this.data;
+    }
+
+    makeRow(data) {
+        return renderElementWithoutClass('p', {
+            style: 'color: #cacaca;'
+        }, [
+            renderElementWithoutClass('kbd', {
+            }, [
+                textNode(data)
+            ]),
+            renderElementWithoutClass('span', {
+                style: 'color: #6D6D6D;'
+            }, [
+                textNode(data)
+            ])
+        ]);
+    }
+
+    updateRow(context, data) {
+        if (this.childNodes[0].childNodes[0].data !== data) {
+            this.childNodes[0].removeChild(this.childNodes[0].childNodes[0]);
+            this.childNodes[0].append(data);
+        }
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divrenderwithoutclass'
+            },
+            children: [
+                markup('div', {
+                    attrs: {
+                        'slfornamed': 'forrenderwithoutclass:data:make:update'
+                    }
+                })
+            ]
+        })
+    }
+}
+
 export class GlobalTestRunner {
 
     constructor() {
@@ -4213,6 +4267,72 @@ export class GlobalTestRunner {
                 (obj.nodeType === 1) && (typeof obj.style === "object") &&
                 (typeof obj.ownerDocument === "object");
         }
+    }
+
+    testFinalize100RenderWithoutClassSimple() {
+        const result = {
+            test: 'test render element without classes to be consumed for simple cases',
+            success: false,
+            message: ''
+        };
+
+        const ele = renderElementWithoutClass('kbd', {}, []);
+        const ele2 = renderElementWithoutClass('span', { style: 'color: #cacaca' }, []);
+        const ele3 = renderElementWithoutClass('div', {}, [ textNode('a') ]);
+        const ele4 = renderElementWithoutClass('p', {}, [ renderElementWithoutClass('header', {}, ['header'])]);
+        const ele5 = renderElementWithoutClass('p', {}, [ renderElementWithoutClass('header', {}, ['header']), 'b', textNode('c')]);
+
+        const eleCorrect = ele && ele.children && ele.children.length === 0 && ele.tagName === 'KBD';
+        const ele2Correct = ele2 && ele2.children && ele2.children.length === 0 && ele2.style.color === 'rgb(202, 202, 202)' && ele2.tagName === 'SPAN';
+        const ele3Correct = ele3 && ele3.childNodes && ele3.childNodes.length === 1 && ele3.childNodes[0].textContent === 'a' && ele3.tagName === 'DIV';
+        const ele4Correct = ele4 && ele4.childNodes && ele4.childNodes.length === 1 && ele4.childNodes[0].tagName === 'HEADER' && ele4.childNodes[0].textContent === 'header'
+        && ele4.tagName === 'P';
+        const ele5Correct = ele5 && ele5.childNodes && ele5.childNodes.length === 3 && ele5.childNodes[0].tagName === 'HEADER' && ele5.childNodes[0].textContent === 'header'
+        && ele5.tagName === 'P' && ele5.childNodes[1].textContent === 'b' && ele5.childNodes[2].textContent === 'c';
+
+        result.success = eleCorrect && ele2Correct && ele3Correct && ele4Correct && ele5Correct;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100RenderWithoutClass() {
+        const result = {
+            test: 'test render element without classes to be consumed',
+            success: false,
+            message: ''
+        };
+
+        mount('divrenderwithoutclass', new TestRenderElementWithoutClassComponent1());
+
+        let rootEle = document.getElementById('divrenderwithoutclass');
+
+        if (rootEle && rootEle.children && rootEle.children.length === 1) {
+            rootEle = rootEle.children[0];
+        }
+
+        const childrenCorrect = rootEle && rootEle.children && rootEle.children.length === 4;
+        const firstEleCorrect = childrenCorrect && rootEle.children[0].tagName === 'P' && rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
+        && rootEle.children[0].childNodes[0].tagName === 'KBD' && rootEle.children[0].childNodes[1].tagName === 'SPAN'
+        && rootEle.children[0].childNodes[0].textContent === 'a' && rootEle.children[0].childNodes[1].textContent === 'a'
+        && rootEle.children[0].style.color === 'rgb(202, 202, 202)' && rootEle.children[0].childNodes[1].style.color === 'rgb(109, 109, 109)';
+        const secondEleCorrect = childrenCorrect && rootEle.children[1].tagName === 'P' && rootEle.children[1].childNodes && rootEle.children[1].childNodes.length === 2
+        && rootEle.children[1].childNodes[0].tagName === 'KBD' && rootEle.children[1].childNodes[1].tagName === 'SPAN'
+        && rootEle.children[1].childNodes[0].textContent === 'b' && rootEle.children[1].childNodes[1].textContent === 'b'
+        && rootEle.children[1].style.color === 'rgb(202, 202, 202)' && rootEle.children[1].childNodes[1].style.color === 'rgb(109, 109, 109)';
+        const thirdEleCorrect = childrenCorrect && rootEle.children[2].tagName === 'P' && rootEle.children[2].childNodes && rootEle.children[2].childNodes.length === 2
+        && rootEle.children[2].childNodes[0].tagName === 'KBD' && rootEle.children[2].childNodes[1].tagName === 'SPAN'
+        && rootEle.children[2].childNodes[0].textContent === 'c' && rootEle.children[2].childNodes[1].textContent === 'c'
+        && rootEle.children[2].style.color === 'rgb(202, 202, 202)' && rootEle.children[2].childNodes[1].style.color === 'rgb(109, 109, 109)';
+        const fourthEleCorrect = childrenCorrect && rootEle.children[3].tagName === 'P' && rootEle.children[3].childNodes && rootEle.children[3].childNodes.length === 2
+        && rootEle.children[3].childNodes[0].tagName === 'KBD' && rootEle.children[3].childNodes[1].tagName === 'SPAN'
+        && rootEle.children[3].childNodes[0].textContent === 'd' && rootEle.children[3].childNodes[1].textContent === 'd'
+        && rootEle.children[3].style.color === 'rgb(202, 202, 202)' && rootEle.children[3].childNodes[1].style.color === 'rgb(109, 109, 109)';
+
+        result.success = childrenCorrect && firstEleCorrect && secondEleCorrect && thirdEleCorrect && fourthEleCorrect;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
     }
 
     testFinalize100ConsumeStringInTemplate() {
@@ -4256,9 +4376,9 @@ export class GlobalTestRunner {
         s.DETACHED_SET_TIMEOUT(() => {
             state = getState();
             const finalViewCount = state.childviewconsume ? state.childviewconsume : 0;
-    
+
             result.success = firstViewCount > originalViewCount && finalViewCount > firstViewCount;
-    
+
             window.globalTestResults.push(result);
             window.globalTestCount++;
         }, 100);
@@ -4284,9 +4404,9 @@ export class GlobalTestRunner {
         s.DETACHED_SET_TIMEOUT(() => {
             state = getState();
             const finalViewCount = state.childviewconsume ? state.childviewconsume : 0;
-    
+
             result.success = originalViewCount === 0 && firstViewCount > originalViewCount && finalViewCount > firstViewCount;
-    
+
             window.globalTestResults.push(result);
             window.globalTestCount++;
         }, 100);
@@ -4333,7 +4453,7 @@ export class GlobalTestRunner {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
             }, 100);
-        } else {            
+        } else {
             window.globalTestResults.push(result);
             window.globalTestCount++;
         }
