@@ -528,6 +528,19 @@ __void update ( rootElementId, component )__
 
 Updates the component mounted at element with ID ```rootElementId```.
 
+## renderElementWithoutClass
+__HTMLElement renderElementWithoutClass ( tagName, attrs, children )__
+
+Render a DOM node from markup. All parameters must be defined. Class may not be specified as children to be consumed, only DOM nodes or DOMStrings are valid children. Useful for use with the ```slfor``` structural directive.
+
+```javascript
+const node1 = renderElementWithoutClass('kbd', {}, []);
+const node2 = renderElementWithoutClass('span', { style: 'color: #cacaca' }, []);
+const node3 = renderElementWithoutClass('div', {}, [ textNode('a') ]);
+const node4 = renderElementWithoutClass('p', {}, [ renderElementWithoutClass('header', {}, ['header'])]);
+const node5 = renderElementWithoutClass('p', {}, [ renderElementWithoutClass('header', {}, ['header']), 'b', textNode('c')]);
+```
+
 ## renderElement
 __HTMLElement renderElement ( { tagName, attrs, children }, isDetached = false )__
 
