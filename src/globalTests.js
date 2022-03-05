@@ -4436,6 +4436,43 @@ export class TestSlStyleComponent4 {
     }
 }
 
+export class TestSlStyleComponent5 {
+    constructor() {
+    }
+
+    slStyle() {
+        return 'div a[target="_complex{"], nav background-color: #cacaca; kbd background-color: #cacaca; }';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstyle5'
+            },
+            children: [
+                markup('a', {
+                    attrs: {
+                        target: "_complex{"
+                    },
+                    children: [
+                        textNode('Styled a')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode('Unstyled nav')
+                    ]
+                }),
+                markup('kbd', {
+                    children: [
+                        textNode('Tab')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class GlobalTestRunner {
 
     constructor() {
@@ -4455,6 +4492,38 @@ export class GlobalTestRunner {
                 (obj.nodeType === 1) && (typeof obj.style === "object") &&
                 (typeof obj.ownerDocument === "object");
         }
+    }
+    
+    testFinalize100SlStyleIsEmptyOrInvalid() {
+        const result = {
+            test: 'test slStyle for invalid CSS specification',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle5', new TestSlStyleComponent5());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle5');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
+        const bgColorClean = navCssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal && bgColor === 'rgba(0, 0, 0, 0)'
+            && bgColorClean === 'rgba(0, 0, 0, 0)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
     }
 
     testFinalize100SlStyleWithBracesAndCommaAndMultipleClauses() {
@@ -5616,9 +5685,9 @@ export class GlobalTestRunner {
                             window.globalTestResults.push(result);
                             window.globalTestCount++;
                             window.globalAsyncCount--;
-                        }, 100);
-                    }, 100);
-                }, 100);
+                        }, 25);
+                    }, 25);
+                }, 25);
             }
 
             attempts++;
@@ -6656,12 +6725,12 @@ export class GlobalTestRunner {
                                         window.globalTestResults.push(result);
                                         window.globalTestCount++;
                                         window.globalAsyncCount--;
-                                    }, 200);
-                                }, 200);
-                            }, 200);
-                        }, 200);
-                    }, 200);
-                }, 200);
+                                    }, 25);
+                                }, 25);
+                            }, 25);
+                        }, 25);
+                    }, 25);
+                }, 25);
             }
 
             attempts++;
