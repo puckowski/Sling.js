@@ -4248,6 +4248,194 @@ export class TestRenderElementWithoutClassComponent1 {
     }
 }
 
+export class TestTagRenameComponent1 {
+    constructor() {
+    }
+
+    view() {
+        return markup('nav', {
+            attrs: {
+                'id': 'divchecktagrename1'
+            },
+            children: [
+                textNode('Tag Rename Test')
+            ]
+        })
+    }
+}
+
+export class TestConsumedSlStyleComponent2 {
+    constructor() {
+    }
+
+    slStyle() {
+        return 'nav { background-color: #cacaca; }';
+    }
+
+    view() {
+        return markup('nav', {
+            children: [
+                textNode('slStyle Test')
+            ]
+        })
+    }
+}
+
+export class TestConsumedSlStyleComponent1 {
+    constructor() {
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstyleconsumed1'
+            },
+            children: [
+                new TestConsumedSlStyleComponent2(),
+                textNode('slStyle Consumed Test Parent'),
+                markup('nav', {
+                    attrs: {
+                        id: 'styleconsumedcleannav'
+                    },
+                    children: [
+                        textNode('Unscoped nav')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestSlStyleComponent1 {
+    constructor() {
+    }
+
+    slStyle() {
+        return 'div span { background-color: #cacaca; }';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstyle1'
+            },
+            children: [
+                markup('span', {
+                    children: [
+                        textNode('Styled span')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode('Unstyled nav')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestSlStyleComponent2 {
+    constructor() {
+    }
+
+    slStyle() {
+        return 'div a[target="_complex{"] { background-color: #cacaca; }';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstyle2'
+            },
+            children: [
+                markup('a', {
+                    attrs: {
+                        target: "_complex{"
+                    },
+                    children: [
+                        textNode('Styled a')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode('Unstyled nav')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestSlStyleComponent3 {
+    constructor() {
+    }
+
+    slStyle() {
+        return 'div a[target="_complex{"], nav { background-color: #cacaca; }';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstyle3'
+            },
+            children: [
+                markup('a', {
+                    attrs: {
+                        target: "_complex{"
+                    },
+                    children: [
+                        textNode('Styled a')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode('Unstyled nav')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestSlStyleComponent4 {
+    constructor() {
+    }
+
+    slStyle() {
+        return 'div a[target="_complex{"], nav { background-color: #cacaca; } kbd { background-color: #cacaca; }';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstyle4'
+            },
+            children: [
+                markup('a', {
+                    attrs: {
+                        target: "_complex{"
+                    },
+                    children: [
+                        textNode('Styled a')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode('Unstyled nav')
+                    ]
+                }),
+                markup('kbd', {
+                    children: [
+                        textNode('Tab')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class GlobalTestRunner {
 
     constructor() {
@@ -4269,6 +4457,193 @@ export class GlobalTestRunner {
         }
     }
 
+    testFinalize100SlStyleWithBracesAndCommaAndMultipleClauses() {
+        const result = {
+            test: 'test slStyle for parent class for selector with braces and comma and multiple clauses',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle4', new TestSlStyleComponent4());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle4');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
+        const bgColorClean = navCssObj.getPropertyValue('background-color');
+
+        const kbdCssObj = window.getComputedStyle(ele.childNodes[2], null);
+        const kbdColorClean = kbdCssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+            && bgColorClean === 'rgb(202, 202, 202)' && kbdColorClean === 'rgb(202, 202, 202)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleWithBracesAndComma() {
+        const result = {
+            test: 'test slStyle for parent class for selector with braces and comma',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle3', new TestSlStyleComponent3());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle3');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
+        const bgColorClean = navCssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+            && bgColorClean === 'rgb(202, 202, 202)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleWithBraces() {
+        const result = {
+            test: 'test slStyle for parent class for selector with braces',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle2', new TestSlStyleComponent2());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle2');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
+        const bgColorClean = navCssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+            && bgColorClean !== 'rgb(202, 202, 202)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyle() {
+        const result = {
+            test: 'test slStyle for parent class',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle1', new TestSlStyleComponent1());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle1');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
+        const bgColorClean = navCssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+            && bgColorClean !== 'rgb(202, 202, 202)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleConsumedClass() {
+        const result = {
+            test: 'test slStyle for consumed class',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyleconsumed1', new TestConsumedSlStyleComponent1());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyleconsumed1');
+        ele = ele.childNodes[0];
+
+        const cssObj = window.getComputedStyle(ele, null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        let cleanNav = document.getElementById('styleconsumedcleannav');
+        const navCssObj = window.getComputedStyle(cleanNav, null);
+        const bgColorClean = navCssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+            && bgColorClean !== 'rgb(202, 202, 202)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100TagRenameWithMount() {
+        const result = {
+            test: 'test tag rename with mount',
+            success: false,
+            message: ''
+        };
+
+        mount('divchecktagrename1', new TestTagRenameComponent1());
+
+        const ids = Array.from(document.querySelectorAll('[id]'))
+            .map(v => v.id)
+            .reduce((acc, v) => { acc[v] = (acc[v] || 0) + 1; return acc }, {});
+        const duplicteIds = Object.entries(ids)
+            .filter(([key, value]) => value > 1)
+            .map(([key, value]) => key);
+
+        result.success = duplicteIds['divchecktagrename1'] === undefined;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
     testFinalize100RenderWithoutClassSimple() {
         const result = {
             test: 'test render element without classes to be consumed for simple cases',
@@ -4278,17 +4653,17 @@ export class GlobalTestRunner {
 
         const ele = renderElementWithoutClass('kbd', {}, []);
         const ele2 = renderElementWithoutClass('span', { style: 'color: #cacaca' }, []);
-        const ele3 = renderElementWithoutClass('div', {}, [ textNode('a') ]);
-        const ele4 = renderElementWithoutClass('p', {}, [ renderElementWithoutClass('header', {}, ['header'])]);
-        const ele5 = renderElementWithoutClass('p', {}, [ renderElementWithoutClass('header', {}, ['header']), 'b', textNode('c')]);
+        const ele3 = renderElementWithoutClass('div', {}, [textNode('a')]);
+        const ele4 = renderElementWithoutClass('p', {}, [renderElementWithoutClass('header', {}, ['header'])]);
+        const ele5 = renderElementWithoutClass('p', {}, [renderElementWithoutClass('header', {}, ['header']), 'b', textNode('c')]);
 
         const eleCorrect = ele && ele.children && ele.children.length === 0 && ele.tagName === 'KBD';
         const ele2Correct = ele2 && ele2.children && ele2.children.length === 0 && ele2.style.color === 'rgb(202, 202, 202)' && ele2.tagName === 'SPAN';
         const ele3Correct = ele3 && ele3.childNodes && ele3.childNodes.length === 1 && ele3.childNodes[0].textContent === 'a' && ele3.tagName === 'DIV';
         const ele4Correct = ele4 && ele4.childNodes && ele4.childNodes.length === 1 && ele4.childNodes[0].tagName === 'HEADER' && ele4.childNodes[0].textContent === 'header'
-        && ele4.tagName === 'P';
+            && ele4.tagName === 'P';
         const ele5Correct = ele5 && ele5.childNodes && ele5.childNodes.length === 3 && ele5.childNodes[0].tagName === 'HEADER' && ele5.childNodes[0].textContent === 'header'
-        && ele5.tagName === 'P' && ele5.childNodes[1].textContent === 'b' && ele5.childNodes[2].textContent === 'c';
+            && ele5.tagName === 'P' && ele5.childNodes[1].textContent === 'b' && ele5.childNodes[2].textContent === 'c';
 
         result.success = eleCorrect && ele2Correct && ele3Correct && ele4Correct && ele5Correct;
 
@@ -4313,21 +4688,21 @@ export class GlobalTestRunner {
 
         const childrenCorrect = rootEle && rootEle.children && rootEle.children.length === 4;
         const firstEleCorrect = childrenCorrect && rootEle.children[0].tagName === 'P' && rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
-        && rootEle.children[0].childNodes[0].tagName === 'KBD' && rootEle.children[0].childNodes[1].tagName === 'SPAN'
-        && rootEle.children[0].childNodes[0].textContent === 'a' && rootEle.children[0].childNodes[1].textContent === 'a'
-        && rootEle.children[0].style.color === 'rgb(202, 202, 202)' && rootEle.children[0].childNodes[1].style.color === 'rgb(109, 109, 109)';
+            && rootEle.children[0].childNodes[0].tagName === 'KBD' && rootEle.children[0].childNodes[1].tagName === 'SPAN'
+            && rootEle.children[0].childNodes[0].textContent === 'a' && rootEle.children[0].childNodes[1].textContent === 'a'
+            && rootEle.children[0].style.color === 'rgb(202, 202, 202)' && rootEle.children[0].childNodes[1].style.color === 'rgb(109, 109, 109)';
         const secondEleCorrect = childrenCorrect && rootEle.children[1].tagName === 'P' && rootEle.children[1].childNodes && rootEle.children[1].childNodes.length === 2
-        && rootEle.children[1].childNodes[0].tagName === 'KBD' && rootEle.children[1].childNodes[1].tagName === 'SPAN'
-        && rootEle.children[1].childNodes[0].textContent === 'b' && rootEle.children[1].childNodes[1].textContent === 'b'
-        && rootEle.children[1].style.color === 'rgb(202, 202, 202)' && rootEle.children[1].childNodes[1].style.color === 'rgb(109, 109, 109)';
+            && rootEle.children[1].childNodes[0].tagName === 'KBD' && rootEle.children[1].childNodes[1].tagName === 'SPAN'
+            && rootEle.children[1].childNodes[0].textContent === 'b' && rootEle.children[1].childNodes[1].textContent === 'b'
+            && rootEle.children[1].style.color === 'rgb(202, 202, 202)' && rootEle.children[1].childNodes[1].style.color === 'rgb(109, 109, 109)';
         const thirdEleCorrect = childrenCorrect && rootEle.children[2].tagName === 'P' && rootEle.children[2].childNodes && rootEle.children[2].childNodes.length === 2
-        && rootEle.children[2].childNodes[0].tagName === 'KBD' && rootEle.children[2].childNodes[1].tagName === 'SPAN'
-        && rootEle.children[2].childNodes[0].textContent === 'c' && rootEle.children[2].childNodes[1].textContent === 'c'
-        && rootEle.children[2].style.color === 'rgb(202, 202, 202)' && rootEle.children[2].childNodes[1].style.color === 'rgb(109, 109, 109)';
+            && rootEle.children[2].childNodes[0].tagName === 'KBD' && rootEle.children[2].childNodes[1].tagName === 'SPAN'
+            && rootEle.children[2].childNodes[0].textContent === 'c' && rootEle.children[2].childNodes[1].textContent === 'c'
+            && rootEle.children[2].style.color === 'rgb(202, 202, 202)' && rootEle.children[2].childNodes[1].style.color === 'rgb(109, 109, 109)';
         const fourthEleCorrect = childrenCorrect && rootEle.children[3].tagName === 'P' && rootEle.children[3].childNodes && rootEle.children[3].childNodes.length === 2
-        && rootEle.children[3].childNodes[0].tagName === 'KBD' && rootEle.children[3].childNodes[1].tagName === 'SPAN'
-        && rootEle.children[3].childNodes[0].textContent === 'd' && rootEle.children[3].childNodes[1].textContent === 'd'
-        && rootEle.children[3].style.color === 'rgb(202, 202, 202)' && rootEle.children[3].childNodes[1].style.color === 'rgb(109, 109, 109)';
+            && rootEle.children[3].childNodes[0].tagName === 'KBD' && rootEle.children[3].childNodes[1].tagName === 'SPAN'
+            && rootEle.children[3].childNodes[0].textContent === 'd' && rootEle.children[3].childNodes[1].textContent === 'd'
+            && rootEle.children[3].style.color === 'rgb(202, 202, 202)' && rootEle.children[3].childNodes[1].style.color === 'rgb(109, 109, 109)';
 
         result.success = childrenCorrect && firstEleCorrect && secondEleCorrect && thirdEleCorrect && fourthEleCorrect;
 
