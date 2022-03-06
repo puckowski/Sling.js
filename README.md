@@ -196,6 +196,38 @@ s.DETACHED_SET_TIMEOUT(() => {
 }, 0);
 ```
 
+For functions bound in model views that do not trigger change detection, but are run in automatic change detection mode, start the function name with case-sensitive ```slDetached```. Below is an example of a detached ```slDetachedIncrementCount``` function that does not trigger change detection when run.
+
+```javascript
+export class TestDetachedFunctionComponent {
+    constructor() {
+        this.count = 0;
+    }
+
+    slDetachedIncrementCount() {
+        this.count++;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divDetachedExample'
+            },
+            children: [
+                markup('button', {
+                    attrs: {
+                        onclick: this.slDetachedIncrementCount.bind(this),
+                    },
+                    children: [
+                        textNode('Detached Button')
+                    ]
+                })
+            ]
+        })
+    }
+}
+```
+
 ## Lifecycle Hooks
 
 Components may specify up to three lifecycle hooks:
@@ -253,9 +285,10 @@ Structural directives modify interactions with the DOM layout.
 
 Attribute directives change the appearance or behavior of a DOM element.
 
-|Directive               |Type      |Behavior                                                           |
-|------------------------|----------|-------------------------------------------------------------------|
-|```slanimatedestroy```  |Attribute |Wait for CSS class animation to finish before removal from the DOM.|
+|Directive                     |Type      |Behavior                                                                                            |
+|------------------------------|----------|----------------------------------------------------------------------------------------------------|
+|```slanimatedestroy```        |Attribute |Wait for CSS class animation to finish before removal from the DOM.                                 |
+|```slanimatedestroytarget```  |Attribute |Used together with ```slanimatedestroy```. Should be a function which returns a DOM node to animate. The proposed node to animate is supplied as an argument to the function.|
 
 Example directive usage:
 
@@ -490,6 +523,60 @@ export class TestRenderElement3 {
                                 'slfor': 'myfor:data:makeRow:updateRow'
                             }
                         })
+                    ]
+                })
+            ]
+        });
+    }
+}
+```
+
+Example of ```slanimatedestroytarget``` directive usage:
+
+```javascript
+export class TestKeyedHideAnimation1 {
+    constructor() {
+        this.list = ['a', 'b', 'c'];
+        this.toRemoveIndex = 1;
+    }
+
+    slDetachedOnNodeDestroy(proposedNode) {
+        const parent = proposedNode.parentNode;
+        return parent.childNodes[this.toRemoveIndex];
+    }
+
+    onHide() {
+        this.list.splice(1, 1);
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divkeyedanimation1'
+            },
+            children: [
+                ...Array.from(this.list, (note) =>
+                    markup('div', {
+                        attrs: {
+                            slanimatedestroy: 'animExit',
+                            slanimatedestroytarget: this.slDetachedOnNodeDestroy.bind(this)
+                        },
+                        children: [
+                            markup('p', {
+                                children: [
+                                    textNode(note)
+                                ]
+                            })
+                        ]
+                    })
+                ),
+                markup('button', {
+                    attrs: {
+                        id: 'keyedhidebtn1',
+                        onclick: this.onHide.bind(this)
+                    },
+                    children: [
+                        textNode('Keyed Hide Button')
                     ]
                 })
             ]
