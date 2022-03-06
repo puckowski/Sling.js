@@ -531,7 +531,9 @@ export class TestRenderElement3 {
 }
 ```
 
-Example of ```slanimatedestroytarget``` directive usage:
+Below is an example of ```slanimatedestroytarget``` directive usage. 
+
+Note that for ```slanimatedestroytarget```, unlike regular ```slanimatedestroy```, change detection is paused for the entire duration of all animated elements. Change detection is resumed and called immediately after that last animation ends.
 
 ```javascript
 export class TestKeyedHideAnimation1 {
