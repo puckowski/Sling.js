@@ -1,3 +1,5 @@
+## Change Detection
+
 Sling supports two change detection strategies: automatic and manual. The default mode is automatic.
 
 |Strategy                                        |Description|
@@ -23,4 +25,36 @@ For example:
 s.DETACHED_SET_TIMEOUT(() => {
     console.log('Hello, world!');
 }, 0);
+```
+
+For functions bound in model views that do not trigger change detection, but are run in automatic change detection mode, start the function name with case-sensitive ```slDetached```. Below is an example of a detached ```slDetachedIncrementCount``` function that does not trigger change detection when run.
+
+```javascript
+export class TestDetachedFunctionComponent {
+    constructor() {
+        this.count = 0;
+    }
+
+    slDetachedIncrementCount() {
+        this.count++;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divDetachedExample'
+            },
+            children: [
+                markup('button', {
+                    attrs: {
+                        onclick: this.slDetachedIncrementCount.bind(this),
+                    },
+                    children: [
+                        textNode('Detached Button')
+                    ]
+                })
+            ]
+        })
+    }
+}
 ```

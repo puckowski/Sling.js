@@ -9,12 +9,14 @@ Structural directives modify interactions with the DOM layout.
 |```onlyself```     |Structural|Only perform change detection on the element and not children.    |
 |```trustchildren```|Structural|Render HTML string children.                                      |
 |```slfor```        |Structural|Render a named list using a node factory and an update function.  |
+|```slfornamed```        |Structural|Render a named list using a node factory and an update function. This directive may be used instead of ```slfor``` where function names are minified in builds.  |
 
 Attribute directives change the appearance or behavior of a DOM element.
 
-|Directive               |Type      |Behavior                                                           |
-|------------------------|----------|-------------------------------------------------------------------|
-|```slanimatedestroy```  |Attribute |Wait for CSS class animation to finish before removal from the DOM.|
+|Directive                     |Type      |Behavior                                                                                            |
+|------------------------------|----------|----------------------------------------------------------------------------------------------------|
+|```slanimatedestroy```        |Attribute |Wait for CSS class animation to finish before removal from the DOM.                                 |
+|```slanimatedestroytarget```  |Attribute |Used together with ```slanimatedestroy```. Should be a function which returns a DOM node to animate. The proposed node to animate is supplied as an argument to the function.|
 
 Example directive usage:
 
@@ -249,6 +251,60 @@ export class TestRenderElement3 {
                                 'slfor': 'myfor:data:makeRow:updateRow'
                             }
                         })
+                    ]
+                })
+            ]
+        });
+    }
+}
+```
+
+Example of ```slanimatedestroytarget``` directive usage:
+
+```javascript
+export class TestKeyedHideAnimation1 {
+    constructor() {
+        this.list = ['a', 'b', 'c'];
+        this.toRemoveIndex = 1;
+    }
+
+    slDetachedOnNodeDestroy(proposedNode) {
+        const parent = proposedNode.parentNode;
+        return parent.childNodes[this.toRemoveIndex];
+    }
+
+    onHide() {
+        this.list.splice(1, 1);
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divkeyedanimation1'
+            },
+            children: [
+                ...Array.from(this.list, (note) =>
+                    markup('div', {
+                        attrs: {
+                            slanimatedestroy: 'animExit',
+                            slanimatedestroytarget: this.slDetachedOnNodeDestroy.bind(this)
+                        },
+                        children: [
+                            markup('p', {
+                                children: [
+                                    textNode(note)
+                                ]
+                            })
+                        ]
+                    })
+                ),
+                markup('button', {
+                    attrs: {
+                        id: 'keyedhidebtn1',
+                        onclick: this.onHide.bind(this)
+                    },
+                    children: [
+                        textNode('Keyed Hide Button')
                     ]
                 })
             ]
