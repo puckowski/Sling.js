@@ -7,6 +7,21 @@ class TodoListComponent {
     constructor() {
     }
 
+    slOnInit() {
+        this.applyCheckedProperty();
+    }
+
+    applyCheckedProperty() {
+        const stateObj = getState();
+        const notes = stateObj.getNotes();
+
+        document.querySelectorAll('#divTodoList input').forEach((node, index) => {
+            if (index % 2 === 0 && notes[index] !== undefined) {
+                node.checked = notes[index].completed;
+            }
+        });
+    }
+
     updateReadonlyAttribute(note, updatedNoteIndex) {
         if (note.completed === false) {
             document.querySelectorAll('#divTodoList input').forEach((node, index) => {

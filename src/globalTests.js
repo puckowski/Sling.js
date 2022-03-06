@@ -1,5 +1,6 @@
 import { renderElementWithoutClass, renderElement, detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll, getRouteSegments, hydrate, renderToString, removeRoute, version, update, setDetectionStrategy, wrapWithChangeDetector, isDetectorAttached, detachDetector, getRoute } from "../dist/sling.min";
 import { FormControl, Observable } from '../dist/sling-reactive.min';
+import { bind } from "file-loader";
 
 function _random(max, idx) {
     return Math.round((idx / 100) * 1000) % max;
@@ -4473,6 +4474,124 @@ export class TestSlStyleComponent5 {
     }
 }
 
+export class TestSlDetachedInAutomaticMode1 {
+    constructor() {
+        this.count = 0;
+    }
+
+    slDetachedIncrementCount() {
+        this.count++;
+    }
+
+    view() {
+        const state = getState();
+        if (state.detachfncount === undefined) state.detachfncount = 1;
+        else state.detachfncount++;
+        setState(state);
+
+        return markup('div', {
+            attrs: {
+                'id': 'divtestdetachedinautomatic1'
+            },
+            children: [
+                markup('button', {
+                    attrs: {
+                        onclick: this.slDetachedIncrementCount.bind(this),
+                        id: 'detachedbtn1'
+                    },
+                    children: [
+                        textNode('Detached Button')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestSlDetachedInAutomaticMode2 {
+    constructor() {
+        this.count = 0;
+    }
+
+    slDetachedIncrementCount() {
+        console.log('Detached count function.');
+    }
+
+    view() {
+        const state = getState();
+        if (state.detachfncount === undefined) state.detachfncount = 1;
+        else state.detachfncount++;
+        setState(state);
+
+        return markup('div', {
+            attrs: {
+                'id': 'divtestdetachedinautomatic2'
+            },
+            children: [
+                markup('button', {
+                    attrs: {
+                        onclick: this.slDetachedIncrementCount,
+                        id: 'detachedbtn2'
+                    },
+                    children: [
+                        textNode('Detached Button')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestKeyedHideAnimation1 {
+    constructor() {
+        this.list = ['a', 'b', 'c'];
+        this.toRemoveIndex = 1;
+    }
+
+    slDetachedOnNodeDestroy(proposedNode) {
+        const parent = proposedNode.parentNode;
+        return parent.childNodes[this.toRemoveIndex];
+    }
+
+    onHide() {
+        this.list.splice(1, 1);
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divkeyedanimation1'
+            },
+            children: [
+                ...Array.from(this.list, (note) =>
+                    markup('div', {
+                        attrs: {
+                            slanimatedestroy: 'animExit',
+                            slanimatedestroytarget: this.slDetachedOnNodeDestroy.bind(this)
+                        },
+                        children: [
+                            markup('p', {
+                                children: [
+                                    textNode(note)
+                                ]
+                            })
+                        ]
+                    })
+                ),
+                markup('button', {
+                    attrs: {
+                        id: 'keyedhidebtn1',
+                        onclick: this.onHide.bind(this)
+                    },
+                    children: [
+                        textNode('Keyed Hide Button')
+                    ]
+                })
+            ]
+        });
+    }
+}
+
 export class GlobalTestRunner {
 
     constructor() {
@@ -4493,7 +4612,154 @@ export class GlobalTestRunner {
                 (typeof obj.ownerDocument === "object");
         }
     }
-    
+
+    testRunLastKeyedAnimation() {
+        const result = {
+            test: 'test keyed hide animation',
+            success: false,
+            message: ''
+        };
+
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            const state = getState();
+            
+            if (window.globalAsyncCount === 0 && window.globalTestCount >= state.testCount) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
+
+                mount('divkeyedanimation1', new TestKeyedHideAnimation1());
+
+                const hideBtn = document.getElementById('keyedhidebtn1');
+                hideBtn.click();
+
+                s.DETACHED_SET_TIMEOUT(() => {
+                    const isAnimating = s._isAnimatingKeyed;
+
+                    let rootEle = document.getElementById('divkeyedanimation1');
+                    let child = rootEle.childNodes[1];
+
+                    const correctData = child.textContent === 'b';
+                    const correctCount = rootEle.children.length === 4;
+
+                    s.DETACHED_SET_TIMEOUT(() => {
+                        rootEle = document.getElementById('divkeyedanimation1');
+                        child = rootEle.childNodes[1];
+
+                        const correctFinalData = child.textContent === 'c';
+                        const correctFinalCount = rootEle.children.length === 3;
+
+                        result.success = isAnimating && correctData && correctCount && correctFinalData && correctFinalCount;
+
+                        window.globalTestResults.push(result);
+                        window.globalTestCount++;
+                        window.globalAsyncCount--;
+                    }, 550);
+                }, 25);
+            }
+
+            attempts++;
+
+            if (attempts === 50 && window.globalAsyncCount > 0) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+
+                clearInterval(waitForStableInterval);
+                window.globalAsyncCount--;
+            }
+        }, 500);
+    }
+
+    testFinalize100DetachedFunctionInAutomaticMode() {
+        const result = {
+            test: 'test detached bound function in automatic mode',
+            success: false,
+            message: ''
+        };
+
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            if (window.globalAsyncCount === 0) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
+
+                mount('divtestdetachedinautomatic1', new TestSlDetachedInAutomaticMode1());
+
+                let state = getState();
+                const originalCount = state.detachfncount;
+
+                const detachedBtn = document.getElementById('detachedbtn1');
+                detachedBtn.click();
+
+                s.DETACHED_SET_TIMEOUT(() => {
+                    state = getState();
+                    const finalCount = state.detachfncount;
+
+                    result.success = originalCount === finalCount;
+
+                    window.globalTestResults.push(result);
+                    window.globalTestCount++;
+                    window.globalAsyncCount--;
+                }, 25);
+            }
+
+            attempts++;
+
+            if (attempts === 50 && window.globalAsyncCount > 0) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+
+                clearInterval(waitForStableInterval);
+                window.globalAsyncCount--;
+            }
+        }, 500);
+    }
+
+    testFinalize100DetachedFunctionInAutomaticModeWithoutBind() {
+        const result = {
+            test: 'test detached function in automatic mode',
+            success: false,
+            message: ''
+        };
+
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            if (window.globalAsyncCount === 0) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
+
+                mount('divtestdetachedinautomatic2', new TestSlDetachedInAutomaticMode2());
+
+                let state = getState();
+                const originalCount = state.detachfncount;
+
+                const detachedBtn = document.getElementById('detachedbtn2');
+                detachedBtn.click();
+
+                s.DETACHED_SET_TIMEOUT(() => {
+                    state = getState();
+                    const finalCount = state.detachfncount;
+
+                    result.success = originalCount === finalCount;
+
+                    window.globalTestResults.push(result);
+                    window.globalTestCount++;
+                    window.globalAsyncCount--;
+                }, 25);
+            }
+
+            attempts++;
+
+            if (attempts === 50 && window.globalAsyncCount > 0) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+
+                clearInterval(waitForStableInterval);
+                window.globalAsyncCount--;
+            }
+        }, 500);
+    }
+
     testFinalize100SlStyleIsEmptyOrInvalid() {
         const result = {
             test: 'test slStyle for invalid CSS specification',
@@ -8334,7 +8600,11 @@ export class GlobalTestRunner {
 
         const testFuncList = this.getAllFuncs(this).filter(key => key && key.startsWith('test')).filter(key => key && key !== 'dummyTest')
             .sort((firstName, secondName) => {
-                if (firstName && firstName.toLowerCase().includes('finalize')) {
+                if (firstName && firstName.toLowerCase().includes('runlast')) {
+                    return 1;
+                } else if (secondName && secondName.toLowerCase().includes('runlast')) {
+                    return -1;
+                } else if (firstName && firstName.toLowerCase().includes('finalize')) {
                     if (secondName && secondName.toLowerCase().includes('finalize')) {
                         const p1 = firstName.substring(firstName.indexOf('finalize') + 8, firstName.indexOf('finalize') + 11);
                         const p2 = secondName.substring(secondName.indexOf('finalize') + 8, secondName.indexOf('finalize') + 11);
@@ -8359,8 +8629,15 @@ export class GlobalTestRunner {
                 }
             });
 
+        let runLastCount = 0;
+        testFuncList.forEach(testFuncName => {
+            if (testFuncName.toLowerCase().includes('runlast')) {
+                runLastCount++;
+            }
+        });
+
         const state = getState();
-        state.testCount = testFuncList.length;
+        state.testCount = testFuncList.length - runLastCount;
         setState(state);
 
         testFuncList.forEach(async testFuncName => {
