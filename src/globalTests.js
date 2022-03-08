@@ -4592,6 +4592,55 @@ export class TestKeyedHideAnimation1 {
     }
 }
 
+export class TestReapplyScopedCss2 {
+    constructor() {
+    }
+
+    slStyle() {
+        return 'nav { background-color: #cacaca; }';
+    }
+
+    view() {
+        return markup('nav', {
+            children: [
+                textNode('Styled nav')
+            ]
+        });
+    }
+}
+
+export class TestReapplyScopedCss1 {
+    constructor() {
+        this.show = true;
+    }
+
+    onToggle() {
+        this.show = !this.show;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divscopedcssreapply1'
+            },
+            children: [
+                ...(this.show === true ? [
+                    new TestReapplyScopedCss2()
+                ] : []),
+                markup('button', {
+                    attrs: {
+                        id: 'reapplycssbtn1',
+                        onclick: this.onToggle.bind(this)
+                    },
+                    children: [
+                        textNode('Toggle Scoped CSS')
+                    ]
+                })
+            ]
+        });
+    }
+}
+
 export class GlobalTestRunner {
 
     constructor() {
@@ -4613,6 +4662,73 @@ export class GlobalTestRunner {
         }
     }
 
+    testFinalize100SlStyleReapply() {
+        const result = {
+            test: 'test slStyle reapply for same component',
+            success: false,
+            message: ''
+        };
+
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            if (window.globalAsyncCount === 0) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
+
+                const originalIdentifierSet = new Set();
+                s._scopedCssSet.forEach(identifier => {
+                    originalIdentifierSet.add(identifier);
+                });
+
+                let head = document.head || document.getElementsByTagName('head')[0];
+                const headChildCountOriginal = head.childNodes.length;
+
+                mount('divscopedcssreapply1', new TestReapplyScopedCss1());
+
+                detectChanges();
+
+                const buttonEle = document.getElementById('reapplycssbtn1');
+                buttonEle.click();
+
+                s.DETACHED_SET_TIMEOUT(() => {
+                    buttonEle.click();
+
+                    s.DETACHED_SET_TIMEOUT(() => {
+                        head = document.head || document.getElementsByTagName('head')[0];
+                        const headChildCountFinal = head.childNodes.length;
+
+                        const finalIdentifierSet = new Set();
+                        s._scopedCssSet.forEach(identifier => {
+                            finalIdentifierSet.add(identifier);
+                        });
+
+                        let ele = document.getElementById('divscopedcssreapply1');
+
+                        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+                        const bgColor = cssObj.getPropertyValue('background-color');
+
+                        result.success = headChildCountFinal === (headChildCountOriginal + 1) && bgColor === 'rgb(202, 202, 202)'
+                            && finalIdentifierSet.size === (originalIdentifierSet.size + 1);
+
+                        window.globalTestResults.push(result);
+                        window.globalTestCount++;
+                        window.globalAsyncCount--;
+                    }, 25);
+                }, 25);
+            }
+
+            attempts++;
+
+            if (attempts === 50 && window.globalAsyncCount > 0) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+
+                clearInterval(waitForStableInterval);
+                window.globalAsyncCount--;
+            }
+        }, 500);
+    }
+
     testRunLastKeyedAnimation() {
         const result = {
             test: 'test keyed hide animation',
@@ -4623,7 +4739,7 @@ export class GlobalTestRunner {
         let attempts = 0;
         const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
             const state = getState();
-            
+
             if (window.globalAsyncCount === 0 && window.globalTestCount >= state.testCount) {
                 window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
