@@ -8,7 +8,25 @@ class TodoListComponent {
     }
 
     slOnInit() {
+        const stateObj = getState();
+
+        this.completedNotesToAnimate = [];
+        stateObj.getNotes().forEach((stateNote, index) => {
+            if (stateNote.completed) {
+                this.completedNotesToAnimate.push(index);
+            }
+        });
+
         this.applyCheckedProperty();
+
+        const routeObservable = stateObj.getRouteObservable();
+        const routeFunction = function (routeArr) {
+            if (routeArr.length > 0 && routeArr[0] === 'completed') {
+                this.completedNotesToAnimate = [];
+                routeObservable.clearSubscription(routeFunction);
+            }
+        }.bind(this);
+        routeObservable.subscribe(routeFunction);
     }
 
     applyCheckedProperty() {
@@ -16,8 +34,8 @@ class TodoListComponent {
         const notes = stateObj.getNotes();
 
         document.querySelectorAll('#divTodoList input').forEach((node, index) => {
-            if (index % 2 === 0 && notes[index] !== undefined) {
-                node.checked = notes[index].completed;
+            if (index % 2 === 0) {
+                node.checked = notes[index / 2].completed;
             }
         });
     }
@@ -54,6 +72,13 @@ class TodoListComponent {
         setState(stateObj);
         new NoteService().setNoteCookie(stateObj);
 
+        this.completedNotesToAnimate = [];
+        stateObj.getNotes().forEach((stateNote, index) => {
+            if (stateNote.completed) {
+                this.completedNotesToAnimate.push(index);
+            }
+        });
+
         if (updatedNote === true) {
             this.updateReadonlyAttribute(note, updatedNoteIndex);
         }
@@ -66,7 +91,7 @@ class TodoListComponent {
             if (stateNote === note) {
                 stateNote.text = event.target.value;
             }
-        })
+        });
 
         setState(stateObj);
         new NoteService().setNoteCookie(stateObj);

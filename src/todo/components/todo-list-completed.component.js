@@ -7,6 +7,10 @@ class TodoListCompletedComponent {
     constructor() {
     }
 
+    slAfterInit() {
+        this.applyCheckedProperty();
+    }
+    
     slOnDestroy() {
         console.log('Destroy completed list component');
     }

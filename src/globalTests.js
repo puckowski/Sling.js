@@ -1,6 +1,5 @@
-import { renderElementWithoutClass, renderElement, detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll, getRouteSegments, hydrate, renderToString, removeRoute, version, update, setDetectionStrategy, wrapWithChangeDetector, isDetectorAttached, detachDetector, getRoute } from "../dist/sling.min";
+import { getRouteQueryVariables, setRouteStrategy, renderElementWithoutClass, renderElement, detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll, getRouteSegments, hydrate, renderToString, removeRoute, version, update, setDetectionStrategy, wrapWithChangeDetector, isDetectorAttached, detachDetector, getRoute } from "../dist/sling.min";
 import { FormControl, Observable } from '../dist/sling-reactive.min';
-import { bind } from "file-loader";
 
 function _random(max, idx) {
     return Math.round((idx / 100) * 1000) % max;
@@ -4641,6 +4640,221 @@ export class TestReapplyScopedCss1 {
     }
 }
 
+export class TestMutationObserver1 {
+    constructor() {
+        this.show = true;
+        this.label = 'Hello, ';
+    }
+
+    onToggle() {
+        this.show = !this.show;
+
+        if (this.label === 'Hello, ') {
+            this.label = 'world!';
+        } else {
+            this.label = 'Hello, ';
+        }
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divmutationobserver1'
+            },
+            children: [
+                ...(this.show === true ? [
+                    markup('kbd', {
+                        children: [
+                            textNode('Tab')
+                        ]
+                    })
+                ] : []),
+                markup('button', {
+                    attrs: {
+                        id: 'mutationobserverbtn1',
+                        onclick: this.onToggle.bind(this),
+                        ...this.show === true && { style: 'background-color: #cacaca;' },
+                        ...this.show === false && { style: 'background-color: #135ac0;' }
+                    },
+                    children: [
+                        textNode('Toggle Hidden Elements')
+                    ]
+                }),
+                ...(this.show === true ? [
+                    markup('span', {
+                        children: [
+                            textNode('A <span>')
+                        ]
+                    })
+                ] : [
+                    markup('div', {
+                        children: [
+                            textNode('A <div>')
+                        ]
+                    })
+                ])
+            ]
+        });
+    }
+}
+
+export class TestMutationObserver2 {
+    constructor() {
+        this.show = true;
+        this.label = 'Hello, ';
+    }
+
+    onToggle() {
+        this.show = !this.show;
+
+        if (this.label === 'Hello, ') {
+            this.label = 'world!';
+        } else {
+            this.label = 'Hello, ';
+        }
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divmutationobserver2'
+            },
+            children: [
+                markup('span', {
+                    children: [
+                        textNode('<span> to preserve')
+                    ]
+                }),
+                markup('kbd', {
+                    children: [
+                        textNode('Tab')
+                    ]
+                }),
+                markup('button', {
+                    attrs: {
+                        id: 'mutationobserverbtn2',
+                        onclick: this.onToggle.bind(this),
+                        ...this.show === true && { style: 'background-color: #cacaca;' },
+                        ...this.show === false && { style: 'background-color: #135ac0;' }
+                    },
+                    children: [
+                        textNode('Toggle Hidden Elements')
+                    ]
+                }),
+                ...(this.show === true ? [
+                    markup('span', {
+                        children: [
+                            textNode('A <span>')
+                        ]
+                    })
+                ] : [
+                    markup('div', {
+                        children: [
+                            textNode('A <div>')
+                        ]
+                    })
+                ]),
+                markup('div', {
+                    children: [
+                        textNode('<div> to preserve')
+                    ]
+                }),
+            ]
+        });
+    }
+}
+
+export class TestMutationObserver3 {
+    constructor() {
+        this.show = true;
+        this.label = 'Hello, ';
+    }
+
+    onToggle() {
+        this.show = !this.show;
+
+        if (this.label === 'Hello, ') {
+            this.label = 'world!';
+        } else {
+            this.label = 'Hello, ';
+        }
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divmutationobserver3'
+            },
+            children: [
+                markup('button', {
+                    attrs: {
+                        id: 'mutationobserverbtn3',
+                        onclick: this.onToggle.bind(this)
+                    },
+                    children: [
+                        textNode('Toggle Hidden Elements')
+                    ]
+                }),
+                ...(this.show === true ? [
+                    markup('nav', {
+                        children: [
+                            textNode('A <nav>')
+                        ]
+                    }),
+                    markup('span', {
+                        children: [
+                            textNode(this.label)
+                        ]
+                    })
+                ] : [
+                    markup('p', {
+                        children: [
+                            textNode('A <p>')
+                        ]
+                    }),
+                    markup('span', {
+                        children: [
+                            textNode(this.label)
+                        ]
+                    })
+                ])
+            ]
+        });
+    }
+}
+
+export class TestQueryStringComponent1 {
+    constructor() {
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divquerystring1'
+            },
+            children: [
+                textNode('Query String Test')
+            ]
+        });
+    }
+}
+
+export class TestPathNameComponent1 {
+    constructor() {
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divpathname1'
+            },
+            children: [
+                textNode('Path Name Test')
+            ]
+        });
+    }
+}
+
 export class GlobalTestRunner {
 
     constructor() {
@@ -4660,6 +4874,322 @@ export class GlobalTestRunner {
                 (obj.nodeType === 1) && (typeof obj.style === "object") &&
                 (typeof obj.ownerDocument === "object");
         }
+    }
+    
+    testFinalize100RouteByPathName() {
+        const result = {
+            test: 'test route by path name',
+            success: false,
+            message: ''
+        };
+
+        setRouteStrategy('');
+        addRoute('docs/:someId/:someId2/bar', { component: new TestPathNameComponent1(), root: 'divpathname1' });
+        route('docs/1/2/bar');
+
+        const segments = getRouteSegments();
+        const rootEle = document.getElementById('divpathname1');
+
+        result.success = segments && segments.length === 4 && segments[0] === 'docs' && segments[1] === '1' 
+        && segments[2] === '2' && segments[3] === 'bar' && rootEle && rootEle.childNodes && rootEle.childNodes.length === 1
+            && rootEle.childNodes[0].textContent === 'Path Name Test' && window.location.href === 'http://localhost:8080/docs/1/2/bar';
+
+        window.history.back();
+        setRouteStrategy('#');
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100RouteByQueryString() {
+        const result = {
+            test: 'test route by query string',
+            success: false,
+            message: ''
+        };
+
+        setRouteStrategy('?');
+        addRoute('querystring=:someId&foo=:someId2', { component: new TestQueryStringComponent1(), root: 'divquerystring1' });
+        route('querystring=2&foo=some+text');
+
+        const variableList = getRouteQueryVariables();
+        const rootEle = document.getElementById('divquerystring1');
+
+        result.success = variableList && variableList.length === 2 && variableList[0].var === 'querystring' && variableList[0].value === '2'
+            && variableList[1].var === 'foo' && variableList[1].value === 'some+text' && rootEle && rootEle.childNodes && rootEle.childNodes.length === 1
+            && rootEle.childNodes[0].textContent === 'Query String Test' && window.location.href === 'http://localhost:8080/?/querystring=2&foo=some+text';
+
+        window.history.back();
+        setRouteStrategy('#');
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100MutationObserverChangesTextCorrectly() {
+        const result = {
+            test: 'test text updated correctly with MutationObserver',
+            success: false,
+            message: ''
+        };
+
+        const targetNode = document.getElementById('divmutationobserver3');
+        const config = { attributes: true, childList: true, subtree: true, characterData: true };
+
+        let mutateCount = 0;
+
+        let addPText = false;
+        let removeNav = false;
+        let addP = false;
+        let correctSecondCount = false;
+        let mutateText = false;
+
+        const callback = function (mutationsList, observer) {
+            if (mutateCount === 1) {
+                let index = 0;
+                correctSecondCount = mutationsList.length === 4;
+
+                for (const mutation of mutationsList) {
+                    if (mutation.type === 'childList') {
+                        if (mutation.addedNodes && mutation.addedNodes.length > 0 && mutation.addedNodes[0].data === 'A <p>') {
+                            addPText = true;
+                        } else if (mutation.removedNodes && mutation.removedNodes.length > 0 && mutation.removedNodes[0].tagName === 'NAV') {
+                            removeNav = true;
+                        } else if (mutation.addedNodes && mutation.addedNodes.length > 0 && mutation.addedNodes[0].tagName === 'P') {
+                            addP = true;
+                        }
+                    }
+                    else if (mutation.type === 'characterData') {
+                        if (mutation.target && mutation.target.data === 'world!') {
+                            mutateText = true;
+                        }
+                    }
+
+                    index++;
+                }
+            }
+
+            mutateCount++;
+        };
+
+        const observer = new MutationObserver(callback);
+        observer.observe(targetNode, config);
+
+        mount('divmutationobserver3', new TestMutationObserver3());
+
+        const firstMutateInterval = s.DETACHED_SET_INTERVAL(() => {
+            if (mutateCount === 1) {
+                clearInterval(firstMutateInterval);
+
+                const buttonEle = document.getElementById('mutationobserverbtn3');
+                buttonEle.click();
+
+                s.DETACHED_SET_TIMEOUT(() => {
+                    const secondMutateInterval = s.DETACHED_SET_INTERVAL(() => {
+                        if (mutateCount === 2) {
+                            clearInterval(secondMutateInterval);
+
+                            result.success = addPText && addP && removeNav && correctSecondCount && mutateText;
+
+                            window.globalTestResults.push(result);
+                            window.globalTestCount++;
+                            observer.disconnect();
+                        }
+                    }, 500);
+                }, 25);
+            }
+        }, 500);
+    }
+
+    testFinalize100MutationObserverPreservesCorrectly() {
+        const result = {
+            test: 'test correct elements and attributes updated with MutationObserver and other nodes preserved correctly',
+            success: false,
+            message: ''
+        };
+
+        const targetNode = document.getElementById('divmutationobserver2');
+        const config = { attributes: true, childList: true, subtree: true, characterData: true };
+
+        let mutateCount = 0;
+
+        let removedSpan = false;
+        let addDivSecond = false;
+        let addDivText = false;
+        let modifiedStyle = false;
+        let correctSecondCount = false;
+
+        const callback = function (mutationsList, observer) {
+            if (mutateCount === 1) {
+                let index = 0;
+                correctSecondCount = mutationsList.length === 4;
+
+                for (const mutation of mutationsList) {
+                    if (mutation.type === 'childList') {
+                        if (mutation.addedNodes && mutation.addedNodes.length > 0 && mutation.addedNodes[0].tagName === 'DIV') {
+                            addDivSecond = true;
+                        } else if (mutation.removedNodes && mutation.removedNodes.length > 0 && mutation.removedNodes[0].tagName === 'SPAN') {
+                            removedSpan = true;
+                        } else if (mutation.addedNodes && mutation.addedNodes.length > 0 && mutation.addedNodes[0].data === 'A <div>') {
+                            addDivText = true;
+                        }
+                    }
+                    else if (mutation.type === 'attributes') {
+                        if (mutation.attributeName === 'style') {
+                            modifiedStyle = true;
+                        }
+                    }
+
+                    index++;
+                }
+            }
+
+            mutateCount++;
+        };
+
+        const observer = new MutationObserver(callback);
+        observer.observe(targetNode, config);
+
+        mount('divmutationobserver2', new TestMutationObserver2());
+
+        const firstMutateInterval = s.DETACHED_SET_INTERVAL(() => {
+            if (mutateCount === 1) {
+                clearInterval(firstMutateInterval);
+
+                const buttonEle = document.getElementById('mutationobserverbtn2');
+                buttonEle.click();
+
+                s.DETACHED_SET_TIMEOUT(() => {
+                    const secondMutateInterval = s.DETACHED_SET_INTERVAL(() => {
+                        if (mutateCount === 2) {
+                            clearInterval(secondMutateInterval);
+
+                            result.success = addDivSecond && removedSpan && addDivText && correctSecondCount && modifiedStyle;
+
+                            window.globalTestResults.push(result);
+                            window.globalTestCount++;
+                            observer.disconnect();
+                        }
+                    }, 500);
+                }, 25);
+            }
+        }, 500);
+    }
+
+    testFinalize100MutationObserver() {
+        const result = {
+            test: 'test correct elements and attributes updated with MutationObserver',
+            success: false,
+            message: ''
+        };
+
+        const targetNode = document.getElementById('divmutationobserver1');
+        const config = { attributes: true, childList: true, subtree: true, characterData: true };
+
+        let mutateCount = 0;
+
+        let addKbdOriginal = false;
+        let addButtonOriginal = false;
+        let addSpanOriginal = false;
+        let correctFirstCount = false;
+
+        let removedSpan = false;
+        let addDivSecond = false;
+        let removedButtonSecond = false;
+        let addDivText = false;
+        let addedButtonSecond = false;
+        let removedKbd = false;
+        let modifiedId = false;
+        let modifiedStyle = false;
+        let addHiddenText = false;
+        let correctSecondCount = false;
+
+        const callback = function (mutationsList, observer) {
+            if (mutateCount === 0) {
+                let index = 0;
+                correctFirstCount = mutationsList.length === 3;
+
+                for (const mutation of mutationsList) {
+                    if (mutation.type === 'childList') {
+                        if (mutation.addedNodes && mutation.addedNodes.length > 0 && mutation.addedNodes[0].tagName === 'KBD') {
+                            addKbdOriginal = true;
+                        } else if (mutation.addedNodes && mutation.addedNodes.length > 0 && mutation.addedNodes[0].tagName === 'BUTTON') {
+                            addButtonOriginal = true;
+                        } else if (mutation.addedNodes && mutation.addedNodes.length > 0 && mutation.addedNodes[0].tagName === 'SPAN') {
+                            addSpanOriginal = true;
+                        }
+                    }
+
+                    index++;
+                }
+
+                mutateCount++;
+            } else if (mutateCount === 1) {
+                let index = 0;
+                correctSecondCount = mutationsList.length === 9;
+
+                for (const mutation of mutationsList) {
+                    if (mutation.type === 'childList') {
+                        if (mutation.removedNodes && mutation.removedNodes.length > 0 && mutation.removedNodes[0].tagName === 'SPAN') {
+                            removedSpan = true;
+                        } else if (mutation.addedNodes && mutation.addedNodes.length > 0 && mutation.addedNodes[0].tagName === 'DIV') {
+                            addDivSecond = true;
+                        } else if (mutation.removedNodes && mutation.removedNodes.length > 0 && mutation.removedNodes[0].tagName === 'BUTTON') {
+                            removedButtonSecond = true;
+                        } else if (mutation.addedNodes && mutation.addedNodes.length > 0 && mutation.addedNodes[0].data === 'A <div>') {
+                            addDivText = true;
+                        } else if (mutation.addedNodes && mutation.addedNodes.length > 0 && mutation.addedNodes[0].tagName === 'BUTTON') {
+                            addedButtonSecond = true;
+                        } else if (mutation.removedNodes && mutation.removedNodes.length > 0 && mutation.removedNodes[0].tagName === 'KBD') {
+                            removedKbd = true;
+                        } else if (mutation.addedNodes && mutation.addedNodes.length > 0 && mutation.addedNodes[0].data === 'Toggle Hidden Elements') {
+                            addHiddenText = true;
+                        }
+                    }
+                    else if (mutation.type === 'attributes') {
+                        if (mutation.attributeName === 'id') {
+                            modifiedId = true;
+                        } else if (mutation.attributeName === 'style') {
+                            modifiedStyle = true;
+                        }
+                    }
+
+                    index++;
+                }
+
+                mutateCount++;
+            }
+        };
+
+        const observer = new MutationObserver(callback);
+        observer.observe(targetNode, config);
+
+        mount('divmutationobserver1', new TestMutationObserver1());
+
+        const firstMutateInterval = s.DETACHED_SET_INTERVAL(() => {
+            if (mutateCount === 1) {
+                clearInterval(firstMutateInterval);
+
+                const buttonEle = document.getElementById('mutationobserverbtn1');
+                buttonEle.click();
+
+                s.DETACHED_SET_TIMEOUT(() => {
+                    const secondMutateInterval = s.DETACHED_SET_INTERVAL(() => {
+                        if (mutateCount === 2) {
+                            clearInterval(secondMutateInterval);
+
+                            result.success = addKbdOriginal && addButtonOriginal && addSpanOriginal && correctFirstCount && removedSpan && addDivSecond
+                                && removedButtonSecond && addDivText && addedButtonSecond && removedKbd && modifiedId && modifiedStyle
+                                && addHiddenText && correctSecondCount;
+
+                            window.globalTestResults.push(result);
+                            window.globalTestCount++;
+                            observer.disconnect();
+                        }
+                    }, 500);
+                }, 25);
+            }
+        }, 500);
     }
 
     testFinalize100SlStyleReapply() {
@@ -4764,8 +5294,9 @@ export class GlobalTestRunner {
 
                         const correctFinalData = child.textContent === 'c';
                         const correctFinalCount = rootEle.children.length === 3;
+                        const isAnimatingFinal = s._isAnimatingKeyed;
 
-                        result.success = isAnimating && correctData && correctCount && correctFinalData && correctFinalCount;
+                        result.success = isAnimating && correctData && correctCount && correctFinalData && correctFinalCount && !isAnimatingFinal;
 
                         window.globalTestResults.push(result);
                         window.globalTestCount++;

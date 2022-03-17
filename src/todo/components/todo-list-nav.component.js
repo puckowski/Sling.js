@@ -1,7 +1,6 @@
 import NoteService from '../services/note.service.js';
 
 import { getState, textNode, markup, getRouteSegments, route } from '../../../dist/sling.min';
-import { Observable } from '../../../dist/sling-reactive.min';
 
 class TodoListNavComponent {
 
@@ -12,7 +11,8 @@ class TodoListNavComponent {
     slOnInit() {
         this.performRouteAction(getRouteSegments()[0]);
 
-        let routeObservable = Observable(getRouteSegments());
+        const state = getState();
+        const routeObservable = state.getRouteObservable();
         routeObservable.subscribe(function (routeArr) {
             if (routeArr.length > 0) {
                 this.routeString = routeArr[0];
