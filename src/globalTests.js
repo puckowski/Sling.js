@@ -4894,8 +4894,8 @@ export class GlobalTestRunner {
         && segments[2] === '2' && segments[3] === 'bar' && rootEle && rootEle.childNodes && rootEle.childNodes.length === 1
             && rootEle.childNodes[0].textContent === 'Path Name Test' && window.location.href === 'http://localhost:8080/docs/1/2/bar';
 
-        window.history.back();
         setRouteStrategy('#');
+        window.history.back();
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -4919,8 +4919,8 @@ export class GlobalTestRunner {
             && variableList[1].var === 'foo' && variableList[1].value === 'some+text' && rootEle && rootEle.childNodes && rootEle.childNodes.length === 1
             && rootEle.childNodes[0].textContent === 'Query String Test' && window.location.href === 'http://localhost:8080/?/querystring=2&foo=some+text';
 
-        window.history.back();
         setRouteStrategy('#');
+        window.history.back();
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
