@@ -999,6 +999,31 @@ __object getRouteParams ( )__
 
 Returns the current route's parameters as an object. Returns ```{ }``` if there are none.
 
+## getRouteQueryVariables
+__[] getRouteQueryVariables ( )__
+
+Returns a list of objects containing parsed query string variables in the following format:
+
+```javascript
+[
+  { var: 'param1', value: '123' },
+  { var: 'param2', value: 'some+text' }
+]
+```
+
+Note ```value``` will always be a string.
+
+## setRouteStrategy
+__void setRouteStrategy ( newStrategy )__
+
+Sets the router strategy. Valid options for ```newStrategy``` are listed in the table below.
+
+|Strategy |Description                     |Example                                  |
+|---------|--------------------------------|-----------------------------------------|
+|'#'      |A hash based strategy.          |http://localhost:8080/todo.html#/docs    |
+|'?'      |A query string route strategy.  |http://localhost:8080/?/query=1          |
+|''       |A path name strategy.           |http://localhost:8080/docs/1             |
+
 # Core Change Detection API
 
 ## setDetectionStrategy
