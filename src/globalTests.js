@@ -4875,30 +4875,150 @@ export class GlobalTestRunner {
                 (typeof obj.ownerDocument === "object");
         }
     }
+
+    testFinalize998RouteByPathNameBack() {
+        const result = {
+            test: 'test route by path name history',
+            success: false,
+            message: ''
+        };
+
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            if (window.globalAsyncCount === 0) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
+
+                window.history.pushState(null, document.title, '/todo.html#');
+
+                setRouteStrategy('');
+                route('docs/1/2/bar');
+                setRouteStrategy('#');
+                window.history.back();
+
+                s.DETACHED_SET_TIMEOUT(() => {
+                    const pathHref = window.location.pathname;
+
+                    result.success = pathHref && pathHref !== '' && pathHref === '/todo.html';
     
-    testFinalize100RouteByPathName() {
+                    if (!result.success) {
+                        window.history.pushState(null, document.title, '/todo.html#');
+                    }
+    
+                    window.globalTestResults.push(result);
+                    window.globalTestCount++;
+                    window.globalAsyncCount--;
+                }, 100);
+            }
+
+            attempts++;
+
+            if (attempts === 50 && window.globalAsyncCount > 0) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+
+                clearInterval(waitForStableInterval);
+                window.globalAsyncCount--;
+            }
+        }, 500);
+    }
+
+    testFinalize998RouteByQueryStringBack() {
+        const result = {
+            test: 'test route by query string history',
+            success: false,
+            message: ''
+        };
+
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            if (window.globalAsyncCount === 0) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
+
+                window.history.pushState(null, document.title, '/todo.html#');
+
+                setRouteStrategy('?');
+                route('querystring=2&foo=some+text');
+                setRouteStrategy('#');
+                window.history.back();
+
+                s.DETACHED_SET_TIMEOUT(() => {
+                    const pathHref = window.location.pathname;
+
+                    result.success = pathHref && pathHref !== '' && pathHref === '/todo.html';
+    
+                    if (!result.success) {
+                        window.history.pushState(null, document.title, '/todo.html#');
+                    }
+    
+                    window.globalTestResults.push(result);
+                    window.globalTestCount++;
+                    window.globalAsyncCount--;
+                }, 100);
+            }
+
+            attempts++;
+
+            if (attempts === 50 && window.globalAsyncCount > 0) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+
+                clearInterval(waitForStableInterval);
+                window.globalAsyncCount--;
+            }
+        }, 500);
+    }
+
+    testFinalize101RouteByPathName() {
         const result = {
             test: 'test route by path name',
             success: false,
             message: ''
         };
 
-        setRouteStrategy('');
-        addRoute('docs/:someId/:someId2/bar', { component: new TestPathNameComponent1(), root: 'divpathname1' });
-        route('docs/1/2/bar');
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            if (window.globalAsyncCount === 0) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
 
-        const segments = getRouteSegments();
-        const rootEle = document.getElementById('divpathname1');
+                let originalHref = window.location.href;
 
-        result.success = segments && segments.length === 4 && segments[0] === 'docs' && segments[1] === '1' 
-        && segments[2] === '2' && segments[3] === 'bar' && rootEle && rootEle.childNodes && rootEle.childNodes.length === 1
-            && rootEle.childNodes[0].textContent === 'Path Name Test' && window.location.href === 'http://localhost:8080/docs/1/2/bar';
+                setRouteStrategy('');
+                addRoute('docs/:someId/:someId2/bar', { component: new TestPathNameComponent1(), root: 'divpathname1' });
+                route('docs/1/2/bar');
 
-        setRouteStrategy('#');
-        window.history.back();
+                const segments = getRouteSegments();
+                const rootEle = document.getElementById('divpathname1');
 
-        window.globalTestResults.push(result);
-        window.globalTestCount++;
+                result.success = segments && segments.length === 4 && segments[0] === 'docs' && segments[1] === '1'
+                    && segments[2] === '2' && segments[3] === 'bar' && rootEle && rootEle.childNodes && rootEle.childNodes.length === 1
+                    && rootEle.childNodes[0].textContent === 'Path Name Test' && window.location.href === 'http://localhost:8080/docs/1/2/bar';
+
+                setRouteStrategy('#');
+
+                if (originalHref.includes('todo.html')) {
+                    originalHref = originalHref.substring(originalHref.indexOf('todo.html'));
+                }
+
+                window.history.pushState(null, document.title, '/' + originalHref);
+
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+                window.globalAsyncCount--;
+            }
+
+            attempts++;
+
+            if (attempts === 50 && window.globalAsyncCount > 0) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+
+                clearInterval(waitForStableInterval);
+                window.globalAsyncCount--;
+            }
+        }, 500);
     }
 
     testFinalize100RouteByQueryString() {
@@ -4908,22 +5028,48 @@ export class GlobalTestRunner {
             message: ''
         };
 
-        setRouteStrategy('?');
-        addRoute('querystring=:someId&foo=:someId2', { component: new TestQueryStringComponent1(), root: 'divquerystring1' });
-        route('querystring=2&foo=some+text');
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            if (window.globalAsyncCount === 0) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
 
-        const variableList = getRouteQueryVariables();
-        const rootEle = document.getElementById('divquerystring1');
+                let originalHref = window.location.href;
 
-        result.success = variableList && variableList.length === 2 && variableList[0].var === 'querystring' && variableList[0].value === '2'
-            && variableList[1].var === 'foo' && variableList[1].value === 'some+text' && rootEle && rootEle.childNodes && rootEle.childNodes.length === 1
-            && rootEle.childNodes[0].textContent === 'Query String Test' && window.location.href === 'http://localhost:8080/?/querystring=2&foo=some+text';
+                setRouteStrategy('?');
+                addRoute('querystring=:someId&foo=:someId2', { component: new TestQueryStringComponent1(), root: 'divquerystring1' });
+                route('querystring=2&foo=some+text');
 
-        setRouteStrategy('#');
-        window.history.back();
+                const variableList = getRouteQueryVariables();
+                const rootEle = document.getElementById('divquerystring1');
 
-        window.globalTestResults.push(result);
-        window.globalTestCount++;
+                result.success = variableList && variableList.length === 2 && variableList[0].var === 'querystring' && variableList[0].value === '2'
+                    && variableList[1].var === 'foo' && variableList[1].value === 'some+text' && rootEle && rootEle.childNodes && rootEle.childNodes.length === 1
+                    && rootEle.childNodes[0].textContent === 'Query String Test' && window.location.href === 'http://localhost:8080/?/querystring=2&foo=some+text';
+
+                setRouteStrategy('#');
+
+                if (originalHref.includes('todo.html')) {
+                    originalHref = originalHref.substring(originalHref.indexOf('todo.html'));
+                }
+
+                window.history.pushState(null, document.title, '/' + originalHref);
+
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+                window.globalAsyncCount--;
+            }
+
+            attempts++;
+
+            if (attempts === 50 && window.globalAsyncCount > 0) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+
+                clearInterval(waitForStableInterval);
+                window.globalAsyncCount--;
+            }
+        }, 500);
     }
 
     testFinalize100MutationObserverChangesTextCorrectly() {
@@ -8093,11 +8239,11 @@ export class GlobalTestRunner {
                                     window.globalTestResults.push(result);
                                     window.globalAsyncCount--;
                                     window.globalTestCount++;
-                                }, 100);
-                            }, 100);
-                        }, 100);
-                    }, 100);
-                }, 100);
+                                }, 25);
+                            }, 25);
+                        }, 25);
+                    }, 25);
+                }, 25);
             }
 
             attempts++;
@@ -8510,17 +8656,19 @@ export class GlobalTestRunner {
                     const successfulPromises = results.filter(p => p.status === 'fulfilled');
                     const hadSuccess = successfulPromises && successfulPromises.length === 1;
 
-                    const ele = document.getElementById('testfetchcomponent');
+                    s.DETACHED_SET_TIMEOUT(() => {
+                        const ele = document.getElementById('testfetchcomponent');
 
-                    const stateObj = getState();
-                    const correctText = ele.textContent === 'Count: 1';
-                    const countIncremented = stateObj && stateObj.count === 2;
-
-                    result.success = hadSuccess && correctText && countIncremented;
-
-                    window.globalTestResults.push(result);
-                    window.globalTestCount++;
-                    window.globalAsyncCount--;
+                        const stateObj = getState();
+                        const correctText = ele.textContent === 'Count: 1';
+                        const countIncremented = stateObj && stateObj.count === 2;
+    
+                        result.success = hadSuccess && correctText && countIncremented;
+    
+                        window.globalTestResults.push(result);
+                        window.globalTestCount++;
+                        window.globalAsyncCount--;
+                    }, 25);
                 });
             }
 
