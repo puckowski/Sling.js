@@ -4855,6 +4855,209 @@ export class TestPathNameComponent1 {
     }
 }
 
+export class TestAnimateRoute1 {
+    slDetachedOnNodeDestroy(proposedNode) {
+        return proposedNode;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divanimateroute',
+                class: 'visible',
+                slanimatedestroy: 'hide',
+                slanimatedestroytarget: this.slDetachedOnNodeDestroy.bind(this)
+            },
+            children: [
+                markup('kbd', {
+                    children: [
+                        textNode('Tab')
+                    ]
+                }),
+                textNode('Test Animate Route 1')
+            ]
+        })
+    }
+}
+
+export class TestAnimateRoute2 {
+    slDetachedOnNodeDestroy(proposedNode) {
+        return proposedNode;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divanimateroute',
+                class: 'visible',
+                slanimatedestroy: 'hide',
+                slanimatedestroytarget: this.slDetachedOnNodeDestroy.bind(this)
+            },
+            children: [
+                textNode('Test Animate Route 2'),
+                markup('button', {
+                    children: [
+                        textNode('Tab')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestAnimateRoute3 {
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divanimateroute',
+                class: 'visible',
+                slanimatedestroy: 'hide',
+            },
+            children: [
+                markup('kbd', {
+                    children: [
+                        textNode('Tab')
+                    ]
+                }),
+                textNode('Test Animate Route 1')
+            ]
+        })
+    }
+}
+
+export class TestAnimateRoute4 {
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divanimateroute',
+                class: 'visible',
+                slanimatedestroy: 'hide',
+            },
+            children: [
+                textNode('Test Animate Route 2'),
+                markup('button', {
+                    children: [
+                        textNode('Tab')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestAnimateRoute5 {
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divanimateroute',
+                class: 'visible',
+                slanimatedestroy: 'hide',
+            },
+            children: [
+                markup('kbd', {
+                    children: [
+                        textNode('Tab')
+                    ]
+                }),
+                textNode('Test Animate Route 1')
+            ]
+        })
+    }
+}
+
+export class TestAnimateRoute6 {
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divanimateroute',
+                class: 'visible',
+                slanimatedestroy: 'hide',
+            },
+            children: [
+                textNode('Test Animate Route 2'),
+                markup('button', {
+                    children: [
+                        textNode('Tab')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestAnimationFunctionsPreserved1 {
+    constructor() {
+        this.show = true;
+    }
+
+    slAfterInit() {
+        const ele = document.getElementById('animpreservebtn1');
+        ele.onanimationstart = () => {
+            const state = getState();
+            if (state.animationstartpreserve === undefined) state.animationstartpreserve = 1;
+            else state.animationstartpreserve++;
+            setState(state);
+        }
+        ele.onanimationend = () => {
+            const state = getState();
+            if (state.animationendpreserve === undefined) state.animationendpreserve = 1;
+            else state.animationendpreserve++;
+            setState(state);
+        }
+    }
+
+    hideMarkup() {
+        this.show = false;
+    }
+
+    showMarkup() {
+        this.show = true;
+    }
+
+    slDetachedOnNodeDestroy(node) {
+        return node;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divanimationfunctions1',
+            },
+            children: [
+                ...(this.show === true ? [
+                    markup('button', {
+                        children: [
+                            textNode('Test Animation Functions 1')
+                        ]
+                    }),
+                    markup('button', {
+                        attrs: {
+                            id: 'animpreservebtn1',
+                            onclick: this.hideMarkup.bind(this),
+                            slanimatedestroy: 'hide',
+                            slanimatedestroytarget: this.slDetachedOnNodeDestroy.bind(this)
+                        },
+                        children: [
+                            textNode('Hide')
+                        ]
+                    })
+                ] : [
+                    markup('button', {
+                        attrs: {
+                            id: 'animpreservebtn1',
+                            onclick: this.showMarkup.bind(this),
+                            slanimatedestroy: 'hide'
+                        },
+                        children: [
+                            textNode('Show')
+                        ]
+                    })
+                ])
+            ]
+        })
+    }
+}
+
 export class GlobalTestRunner {
 
     constructor() {
@@ -4874,6 +5077,264 @@ export class GlobalTestRunner {
                 (obj.nodeType === 1) && (typeof obj.style === "object") &&
                 (typeof obj.ownerDocument === "object");
         }
+    }
+
+    testRunLastAnimationFunctionsPreserved() {
+        const result = {
+            test: 'test animation functions preserved',
+            success: false,
+            message: ''
+        };
+
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            const state = getState();
+
+            if (window.globalAsyncCount === 0 && window.globalTestCount >= state.testCount && window.runAnimFunctionPreserve) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
+                mount('divanimationfunctions1', new TestAnimationFunctionsPreserved1());
+
+                let btnEle = document.getElementById('animpreservebtn1');
+                btnEle.click();
+
+                s.DETACHED_SET_TIMEOUT(() => {
+                    s.DETACHED_SET_TIMEOUT(() => {
+                        // Animation ended
+                        let state = getState();
+                        const startCount = state.animationstartpreserve;
+                        const endCount = state.animationendpreserve;
+
+                        btnEle = document.getElementById('animpreservebtn1');
+
+                        state = getState();
+                        const startCountFinal = state.animationstartpreserve;
+                        const endCountFinal = state.animationendpreserve;
+
+                        result.success = startCount === undefined && endCount === 1 && startCountFinal === undefined && endCountFinal === 1
+                            && btnEle.onanimationstart === null && btnEle.onanimationend === null;
+
+                        window.globalTestResults.push(result);
+                        window.globalTestCount++;
+                        window.globalAsyncCount--;
+                    }, 2100);
+                }, 25);
+            }
+
+            attempts++;
+
+            if (attempts === 75 && window.globalAsyncCount > 0) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+
+                clearInterval(waitForStableInterval);
+                window.globalAsyncCount--;
+            }
+        }, 500);
+    }
+
+    testRunLastAnimateRouteChangeWithoutTargetAndNoPrevious() {
+        const result = {
+            test: 'test animating a route change without target directive and no existing target directive',
+            success: false,
+            message: ''
+        };
+
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            const state = getState();
+
+            if (window.globalAsyncCount === 0 && window.globalTestCount >= state.testCount && window.runLastAnimateRoute) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
+
+                removeRoute('.*');
+
+                addRoute('animateroute5', { component: new TestAnimateRoute5(), root: 'divanimateroute', animateDestroy: true });
+                addRoute('animateroute6', { component: new TestAnimateRoute6(), root: 'divanimateroute', animateDestroy: true });
+
+                route('animateroute5');
+
+                s.DETACHED_SET_TIMEOUT(() => {
+                    route('animateroute6');
+
+                    s.DETACHED_SET_TIMEOUT(() => {
+                        s.DETACHED_SET_TIMEOUT(() => {
+                            const isAnimatingKeyed = s._isAnimatingKeyed;
+
+                            let rootEle = document.getElementById('divanimateroute');
+                            const rootCorrect = rootEle && rootEle.children && rootEle.childNodes.length === 2 && rootEle.childNodes[0].tagName === 'KBD'
+                                && rootEle.childNodes[0].textContent === 'Tab' && rootEle.childNodes[1].textContent === 'Test Animate Route 1';
+                            const rootCorrect2 = rootEle && rootEle.children && rootEle.childNodes.length === 2 && rootEle.childNodes[1].tagName === 'BUTTON'
+                                && rootEle.childNodes[1].textContent === 'Tab' && rootEle.childNodes[0].textContent === 'Test Animate Route 2';
+
+                            s.DETACHED_SET_TIMEOUT(() => {
+                                const isAnimatingKeyedFinal = s._isAnimatingKeyed;
+
+                                rootEle = document.getElementById('divanimateroute');
+                                const rootCorrectFinal = rootEle && rootEle.children && rootEle.childNodes.length === 2 && rootEle.childNodes[1].tagName === 'BUTTON'
+                                    && rootEle.childNodes[1].textContent === 'Tab' && rootEle.childNodes[0].textContent === 'Test Animate Route 2';
+
+                                result.success = !isAnimatingKeyed && !rootCorrect && rootCorrect2 && !isAnimatingKeyedFinal && rootCorrectFinal;
+
+                                s.DETACHED_SET_TIMEOUT(() => {
+                                    // Animation finished
+                                    window.globalTestResults.push(result);
+                                    window.globalTestCount++;
+                                    window.globalAsyncCount--;
+                                    window.runAnimFunctionPreserve = true;
+                                }, 2001);
+                            }, 1000);
+                        }, 1500);
+                    }, 25);
+                }, 25);
+            }
+
+            attempts++;
+
+            if (attempts === 75 && window.globalAsyncCount > 0) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+
+                clearInterval(waitForStableInterval);
+                window.globalAsyncCount--;
+                window.runAnimFunctionPreserve = true;
+            }
+        }, 500);
+    }
+
+    testRunLastAnimateRouteChangeWithoutTarget() {
+        const result = {
+            test: 'test animating a route change without target directive',
+            success: false,
+            message: ''
+        };
+
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            const state = getState();
+
+            if (window.globalAsyncCount === 0 && window.globalTestCount >= state.testCount) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
+
+                removeRoute('.*');
+
+                addRoute('animateroute3', { component: new TestAnimateRoute3(), root: 'divanimateroute', animateDestroy: true });
+                addRoute('animateroute4', { component: new TestAnimateRoute4(), root: 'divanimateroute', animateDestroy: true });
+
+                route('animateroute3');
+
+                s.DETACHED_SET_TIMEOUT(() => {
+                    route('animateroute4');
+
+                    s.DETACHED_SET_TIMEOUT(() => {
+                        s.DETACHED_SET_TIMEOUT(() => {
+                            const isAnimatingKeyed = s._isAnimatingKeyed;
+
+                            let rootEle = document.getElementById('divanimateroute');
+                            const rootCorrect = rootEle && rootEle.children && rootEle.childNodes.length === 2 && rootEle.childNodes[0].tagName === 'KBD'
+                                && rootEle.childNodes[0].textContent === 'Tab' && rootEle.childNodes[1].textContent === 'Test Animate Route 1';
+
+                            s.DETACHED_SET_TIMEOUT(() => {
+                                const isAnimatingKeyedFinal = s._isAnimatingKeyed;
+
+                                rootEle = document.getElementById('divanimateroute');
+                                const rootCorrectFinal = rootEle && rootEle.children && rootEle.childNodes.length === 2 && rootEle.childNodes[1].tagName === 'BUTTON'
+                                    && rootEle.childNodes[1].textContent === 'Tab' && rootEle.childNodes[0].textContent === 'Test Animate Route 2';
+
+                                result.success = isAnimatingKeyed && rootCorrect && !isAnimatingKeyedFinal && rootCorrectFinal;
+
+                                s.DETACHED_SET_TIMEOUT(() => {
+                                    // Animation finished
+                                    window.globalTestResults.push(result);
+                                    window.globalTestCount++;
+                                    window.globalAsyncCount--;
+                                    window.runLastAnimateRoute = true;
+                                }, 2001);
+                            }, 1000);
+                        }, 1500);
+                    }, 25);
+                }, 25);
+            }
+
+            attempts++;
+
+            if (attempts === 75 && window.globalAsyncCount > 0) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+
+                clearInterval(waitForStableInterval);
+                window.globalAsyncCount--;
+                window.runLastAnimateRoute = true;
+            }
+        }, 500);
+    }
+
+    testRunLastAnimateRouteChange() {
+        const result = {
+            test: 'test animating a route change',
+            success: false,
+            message: ''
+        };
+
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            const state = getState();
+
+            if (window.globalAsyncCount === 0 && window.globalTestCount >= state.testCount) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
+
+                removeRoute('.*');
+
+                addRoute('animateroute1', { component: new TestAnimateRoute1(), root: 'divanimateroute', animateDestroy: true });
+                addRoute('animateroute2', { component: new TestAnimateRoute2(), root: 'divanimateroute', animateDestroy: true });
+
+                route('animateroute1');
+
+                s.DETACHED_SET_TIMEOUT(() => {
+                    route('animateroute2');
+
+                    s.DETACHED_SET_TIMEOUT(() => {
+                        s.DETACHED_SET_TIMEOUT(() => {
+                            const isAnimatingKeyed = s._isAnimatingKeyed;
+
+                            let rootEle = document.getElementById('divanimateroute');
+                            const rootCorrect = rootEle && rootEle.children && rootEle.childNodes.length === 2 && rootEle.childNodes[0].tagName === 'KBD'
+                                && rootEle.childNodes[0].textContent === 'Tab' && rootEle.childNodes[1].textContent === 'Test Animate Route 1';
+
+                            s.DETACHED_SET_TIMEOUT(() => {
+                                const isAnimatingKeyedFinal = s._isAnimatingKeyed;
+
+                                rootEle = document.getElementById('divanimateroute');
+                                const rootCorrectFinal = rootEle && rootEle.children && rootEle.childNodes.length === 2 && rootEle.childNodes[1].tagName === 'BUTTON'
+                                    && rootEle.childNodes[1].textContent === 'Tab' && rootEle.childNodes[0].textContent === 'Test Animate Route 2';
+
+                                result.success = isAnimatingKeyed && rootCorrect && !isAnimatingKeyedFinal && rootCorrectFinal;
+
+                                s.DETACHED_SET_TIMEOUT(() => {
+                                    // Animation finished
+                                    window.globalTestResults.push(result);
+                                    window.globalTestCount++;
+                                    window.globalAsyncCount--;
+                                }, 2001);
+                            }, 1000);
+                        }, 1500);
+                    }, 25);
+                }, 25);
+            }
+
+            attempts++;
+
+            if (attempts === 75 && window.globalAsyncCount > 0) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+
+                clearInterval(waitForStableInterval);
+                window.globalAsyncCount--;
+            }
+        }, 500);
     }
 
     testFinalize998RouteByPathNameBack() {
@@ -4900,20 +5361,20 @@ export class GlobalTestRunner {
                     const pathHref = window.location.pathname;
 
                     result.success = pathHref && pathHref !== '' && pathHref === '/todo.html';
-    
+
                     if (!result.success) {
                         window.history.pushState(null, document.title, '/todo.html#');
                     }
-    
+
                     window.globalTestResults.push(result);
                     window.globalTestCount++;
                     window.globalAsyncCount--;
-                }, 100);
+                }, 300);
             }
 
             attempts++;
 
-            if (attempts === 50 && window.globalAsyncCount > 0) {
+            if (attempts === 75 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -4947,20 +5408,20 @@ export class GlobalTestRunner {
                     const pathHref = window.location.pathname;
 
                     result.success = pathHref && pathHref !== '' && pathHref === '/todo.html';
-    
+
                     if (!result.success) {
                         window.history.pushState(null, document.title, '/todo.html#');
                     }
-    
+
                     window.globalTestResults.push(result);
                     window.globalTestCount++;
                     window.globalAsyncCount--;
-                }, 100);
+                }, 300);
             }
 
             attempts++;
 
-            if (attempts === 50 && window.globalAsyncCount > 0) {
+            if (attempts === 75 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -5011,7 +5472,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 50 && window.globalAsyncCount > 0) {
+            if (attempts === 75 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -5062,7 +5523,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 50 && window.globalAsyncCount > 0) {
+            if (attempts === 75 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -5395,7 +5856,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 50 && window.globalAsyncCount > 0) {
+            if (attempts === 75 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -5439,21 +5900,28 @@ export class GlobalTestRunner {
                         child = rootEle.childNodes[1];
 
                         const correctFinalData = child.textContent === 'c';
-                        const correctFinalCount = rootEle.children.length === 3;
+                        const correctFinalData2 = rootEle && rootEle.childNodes.length > 0 && rootEle.childNodes[0].textContent === 'a';
+                        const correctTag = rootEle && rootEle.childNodes.length > 2 && rootEle.childNodes[2].tagName === 'BUTTON';
+                        const correctFinalData3 = rootEle && rootEle.childNodes.length > 2 && rootEle.childNodes[2].textContent === 'Keyed Hide Button';
                         const isAnimatingFinal = s._isAnimatingKeyed;
 
-                        result.success = isAnimating && correctData && correctCount && correctFinalData && correctFinalCount && !isAnimatingFinal;
+                        s.DETACHED_SET_TIMEOUT(() => {
+                            const correctFinalCount = rootEle.children.length === 3;
 
-                        window.globalTestResults.push(result);
-                        window.globalTestCount++;
-                        window.globalAsyncCount--;
+                            result.success = isAnimating && correctData && correctCount && correctFinalData && correctFinalCount && !isAnimatingFinal
+                                && correctFinalData2 && correctTag && correctFinalData3;
+
+                            window.globalTestResults.push(result);
+                            window.globalTestCount++;
+                            window.globalAsyncCount--;
+                        }, 500);
                     }, 550);
                 }, 25);
             }
 
             attempts++;
 
-            if (attempts === 50 && window.globalAsyncCount > 0) {
+            if (attempts === 75 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -5498,7 +5966,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 50 && window.globalAsyncCount > 0) {
+            if (attempts === 75 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -5543,7 +6011,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 50 && window.globalAsyncCount > 0) {
+            if (attempts === 75 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -6390,7 +6858,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 50 && window.globalAsyncCount > 0) {
+            if (attempts === 75 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -6695,7 +7163,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 50 && window.globalAsyncCount > 0) {
+            if (attempts === 75 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -6751,7 +7219,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 50 && window.globalAsyncCount > 0) {
+            if (attempts === 75 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -6890,7 +7358,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 50 && window.globalAsyncCount > 0) {
+            if (attempts === 75 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -7693,7 +8161,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 50 && window.globalAsyncCount > 0) {
+            if (attempts === 75 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
                 window.globalAsyncCount--;
@@ -7794,7 +8262,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 50 && window.globalAsyncCount > 0) {
+            if (attempts === 75 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
                 window.globalAsyncCount--;
@@ -7853,7 +8321,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 50 && window.globalAsyncCount > 0) {
+            if (attempts === 75 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
                 window.globalAsyncCount--;
@@ -7937,7 +8405,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 50 && window.globalAsyncCount > 0) {
+            if (attempts === 75 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
                 window.globalAsyncCount--;
@@ -8025,7 +8493,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 50 && window.globalAsyncCount > 0) {
+            if (attempts === 75 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
                 window.globalAsyncCount--;
@@ -8094,7 +8562,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 50 && window.globalAsyncCount > 0) {
+            if (attempts === 75 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
                 window.globalAsyncCount--;
@@ -8171,7 +8639,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 50 && window.globalAsyncCount > 0) {
+            if (attempts === 75 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
                 window.globalAsyncCount--;
@@ -8248,7 +8716,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 50 && window.globalAsyncCount > 0) {
+            if (attempts === 75 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalAsyncCount--;
                 window.globalTestCount++;
@@ -8662,9 +9130,9 @@ export class GlobalTestRunner {
                         const stateObj = getState();
                         const correctText = ele.textContent === 'Count: 1';
                         const countIncremented = stateObj && stateObj.count === 2;
-    
+
                         result.success = hadSuccess && correctText && countIncremented;
-    
+
                         window.globalTestResults.push(result);
                         window.globalTestCount++;
                         window.globalAsyncCount--;
@@ -8674,7 +9142,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 50 && window.globalAsyncCount > 0) {
+            if (attempts === 75 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
