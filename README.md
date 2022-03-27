@@ -922,6 +922,7 @@ Below is a list of possible ```routeObj``` properties:
 |onActivationCheck |A function that returns true if route action may be taken, otherwise false.                                                          |
 |onActivationFail  |Object with ```route``` property to route to on ```onActivationCheck``` fail. Also may specify ```params``` and ```attachDetector```.|
 |onBeforeRoute     |Function to execute before taking route action. Called after onActivationCheck and before the route action is taken.                 |
+|animateDestroy    |Used with animation structural directives to animate router transitions.                                                             |
 
 Example route definition:
 
