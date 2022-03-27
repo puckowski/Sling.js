@@ -384,7 +384,7 @@ view() {
 }			
 ```
 
-Example of ``slfor``` directive usage:
+Example of ```slfor``` directive usage:
 
 ```javascript
 export class TestRenderElement3 {
