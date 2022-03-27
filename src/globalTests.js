@@ -5058,6 +5058,88 @@ export class TestAnimationFunctionsPreserved1 {
     }
 }
 
+class TestAnimateRouteToggle1 {
+    constructor() {
+        this.welcomeHidden = false;
+    }
+
+    hideWelcome() {
+        route('animroutetoggle2');
+    }
+
+    slDetachedOnNodeDestroy(node) {
+        return node;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divRouterOutlet2',
+                class: 'visible',
+                style:
+                    'display: flex; justify-content: center; align-items: center; height: 100%;',
+                slanimatedestroy: 'hide',
+                slanimatedestroytarget: this.slDetachedOnNodeDestroy.bind(this),
+            },
+            children: [
+                markup('h1', {
+                    children: [
+                        textNode('Hello, world!'),
+                        markup('button', {
+                            attrs: {
+                                id: 'toggleanimroute1',
+                                onclick: this.hideWelcome.bind(this),
+                            },
+                            children: [textNode('Hide')],
+                        })
+                    ],
+                }),
+            ],
+        });
+    }
+}
+
+class TestAnimateRouteToggle2 {
+    constructor() {
+        this.welcomeHidden = false;
+    }
+
+    hideWelcome() {
+        route('animroutetoggle1');
+    }
+
+    slDetachedOnNodeDestroy(node) {
+        return node;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divRouterOutlet2',
+                class: 'visible',
+                style:
+                    'display: flex; justify-content: center; align-items: center; height: 100%;',
+                slanimatedestroy: 'hide',
+                slanimatedestroytarget: this.slDetachedOnNodeDestroy.bind(this),
+            },
+            children: [
+                markup('h1', {
+                    children: [
+                        textNode('Hello, world 2!'),
+                        markup('button', {
+                            attrs: {
+                                id: 'toggleanimroute1',
+                                onclick: this.hideWelcome.bind(this),
+                            },
+                            children: [textNode('Hide 2')],
+                        })
+                    ],
+                }),
+            ],
+        });
+    }
+}
+
 export class GlobalTestRunner {
 
     constructor() {
@@ -5073,10 +5155,123 @@ export class GlobalTestRunner {
             //Browsers not supporting W3 DOM2 don't have HTMLElement and
             //an exception is thrown and we end up here. Testing some
             //properties that all elements have (works on IE7)
-            return (typeof obj === "object") &&
-                (obj.nodeType === 1) && (typeof obj.style === "object") &&
-                (typeof obj.ownerDocument === "object");
+            return (typeof obj === 'object') &&
+                (obj.nodeType === 1) && (typeof obj.style === 'object') &&
+                (typeof obj.ownerDocument === 'object');
         }
+    }
+
+    testRunLastToggleBetweenAnimatedRoutes() {
+        const result = {
+            test: 'test toggling between animated routes',
+            success: false,
+            message: ''
+        };
+
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            const state = getState();
+
+            if (window.globalAsyncCount === 0 && window.globalTestCount >= state.testCount && window.runAnimRouteToggle) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
+                mount('divanimationfunctions1', new TestAnimationFunctionsPreserved1());
+
+                addRoute('animroutetoggle1', {
+                    component: new TestAnimateRouteToggle1(),
+                    root: 'divRouterOutlet2',
+                    animateDestroy: true
+                });
+                addRoute('animroutetoggle2', {
+                    component: new TestAnimateRouteToggle2(),
+                    root: 'divRouterOutlet2',
+                    animateDestroy: true
+                });
+
+                route('animroutetoggle1');
+
+                s.DETACHED_SET_TIMEOUT(() => {
+                    let rootEle = document.getElementById('divRouterOutlet2');
+                    const rootCorrect = rootEle && rootEle.children && rootEle.children.length === 1 && rootEle.children[0].tagName === 'H1';
+                    const h1Correct = rootCorrect && rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
+                        && rootEle.children[0].childNodes[0].textContent === 'Hello, world!' && rootEle.children[0].childNodes[1].tagName === 'BUTTON'
+                        && rootEle.children[0].childNodes[1].textContent === 'Hide';
+
+                    s.DETACHED_SET_TIMEOUT(() => {
+                        // Animation ended
+                        rootEle = document.getElementById('divRouterOutlet2');
+                        const rootCorrectFinal = rootEle && rootEle.children && rootEle.children.length === 1 && rootEle.children[0].tagName === 'H1';
+                        const h1CorrectFinal = rootCorrect && rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
+                            && rootEle.children[0].childNodes[0].textContent === 'Hello, world!' && rootEle.children[0].childNodes[1].tagName === 'BUTTON'
+                            && rootEle.children[0].childNodes[1].textContent === 'Hide';
+
+                        route('animroutetoggle2');
+
+                        s.DETACHED_SET_TIMEOUT(() => {
+                            const rootCorrectFinal2 = rootEle && rootEle.children && rootEle.children.length === 1 && rootEle.children[0].tagName === 'H1';
+                            const h1CorrectFinal2 = rootCorrect && rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
+                                && rootEle.children[0].childNodes[0].textContent === 'Hello, world!' && rootEle.children[0].childNodes[1].tagName === 'BUTTON'
+                                && rootEle.children[0].childNodes[1].textContent === 'Hide';
+
+                            s.DETACHED_SET_TIMEOUT(() => {
+                                const rootCorrectFinal3 = rootEle && rootEle.children && rootEle.children.length === 1 && rootEle.children[0].tagName === 'H1';
+                                const h1CorrectFinal3 = rootCorrect && rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
+                                    && rootEle.children[0].childNodes[0].textContent === 'Hello, world!' && rootEle.children[0].childNodes[1].tagName === 'BUTTON'
+                                    && rootEle.children[0].childNodes[1].textContent === 'Hide';
+
+                                s.DETACHED_SET_TIMEOUT(() => {
+                                    const rootCorrectFinal4 = rootEle && rootEle.children && rootEle.children.length === 1 && rootEle.children[0].tagName === 'H1';
+                                    const h1CorrectFinal4 = rootCorrect && rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
+                                        && rootEle.children[0].childNodes[0].textContent === 'Hello, world 2!' && rootEle.children[0].childNodes[1].tagName === 'BUTTON'
+                                        && rootEle.children[0].childNodes[1].textContent === 'Hide 2';
+
+                                    route('animroutetoggle1');
+
+                                    s.DETACHED_SET_TIMEOUT(() => {
+                                        const rootCorrectFinal5 = rootEle && rootEle.children && rootEle.children.length === 1 && rootEle.children[0].tagName === 'H1';
+                                        const h1CorrectFinal5 = rootCorrect && rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
+                                            && rootEle.children[0].childNodes[0].textContent === 'Hello, world 2!' && rootEle.children[0].childNodes[1].tagName === 'BUTTON'
+                                            && rootEle.children[0].childNodes[1].textContent === 'Hide 2';
+
+                                        s.DETACHED_SET_TIMEOUT(() => {
+                                            const rootCorrectFinal6 = rootEle && rootEle.children && rootEle.children.length === 1 && rootEle.children[0].tagName === 'H1';
+                                            const h1CorrectFinal6 = rootCorrect && rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
+                                                && rootEle.children[0].childNodes[0].textContent === 'Hello, world 2!' && rootEle.children[0].childNodes[1].tagName === 'BUTTON'
+                                                && rootEle.children[0].childNodes[1].textContent === 'Hide 2';
+
+                                            s.DETACHED_SET_TIMEOUT(() => {
+                                                const rootCorrectFinal7 = rootEle && rootEle.children && rootEle.children.length === 1 && rootEle.children[0].tagName === 'H1';
+                                                const h1CorrectFinal7 = rootCorrect && rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
+                                                    && rootEle.children[0].childNodes[0].textContent === 'Hello, world!' && rootEle.children[0].childNodes[1].tagName === 'BUTTON'
+                                                    && rootEle.children[0].childNodes[1].textContent === 'Hide';
+
+                                                result.success = rootCorrect && h1Correct && rootCorrectFinal && h1CorrectFinal
+                                                    && rootCorrectFinal2 && rootCorrectFinal3 && rootCorrectFinal4 && rootCorrectFinal5 && rootCorrectFinal6 && rootCorrectFinal7
+                                                    && h1CorrectFinal2 && h1CorrectFinal3 && h1CorrectFinal4 && h1CorrectFinal5 && h1CorrectFinal6 && h1CorrectFinal7;
+
+                                                window.globalTestResults.push(result);
+                                                window.globalTestCount++;
+                                                window.globalAsyncCount--;
+                                            }, 600);
+                                        }, 1500);
+                                    }, 25);
+                                }, 2600);
+                            }, 1500);
+                        }, 25);
+                    }, 2100);
+                }, 25);
+            }
+
+            attempts++;
+
+            if (attempts === 90 && window.globalAsyncCount > 0) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+
+                clearInterval(waitForStableInterval);
+                window.globalAsyncCount--;
+            }
+        }, 500);
     }
 
     testRunLastAnimationFunctionsPreserved() {
@@ -5117,18 +5312,20 @@ export class GlobalTestRunner {
                         window.globalTestResults.push(result);
                         window.globalTestCount++;
                         window.globalAsyncCount--;
+                        window.runAnimRouteToggle = true;
                     }, 2100);
                 }, 25);
             }
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
                 clearInterval(waitForStableInterval);
                 window.globalAsyncCount--;
+                window.runAnimRouteToggle = true;
             }
         }, 500);
     }
@@ -5192,7 +5389,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -5235,6 +5432,9 @@ export class GlobalTestRunner {
                             let rootEle = document.getElementById('divanimateroute');
                             const rootCorrect = rootEle && rootEle.children && rootEle.childNodes.length === 2 && rootEle.childNodes[0].tagName === 'KBD'
                                 && rootEle.childNodes[0].textContent === 'Tab' && rootEle.childNodes[1].textContent === 'Test Animate Route 1';
+                            const rootCorrect2 = rootEle && rootEle.children && rootEle.childNodes.length === 2 && rootEle.childNodes[1].tagName === 'BUTTON'
+                                && rootEle.childNodes[1].textContent === 'Tab' && rootEle.childNodes[0].textContent === 'Test Animate Route 2';
+
 
                             s.DETACHED_SET_TIMEOUT(() => {
                                 const isAnimatingKeyedFinal = s._isAnimatingKeyed;
@@ -5243,7 +5443,7 @@ export class GlobalTestRunner {
                                 const rootCorrectFinal = rootEle && rootEle.children && rootEle.childNodes.length === 2 && rootEle.childNodes[1].tagName === 'BUTTON'
                                     && rootEle.childNodes[1].textContent === 'Tab' && rootEle.childNodes[0].textContent === 'Test Animate Route 2';
 
-                                result.success = isAnimatingKeyed && rootCorrect && !isAnimatingKeyedFinal && rootCorrectFinal;
+                                result.success = isAnimatingKeyed && !rootCorrect && rootCorrect2 && !isAnimatingKeyedFinal && rootCorrectFinal;
 
                                 s.DETACHED_SET_TIMEOUT(() => {
                                     // Animation finished
@@ -5260,7 +5460,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -5327,7 +5527,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -5374,7 +5574,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -5421,7 +5621,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -5472,7 +5672,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -5523,7 +5723,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -5856,7 +6056,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -5921,7 +6121,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -5966,7 +6166,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -6011,7 +6211,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -6858,7 +7058,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -7163,7 +7363,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -7219,7 +7419,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -7358,7 +7558,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -8161,7 +8361,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
                 window.globalAsyncCount--;
@@ -8262,7 +8462,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
                 window.globalAsyncCount--;
@@ -8321,7 +8521,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
                 window.globalAsyncCount--;
@@ -8405,7 +8605,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
                 window.globalAsyncCount--;
@@ -8493,7 +8693,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
                 window.globalAsyncCount--;
@@ -8562,7 +8762,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
                 window.globalAsyncCount--;
@@ -8639,7 +8839,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
                 window.globalAsyncCount--;
@@ -8716,7 +8916,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalAsyncCount--;
                 window.globalTestCount++;
@@ -9142,7 +9342,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 75 && window.globalAsyncCount > 0) {
+            if (attempts === 90 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
