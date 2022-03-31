@@ -5161,6 +5161,40 @@ export class GlobalTestRunner {
         }
     }
 
+    testRunLastDestroyMapNoDuplicates() {
+        const result = {
+            test: 'test destroy map contains no duplicate nodes',
+            success: false,
+            message: ''
+        };
+
+        const nodeSet = new Set();
+        let hasDuplicates = false;
+
+        for (const [key, value] of s._destroyNodeMap) {
+            if (value !== null && value !== undefined && value.length > 0) {
+                for (let i = 0; i < value.length; ++i) {
+                    if (nodeSet.has(value[i])) {
+                        hasDuplicates = true;
+
+                        break;
+                    } else {
+                        nodeSet.add(value[i]);
+                    }
+                }
+            }
+
+            if (hasDuplicates) {
+                break;
+            }
+        }
+
+        result.success = !hasDuplicates;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
     testRunLastToggleBetweenAnimatedRoutes() {
         const result = {
             test: 'test toggling between animated routes',
