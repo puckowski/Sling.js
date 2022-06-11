@@ -4335,6 +4335,183 @@ export class TestSlStyleComponent1 {
     }
 }
 
+export class TestSlStyleComponent6 {
+    constructor() {
+    }
+
+    slStyle() {
+        return '@layer foo { div span { background-color: #cacaca; }}';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstyle6'
+            },
+            children: [
+                markup('span', {
+                    children: [
+                        textNode('Styled span')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode('Unstyled nav')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestSlStyleComponent7 {
+    constructor() {
+    }
+
+    slStyle() {
+        return '@layer foo { @layer bar{div span { background-color: #cacaca; }}}';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstyle7'
+            },
+            children: [
+                markup('span', {
+                    children: [
+                        textNode('Styled span')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode('Unstyled nav')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestSlStyleComponent8 {
+    constructor() {
+    }
+
+    slStyle() {
+        return '@layer foo; div span { background-color: #cacaca; }';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstyle8'
+            },
+            children: [
+                markup('span', {
+                    children: [
+                        textNode('Styled span')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode('Unstyled nav')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestSlStyleComponent9 {
+    constructor() {
+    }
+
+    slStyle() {
+        return '@layer foo, bar, baz; div span { background-color: #cacaca; }';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstyle9'
+            },
+            children: [
+                markup('span', {
+                    children: [
+                        textNode('Styled span')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode('Unstyled nav')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestSlStyleComponent10 {
+    constructor() {
+    }
+
+    slStyle() {
+        return '@layer foo { div span { background-color: #cacaca; } @layer bar { table a { color: red; } } }';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstyle10'
+            },
+            children: [
+                markup('span', {
+                    children: [
+                        textNode('Styled span')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode('Unstyled nav')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestSlStyleComponent11 {
+    constructor() {
+    }
+
+    slStyle() {
+        return '@layer utilities { [data-color=\'brand\'] { color: #ca2222; } }';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstyle11'
+            },
+            children: [
+                markup('span', {
+                    attrs: {
+                        'data-color': 'brand'
+                    },
+                    children: [
+                        textNode('Styled span')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode('Unstyled nav')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class TestSlStyleComponent2 {
     constructor() {
     }
@@ -6413,6 +6590,198 @@ export class GlobalTestRunner {
 
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
             && bgColorClean !== 'rgb(202, 202, 202)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleWithLayer() {
+        const result = {
+            test: 'test slStyle with layer',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle6', new TestSlStyleComponent6());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle6');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
+        const bgColorClean = navCssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+            && bgColorClean !== 'rgb(202, 202, 202)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleWithLayerInLayer() {
+        const result = {
+            test: 'test slStyle with layer in layer',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle7', new TestSlStyleComponent7());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle7');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
+        const bgColorClean = navCssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+            && bgColorClean !== 'rgb(202, 202, 202)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleWithLayerDefined() {
+        const result = {
+            test: 'test slStyle with layer defined',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle8', new TestSlStyleComponent8());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle8');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
+        const bgColorClean = navCssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+            && bgColorClean !== 'rgb(202, 202, 202)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleWithMultipleLayersDefined() {
+        const result = {
+            test: 'test slStyle with multiple layers defined',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle9', new TestSlStyleComponent9());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle9');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
+        const bgColorClean = navCssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+            && bgColorClean !== 'rgb(202, 202, 202)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleWithMultipleLayersDefinedOutOfOrder() {
+        const result = {
+            test: 'test slStyle with multiple layers defined in mixed order',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle10', new TestSlStyleComponent10());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle10');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
+        const bgColorClean = navCssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+            && bgColorClean !== 'rgb(202, 202, 202)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleWithDataAttributeStyle() {
+        const result = {
+            test: 'test slStyle with data attribute',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle11', new TestSlStyleComponent11());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle11');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const fgColor = cssObj.getPropertyValue('color');
+
+        const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
+        const fgColorClean = navCssObj.getPropertyValue('color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && fgColor === 'rgb(202, 34, 34)'
+            && fgColorClean === 'rgb(33, 37, 41)';
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
