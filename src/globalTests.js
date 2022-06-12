@@ -4512,6 +4512,60 @@ export class TestSlStyleComponent11 {
     }
 }
 
+export class TestSlStyleComponent12 {
+    constructor() {
+    }
+
+    slStyle() {
+        return 'a:first-child:any-link { border: 1px solid blue; color: orange; }';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstyle12'
+            },
+            children: [
+                markup('a', {
+                    attrs: {
+                        'href': 'www.google.com'
+                    },
+                    children: [
+                        textNode('Google')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestSlStyleComponent13 {
+    constructor() {
+    }
+
+    slStyle() {
+        return '@layer foo{a:first-child:any-link { border: 1px solid blue; color: orange !important; }}';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstyle13'
+            },
+            children: [
+                markup('a', {
+                    attrs: {
+                        'href': 'www.google.com'
+                    },
+                    children: [
+                        textNode('Google')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class TestSlStyleComponent2 {
     constructor() {
     }
@@ -6782,6 +6836,62 @@ export class GlobalTestRunner {
 
         result.success = headChildCountFinal === headChildCountOriginal + 1 && fgColor === 'rgb(202, 34, 34)'
             && fgColorClean === 'rgb(33, 37, 41)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleWithPseudoClass() {
+        const result = {
+            test: 'test slStyle with CSS pseudo-class',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle12', new TestSlStyleComponent12());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle12');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const fgColor = cssObj.getPropertyValue('color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && fgColor === 'rgb(255, 165, 0)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleWithPseudoClassAndLayer() {
+        const result = {
+            test: 'test slStyle with CSS pseudo-class and layer',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle13', new TestSlStyleComponent13());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle13');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const fgColor = cssObj.getPropertyValue('color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && fgColor === 'rgb(255, 165, 0)';
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
