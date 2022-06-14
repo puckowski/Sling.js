@@ -4566,6 +4566,173 @@ export class TestSlStyleComponent13 {
     }
 }
 
+export class TestSlStyleComponent14 {
+    constructor() {
+    }
+
+    slStyle() {
+        return '@layer foo { div span { background-color: #cacaca; } @layer bar { @layer baz { table div { background-color: #fafafa; } } table a { color: red; } } }';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstyle14'
+            },
+            children: [
+                markup('span', {
+                    children: [
+                        textNode('Styled span')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode('Unstyled nav')
+                    ]
+                }),
+                markup('table', {
+                    children: [
+                        markup('div', {
+                            children: [
+                                textNode('Text with background color.')
+                            ]
+                        })
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestSlStyleComponent15 {
+    constructor() {
+    }
+
+    slStyle() {
+        return '@layer foo { div span { background-color: #cacaca; } @layer bar { table p { color: blue; } @layer baz { table div { background-color: #fafafa; } } table a { color: red; } } }';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstyle15'
+            },
+            children: [
+                markup('span', {
+                    children: [
+                        textNode('Styled span')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode('Unstyled nav')
+                    ]
+                }),
+                markup('table', {
+                    children: [
+                        markup('div', {
+                            children: [
+                                textNode('Text with background color.')
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('Blue paragraph.')
+                            ]
+                        })
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestSlStyleComponent16 {
+    constructor() {
+    }
+
+    slStyle() {
+        return '@layer foo { div span { background-color: #cacaca; } @layer bar { table p { color: blue; } @layer baz { a kbd { color: green; } @layer quzzy { table div { background-color: #fafafa; } } } table a { color: red; } } }';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstyle16'
+            },
+            children: [
+                markup('span', {
+                    children: [
+                        textNode('Styled span')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode('Unstyled nav')
+                    ]
+                }),
+                markup('table', {
+                    children: [
+                        markup('div', {
+                            children: [
+                                textNode('Text with background color.')
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('Blue paragraph.')
+                            ]
+                        })
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestSlStyleComponent17 {
+    constructor() {
+    }
+
+    slStyle() {
+        return '@layer foo { div span { background-color: #cacaca; } @layer bar { table p { color: blue; } @layer baz { a kbd { color: green; } @layer quzzy { table div { background-color: #fafafa; } @layer fake { ul li { background-color: #fafafa; } } kbd { background-color: #888888; } } } table a { color: red; } @layer util { input { border: 1px solid; }  } }}';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstyle17'
+            },
+            children: [
+                markup('span', {
+                    children: [
+                        textNode('Styled span')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode('Unstyled nav')
+                    ]
+                }),
+                markup('table', {
+                    children: [
+                        markup('div', {
+                            children: [
+                                textNode('Text with background color.')
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('Blue paragraph.')
+                            ]
+                        })
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class TestSlStyleComponent2 {
     constructor() {
     }
@@ -6892,6 +7059,158 @@ export class GlobalTestRunner {
         const fgColor = cssObj.getPropertyValue('color');
 
         result.success = headChildCountFinal === headChildCountOriginal + 1 && fgColor === 'rgb(255, 165, 0)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleWithMultipleNestedLayers() {
+        const result = {
+            test: 'test slStyle with multiple nested layers',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle14', new TestSlStyleComponent14());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle14');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
+        const bgColorClean = navCssObj.getPropertyValue('background-color');
+
+        const divCssObj = window.getComputedStyle(ele.childNodes[2].childNodes[0], null);
+        const bgColorDiv = divCssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+            && bgColorClean !== 'rgb(202, 202, 202)' && bgColorDiv === 'rgb(250, 250, 250)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleWithMultipleNestedLayersAndRules() {
+        const result = {
+            test: 'test slStyle with multiple nested layers and rules',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle15', new TestSlStyleComponent15());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle15');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
+        const bgColorClean = navCssObj.getPropertyValue('background-color');
+
+        const divCssObj = window.getComputedStyle(ele.childNodes[2].childNodes[0], null);
+        const bgColorDiv = divCssObj.getPropertyValue('background-color');
+
+        const pCssObj = window.getComputedStyle(ele.childNodes[2].childNodes[1], null);
+        const bgColorP = pCssObj.getPropertyValue('color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+            && bgColorClean !== 'rgb(202, 202, 202)' && bgColorDiv === 'rgb(250, 250, 250)'
+            && bgColorP === 'rgb(0, 0, 255)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleWithManyNestedLayers() {
+        const result = {
+            test: 'test slStyle with many nested layers',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle16', new TestSlStyleComponent16());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle16');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
+        const bgColorClean = navCssObj.getPropertyValue('background-color');
+
+        const divCssObj = window.getComputedStyle(ele.childNodes[2].childNodes[0], null);
+        const bgColorDiv = divCssObj.getPropertyValue('background-color');
+
+        const pCssObj = window.getComputedStyle(ele.childNodes[2].childNodes[1], null);
+        const bgColorP = pCssObj.getPropertyValue('color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+            && bgColorClean !== 'rgb(202, 202, 202)' && bgColorDiv === 'rgb(250, 250, 250)'
+            && bgColorP === 'rgb(0, 0, 255)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleWithManyNestedLayersAndRules() {
+        const result = {
+            test: 'test slStyle with many nested layers and rules',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle17', new TestSlStyleComponent17());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle17');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
+        const bgColorClean = navCssObj.getPropertyValue('background-color');
+
+        const divCssObj = window.getComputedStyle(ele.childNodes[2].childNodes[0], null);
+        const bgColorDiv = divCssObj.getPropertyValue('background-color');
+
+        const pCssObj = window.getComputedStyle(ele.childNodes[2].childNodes[1], null);
+        const bgColorP = pCssObj.getPropertyValue('color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+            && bgColorClean !== 'rgb(202, 202, 202)' && bgColorDiv === 'rgb(250, 250, 250)'
+            && bgColorP === 'rgb(0, 0, 255)';
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
