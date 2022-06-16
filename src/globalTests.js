@@ -4733,6 +4733,93 @@ export class TestSlStyleComponent17 {
     }
 }
 
+export class TestSlStyleComponent18 {
+    constructor() {
+    }
+
+    slStyle() {
+        return 'span { background-color: #fafafa; } button { --handle: { pointerdown(event) { console.log(event.type, event.target); }, async click(event) { console.log( await Promise.resolve(\'CSS can do that.\') ); }, }; } nav { background-color: #fafafa; }';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstyle18'
+            },
+            children: [
+                markup('span', {
+                    children: [
+                        textNode('Styled span')
+                    ]
+                }),
+                markup('button', {
+                    children: [
+                        textNode('A button.')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestSlStyleComponent19 {
+    constructor() {
+    }
+
+    slStyle() {
+        return 'span { background-color: #fafafa; } button { --handle: { pointerdown(event) { console.log(event.type, event.target); }, async click(event) { console.log( await Promise.resolve(\'CSS can do that.\') ); }, }; --test: { async click(event) { console.log(\'test\'); } }; } nav { background-color: #fafafa; }';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstyle19'
+            },
+            children: [
+                markup('span', {
+                    children: [
+                        textNode('Styled span')
+                    ]
+                }),
+                markup('button', {
+                    children: [
+                        textNode('A button.')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestSlStyleComponent20 {
+    constructor() {
+    }
+
+    slStyle() {
+        return 'span { background-color: #fafafa; } button { --handle: #444444; --test: #888888; } nav { background-color: #fafafa; }';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstyle20'
+            },
+            children: [
+                markup('span', {
+                    children: [
+                        textNode('Styled span')
+                    ]
+                }),
+                markup('button', {
+                    children: [
+                        textNode('A button.')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class TestSlStyleComponent2 {
     constructor() {
     }
@@ -7211,6 +7298,102 @@ export class GlobalTestRunner {
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
             && bgColorClean !== 'rgb(202, 202, 202)' && bgColorDiv === 'rgb(250, 250, 250)'
             && bgColorP === 'rgb(0, 0, 255)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleCustomPropertyWithBraces() {
+        const result = {
+            test: 'test slStyle with custom property with braces',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle18', new TestSlStyleComponent18());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle18');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const btnCssObj = window.getComputedStyle(ele.childNodes[1], null);
+        const code = btnCssObj.getPropertyValue('--handle').trim();
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(250, 250, 250)'
+            && code === '{ pointerdown(event) { console.log(event.type, event.target); }, async click(event) { console.log( await Promise.resolve("CSS can do that.") ); }, }';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleMultipleCustomPropertyWithBraces() {
+        const result = {
+            test: 'test slStyle with multiple custom properties with braces',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle19', new TestSlStyleComponent19());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle19');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const btnCssObj = window.getComputedStyle(ele.childNodes[1], null);
+        const code = btnCssObj.getPropertyValue('--handle').trim();
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(250, 250, 250)'
+            && code === '{ pointerdown(event) { console.log(event.type, event.target); }, async click(event) { console.log( await Promise.resolve("CSS can do that.") ); }, }';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleMultipleCustomProperties() {
+        const result = {
+            test: 'test slStyle with multiple custom properties',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle20', new TestSlStyleComponent20());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle20');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const btnCssObj = window.getComputedStyle(ele.childNodes[1], null);
+        const handleValue = btnCssObj.getPropertyValue('--handle').trim();
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(250, 250, 250)'
+            && handleValue === '#444444';
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
