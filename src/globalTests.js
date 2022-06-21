@@ -4820,6 +4820,125 @@ export class TestSlStyleComponent20 {
     }
 }
 
+export class TestSlStyleComponent21 {
+    constructor() {
+    }
+
+    slStyle() {
+        return 'p { color: blue; } table { & td { background-color: #888888; } & th { background-color: #229999; } } span { color: blue; }';
+    }
+
+    view() {
+        return markup('table', {
+            attrs: {
+                'id': 'divslstyle21'
+            },
+            children: [
+                markup('tr', {
+                    children: [
+                        markup('th', {
+                            children: [
+                                textNode('Header')
+                            ]
+                        })
+                    ]
+                }),
+                markup('tr', {
+                    children: [
+                        markup('td', {
+                            children: [
+                                textNode('Data')
+                            ]
+                        })
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestSlStyleComponent22 {
+    constructor() {
+    }
+
+    slStyle() {
+        return 'p { color: blue; } table { & td { background-color: #888888; &:first-child { color: blue; } } & th { background-color: #229999; } @nest .dark & { background-color: blue; } } span { color: blue; }';
+    }
+
+    view() {
+        return markup('table', {
+            attrs: {
+                'id': 'divslstyle22'
+            },
+            children: [
+                markup('tr', {
+                    children: [
+                        markup('th', {
+                            children: [
+                                textNode('Header')
+                            ]
+                        })
+                    ]
+                }),
+                markup('tr', {
+                    children: [
+                        markup('td', {
+                            children: [
+                                markup('span', {
+                                    children: [
+                                        textNode('Data span')
+                                    ]
+                                })
+                            ]
+                        })
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestSlStyleComponent23 {
+    constructor() {
+    }
+
+    slStyle() {
+        return 'p { color: blue; } table { & td { background-color: #888888; &:first-child { color: blue; }} & :where(tr) { padding: 0.25rem; display: block; } & th { background-color: #229999;} @nest .dark & { background-color: blue; } } span { color: blue; }';
+    }
+
+    view() {
+        return markup('table', {
+            attrs: {
+                'id': 'divslstyle23'
+            },
+            children: [
+                markup('tr', {
+                    children: [
+                        markup('th', {
+                            children: [
+                                textNode('Header')
+                            ]
+                        })
+                    ]
+                }),
+                markup('tr', {
+                    children: [
+                        markup('td', {
+                            children: [
+                                markup('span', {
+                                    children: [
+                                        textNode('Data span')
+                                    ]
+                                })
+                            ]
+                        })
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class TestSlStyleComponent2 {
     constructor() {
     }
@@ -7394,6 +7513,105 @@ export class GlobalTestRunner {
 
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(250, 250, 250)'
             && handleValue === '#444444';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleNestedCss() {
+        const result = {
+            test: 'test slStyle with nested CSS',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle21', new TestSlStyleComponent21());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle21');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0].childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const tdCssObj = window.getComputedStyle(ele.childNodes[1].childNodes[0], null);
+        const tdBgColor = tdCssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleDeeplyNestedCss() {
+        const result = {
+            test: 'test slStyle with deeply nested CSS',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle22', new TestSlStyleComponent22());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle22');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0].childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const tdCssObj = window.getComputedStyle(ele.childNodes[1].childNodes[0], null);
+        const tdBgColor = tdCssObj.getPropertyValue('background-color');
+
+        const spanCssObj = window.getComputedStyle(ele.childNodes[1].childNodes[0].childNodes[0], null);
+        const spanColor = spanCssObj.getPropertyValue('color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleDeeplyNestedCssAndWhere() {
+        const result = {
+            test: 'test slStyle with deeply nested CSS and :where() pseudo-class',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle23', new TestSlStyleComponent23());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle23');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0].childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const tdCssObj = window.getComputedStyle(ele.childNodes[1].childNodes[0], null);
+        const tdBgColor = tdCssObj.getPropertyValue('background-color');
+
+        const spanCssObj = window.getComputedStyle(ele.childNodes[1].childNodes[0].childNodes[0], null);
+        const spanColor = spanCssObj.getPropertyValue('color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
