@@ -4939,6 +4939,88 @@ export class TestSlStyleComponent23 {
     }
 }
 
+export class TestSlStyleComponent24 {
+    constructor() {
+    }
+
+    slStyle() {
+        return 'p { color: blue; } button { --handle: { pointerdown(event) { console.log(event.type, event.target); }, async click(event) { console.log( await Promise.resolve(\'CSS can do that.\') ); }, }; --test: { async click(event) { console.log(\'test\'); } }; } table { & td { background-color: #888888; &:first-child { color: blue; }} & :where(tr) { padding: 0.25rem; display: block; } & th { background-color: #229999;} @nest .dark & { background-color: blue; } } span { color: blue; }';
+    }
+
+    view() {
+        return markup('table', {
+            attrs: {
+                'id': 'divslstyle24'
+            },
+            children: [
+                markup('tr', {
+                    children: [
+                        markup('th', {
+                            children: [
+                                textNode('Header')
+                            ]
+                        })
+                    ]
+                }),
+                markup('tr', {
+                    children: [
+                        markup('td', {
+                            children: [
+                                markup('span', {
+                                    children: [
+                                        textNode('Data span')
+                                    ]
+                                })
+                            ]
+                        })
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class TestSlStyleComponent25 {
+    constructor() {
+    }
+
+    slStyle() {
+        return 'p { color: blue; } table { button { --handle: { pointerdown(event) { console.log(event.type, event.target); }, async click(event) { console.log( await Promise.resolve(\'CSS can do that.\') ); }, }; --test: { async click(event) { console.log(\'test\'); } }; } & td { background-color: #888888; &:first-child { color: blue; }} & :where(tr) { padding: 0.25rem; display: block; } & th { background-color: #229999;} @nest .dark & { background-color: blue; } } span { color: blue; }';
+    }
+
+    view() {
+        return markup('table', {
+            attrs: {
+                'id': 'divslstyle25'
+            },
+            children: [
+                markup('tr', {
+                    children: [
+                        markup('th', {
+                            children: [
+                                textNode('Header')
+                            ]
+                        })
+                    ]
+                }),
+                markup('tr', {
+                    children: [
+                        markup('td', {
+                            children: [
+                                markup('span', {
+                                    children: [
+                                        textNode('Data span')
+                                    ]
+                                })
+                            ]
+                        })
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class TestSlStyleComponent2 {
     constructor() {
     }
@@ -7601,6 +7683,74 @@ export class GlobalTestRunner {
         const headChildCountFinal = head.childNodes.length;
 
         let ele = document.getElementById('divslstyle23');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0].childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const tdCssObj = window.getComputedStyle(ele.childNodes[1].childNodes[0], null);
+        const tdBgColor = tdCssObj.getPropertyValue('background-color');
+
+        const spanCssObj = window.getComputedStyle(ele.childNodes[1].childNodes[0].childNodes[0], null);
+        const spanColor = spanCssObj.getPropertyValue('color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleDeeplyNestedCssAndComplexProperty() {
+        const result = {
+            test: 'test slStyle with deeply nested CSS and complex custom property',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle24', new TestSlStyleComponent24());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle24');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0].childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const tdCssObj = window.getComputedStyle(ele.childNodes[1].childNodes[0], null);
+        const tdBgColor = tdCssObj.getPropertyValue('background-color');
+
+        const spanCssObj = window.getComputedStyle(ele.childNodes[1].childNodes[0].childNodes[0], null);
+        const spanColor = spanCssObj.getPropertyValue('color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleDeeplyNestedCssWithComplexProperty() {
+        const result = {
+            test: 'test slStyle with deeply nested CSS with complex custom property',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyle25', new TestSlStyleComponent25());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyle25');
 
         const cssObj = window.getComputedStyle(ele.childNodes[0].childNodes[0], null);
         const bgColor = cssObj.getPropertyValue('background-color');

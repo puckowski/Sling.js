@@ -1,0 +1,7 @@
+What is the Islands Architecture? 
+
+First, we need to understand what "hydration" is. Hydration refers to the process of adding event listeners to DOM elements and, typically, setting up a mechanism for the web browser to take control of managing updates for a particular set of DOM nodes.
+
+The Islands Architecture, sometimes called Partial Hydration, refers to a system where the server delivers HTML pages with zero or minimal JavaScript for display in the browser. Portions of the server-rendered HTML can be reused and hydrated by downloading and executing the minimal amount of JavaScript required to add complex interactivity to that portion of the page. Multiple independent regions of the page, or "islands", can be hydrated for interactivity. 
+
+How does this differ from regular hydration with Server Side Rendering (SSR)? The Islands Architecture differs in that the total amount of JavaScript delivered to the browser differs. With the Islands Architecture, less JavaScript is delivered which can help deliver a faster time to interactive for the page. With regular hydration, it is possible to hydrate select components in an effort to optimize the hydration process, but the JavaScript executed typically comes in a bundle which includes the necessary code to add the intended interactivity for the whole page.
