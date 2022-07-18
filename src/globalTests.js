@@ -2498,7 +2498,7 @@ class PartSupplyComponent {
                 markup('div', {
                     attrs: {
                         id: 'chartDiv',
-                        sldirective: 'useexsting',
+                        sldirective: 'useexisting',
                         style: 'width: 90vw;'
                     }
                 })
@@ -9198,7 +9198,7 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
-    testFinalize997UseExsting() {
+    testFinalize997UseExisting() {
         const result = {
             test: 'test use existing directive',
             success: false,
