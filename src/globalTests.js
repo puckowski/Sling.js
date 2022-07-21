@@ -1871,6 +1871,101 @@ class OnDestroyCallTemplateTestComponent {
     }
 }
 
+class NewConsumedClassHooksCalledTestComponent1 {
+    slAfterInit() {
+        const state = getState();
+        
+        if (state.newConsumed1 === null || state.newConsumed1 === undefined) {
+            state.newConsumed1 = 1;
+        } else {
+            state.newConsumed1++;
+        }
+
+        setState(state);
+    }
+
+    view() {
+        return markup('div', {
+            children: [
+                textNode('Some plain text.')
+            ]
+        })
+    }
+}
+
+class NewConsumedClassHooksCalledTestComponent2 {
+    slAfterInit() {
+        const state = getState();
+        
+        if (state.newConsumed2 === null || state.newConsumed2 === undefined) {
+            state.newConsumed2 = 1;
+        } else {
+            state.newConsumed2++;
+        }
+
+        setState(state);
+    }
+
+    view() {
+        return markup('div', {
+            children: [
+                textNode('Some plain text.')
+            ]
+        })
+    }
+}
+
+class NewConsumedClassHooksCalledTestComponent3 {
+    constructor() {
+        this.showPreview = false;
+        this.comp1 = new NewConsumedClassHooksCalledTestComponent1();
+        this.comp2 = new NewConsumedClassHooksCalledTestComponent2();
+    }
+
+    togglePreview() {
+        this.showPreview = !this.showPreview;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'newconsumeddiv1'
+            },
+            children: [
+                markup('button', {
+                    attrs: {
+                        onclick: this.togglePreview.bind(this),
+                        id: 'newconsumedbutton1'
+                    },
+                    children: [
+                        textNode('Toggle Preview')
+                    ]
+                }),
+                ...(this.showPreview === true ? [
+                    markup('div', {
+                        attrs: {
+                            style: 'width: 88%; max-height: inherit;'
+                        },
+                        children: [
+                            this.comp2
+                        ]
+                    })
+                ] : []),
+                ...(this.showPreview === false ? [
+                    markup('div', {
+                        attrs: {
+                            style: 'width: 88%; max-height: inherit;'
+                        },
+                        children: [
+                            this.comp1
+                        ]
+                    })
+                ] : []),
+            ]
+        })
+    }
+}
+
 class OnDestroyCallTemplateTestComponent2 {
     slOnDestroy() {
         const state = getState();
@@ -5845,6 +5940,30 @@ export class GlobalTestRunner {
                 (obj.nodeType === 1) && (typeof obj.style === 'object') &&
                 (typeof obj.ownerDocument === 'object');
         }
+    }
+
+    testFinalize100NewConsumedClassHookCalled() {
+        const result = {
+            test: 'test new consumed class hook is called',
+            success: false,
+            message: ''
+        };
+
+        mount('newconsumeddiv1', new NewConsumedClassHooksCalledTestComponent3());
+
+        const buttonEle = document.getElementById('newconsumedbutton1');
+        buttonEle.click();
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            const state = getState();
+            const count1 = state.newConsumed1 === 1;
+            const count2 = state.newConsumed2 === 1;
+
+            result.success = count1 && count2;
+
+            window.globalTestResults.push(result);
+            window.globalTestCount++;
+        }, 25);
     }
 
     testRunLastDestroyMapNoDuplicates() {
