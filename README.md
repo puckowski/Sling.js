@@ -2,7 +2,7 @@
 
 # Sling
 
-Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **23KB minified, and less than 7KB gzipped**.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **24KB minified, and less than 7KB gzipped**.
 
 Sling creates and uses an Incremental DOM to perform differential updates for fast rendering.
 
@@ -289,6 +289,7 @@ Attribute directives change the appearance or behavior of a DOM element.
 |------------------------------|----------|----------------------------------------------------------------------------------------------------|
 |```slanimatedestroy```        |Attribute |Wait for CSS class animation to finish before removal from the DOM.                                 |
 |```slanimatedestroytarget```  |Attribute |Used together with ```slanimatedestroy```. Should be a function which returns a DOM node to animate. The proposed node to animate is supplied as an argument to the function.|
+|```slpreventdefault```        |Attribute |Prevent default behavior on Event object. |
 
 Example directive usage:
 
@@ -1048,9 +1049,15 @@ __void detachDetector ( eleId )__
 Detach the Sling change detector for the given element ID ```eleId```.
 
 ## wrapWithChangeDetector
-__function wrapWithChangeDetector ( funcToWrap )__
+__function wrapWithChangeDetector ( funcToWrap, optionsObject )__
 
 Wrap a function ```funcToWrap``` with a change detector call, so every time the function is called change detection is also run.
+
+Valid options for ```optionsObject``` are listed in the table below.
+
+|Key              |Purpose                          |Usage                     |
+|-----------------|---------------------------------|--------------------------|
+|slpreventdefault |Prevent default on Event object. |slpreventdefault: true    |
 
 # XHR API
 
