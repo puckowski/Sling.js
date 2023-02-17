@@ -450,7 +450,8 @@ export class TestRow1 {
                         markup('a', {
                             attrs: {
                                 'href': '#',
-                                onclick: this.click.bind(this)
+                                onclick: this.click.bind(this),
+                                slpreventdefault: true
                             },
                             children: [
                                 textNode(this.label)
@@ -467,7 +468,8 @@ export class TestRow1 {
                             attrs: {
                                 'href': '#',
                                 id: 'id-row-delete-' + String(this.id),
-                                onclick: this.delete.bind(this)
+                                onclick: this.delete.bind(this),
+                                slpreventdefault: true
                             },
                             children: [
                                 markup('span', {
@@ -1874,7 +1876,7 @@ class OnDestroyCallTemplateTestComponent {
 class NewConsumedClassHooksCalledTestComponent1 {
     slAfterInit() {
         const state = getState();
-        
+
         if (state.newConsumed1 === null || state.newConsumed1 === undefined) {
             state.newConsumed1 = 1;
         } else {
@@ -1896,7 +1898,7 @@ class NewConsumedClassHooksCalledTestComponent1 {
 class NewConsumedClassHooksCalledTestComponent2 {
     slAfterInit() {
         const state = getState();
-        
+
         if (state.newConsumed2 === null || state.newConsumed2 === undefined) {
             state.newConsumed2 = 1;
         } else {
@@ -2878,7 +2880,7 @@ export class TestRenderElement3 {
             this.$label = this.children[2].childNodes[0];
         }
 
-        this.children[2].children[0].onclick = wrapWithChangeDetector(ctx.delete.bind(this, v.id));
+        this.children[2].children[0].onclick = wrapWithChangeDetector(ctx.delete.bind(this, v.id), { slpreventdefault: true });
 
         if (this.$label.childNodes[0].data !== v.label) {
             this.$label.removeChild(this.$label.childNodes[0]);
@@ -2920,7 +2922,8 @@ export class TestRenderElement3 {
                         markup('a', {
                             attrs: {
                                 'href': '#',
-                                onclick: this.select.bind(this, d.id)
+                                onclick: this.select.bind(this, d.id),
+                                slpreventdefault: true
                             },
                             children: [
                                 textNode(d.label)
@@ -2936,7 +2939,8 @@ export class TestRenderElement3 {
                         markup('a', {
                             attrs: {
                                 'href': '#',
-                                onclick: this.delete.bind(this, d.id)
+                                onclick: this.delete.bind(this, d.id),
+                                slpreventdefault: true
                             },
                             children: [
                                 markup('span', {
@@ -3027,7 +3031,7 @@ export class TestRenderElement5 {
             this.$label = this.children[2].childNodes[0];
         }
 
-        this.children[2].children[0].onclick = wrapWithChangeDetector(ctx.delete.bind(this, v.id));
+        this.children[2].children[0].onclick = wrapWithChangeDetector(ctx.delete.bind(this, v.id), { slpreventdefault: true });
 
         if (this.$label.childNodes[0].data !== v.label) {
             this.$label.removeChild(this.$label.childNodes[0]);
@@ -3069,7 +3073,8 @@ export class TestRenderElement5 {
                         markup('a', {
                             attrs: {
                                 'href': '#',
-                                onclick: this.select.bind(this, d.id)
+                                onclick: this.select.bind(this, d.id),
+                                slpreventdefault: true
                             },
                             children: [
                                 textNode(d.label)
@@ -3085,7 +3090,8 @@ export class TestRenderElement5 {
                         markup('a', {
                             attrs: {
                                 'href': '#',
-                                onclick: this.delete.bind(this, d.id)
+                                onclick: this.delete.bind(this, d.id),
+                                slpreventdefault: true
                             },
                             children: [
                                 markup('span', {
@@ -3148,6 +3154,40 @@ export class TestRenderElement5 {
     }
 }
 
+export class TestPreventDefault1 {
+    constructor() {
+
+    }
+
+    simpleFunction() {
+        console.log('Hello');
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divpreventdefault1'
+            },
+            children: [
+                markup('span', {
+                    children: [
+                        textNode('Prevent default test.')
+                    ]
+                }),
+                markup('a', {
+                    attrs: {
+                        slpreventdefault: true,
+                        id: 'preventdefaultanchor1',
+                        onclick: this.simpleFunction.bind(this)
+                    },
+                    children: [
+                        textNode('Prevent default anchor.')
+                    ]
+                })
+            ]
+        });
+    }
+}
 
 export class TestRenderHydrate1 {
     constructor() {
@@ -3189,7 +3229,7 @@ export class TestRenderHydrate1 {
             this.$label = this.children[1].childNodes[0];
         }
 
-        this.children[2].children[0].onclick = wrapWithChangeDetector(ctx.delete.bind(this, v.id));
+        this.children[2].children[0].onclick = wrapWithChangeDetector(ctx.delete.bind(this, v.id), { slpreventdefault: true });
 
         if (this.$label.childNodes[0].data !== v.label) {
             this.$label.removeChild(this.$label.childNodes[0]);
@@ -3230,7 +3270,8 @@ export class TestRenderHydrate1 {
                         markup('a', {
                             attrs: {
                                 'href': '#',
-                                onclick: this.select.bind(this, d.id)
+                                onclick: this.select.bind(this, d.id),
+                                slpreventdefault: true
                             },
                             children: [
                                 textNode(d.label)
@@ -3246,7 +3287,8 @@ export class TestRenderHydrate1 {
                         markup('a', {
                             attrs: {
                                 'href': '#',
-                                onclick: this.delete.bind(this, d.id)
+                                onclick: this.delete.bind(this, d.id),
+                                slpreventdefault: true
                             },
                             children: [
                                 markup('span', {
@@ -3407,6 +3449,86 @@ export class TestSlForCleanupComponent2 {
     }
 }
 
+export class TestSlStyleComponentSameTagSlFor {
+    constructor() {
+        this.data = ['a', 'b', 'c'];
+    }
+
+    makeRow(data) {
+        return markup('p', {
+            children: [
+                textNode(data)
+            ]
+        });
+    }
+
+    updateRow(context, data) {
+        if (this.childNodes[0].data !== data) {
+            this.removeChild(this.childNodes[0]);
+            this.append(data);
+        }
+    }
+
+    slStyle() {
+        return 'div { background-color: #cacaca; }';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divslforstyle1'
+            },
+            children: [
+                markup('div', {
+                    attrs: {
+                        'slfor': 'slstylefor1:data:makeRow:updateRow'
+                    }
+                })
+            ]
+        })
+    }
+}
+
+export class TestSlStyleComponentDifferentTagSlFor {
+    constructor() {
+        this.data = ['a', 'b', 'c'];
+    }
+
+    makeRow(data) {
+        return markup('p', {
+            children: [
+                textNode(data)
+            ]
+        });
+    }
+
+    updateRow(context, data) {
+        if (this.childNodes[0].data !== data) {
+            this.removeChild(this.childNodes[0]);
+            this.append(data);
+        }
+    }
+
+    slStyle() {
+        return 'div { background-color: #cacaca; }';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divslforstyle2'
+            },
+            children: [
+                markup('div', {
+                    attrs: {
+                        'slfor': 'slstylefor2:data:makeRow:updateRow'
+                    }
+                })
+            ]
+        })
+    }
+}
+
 export class TestManualChangeDetectionComponent2 {
     constructor() {
         this.data = function () { return Store6.data; };
@@ -3445,7 +3567,7 @@ export class TestManualChangeDetectionComponent2 {
             this.$label.append(d.label);
         }
 
-        this.children[2].children[0].onclick = wrapWithChangeDetector(context.delete.bind(this, d.id));
+        this.children[2].children[0].onclick = wrapWithChangeDetector(context.delete.bind(this, d.id), { slpreventdefault: true });
 
         const idStr = String(d.id);
 
@@ -3485,7 +3607,8 @@ export class TestManualChangeDetectionComponent2 {
                         markup('a', {
                             attrs: {
                                 'href': '#',
-                                onclick: this.select.bind(this, d.id)
+                                onclick: this.select.bind(this, d.id),
+                                slpreventdefault: true
                             },
                             children: [
                                 textNode(d.label)
@@ -3501,7 +3624,8 @@ export class TestManualChangeDetectionComponent2 {
                         markup('a', {
                             attrs: {
                                 'href': '#',
-                                onclick: this.delete.bind(this, d.id)
+                                onclick: this.delete.bind(this, d.id),
+                                slpreventdefault: true
                             },
                             children: [
                                 markup('span', {
@@ -4359,6 +4483,46 @@ export class TestTagRenameComponent1 {
     }
 }
 
+export class TestSlStyleComponentSameTag {
+    constructor() {
+    }
+
+    slStyle() {
+        return 'div { background-color: #cacaca; }';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstylesametag'
+            },
+            children: [
+                textNode('Styled div')
+            ]
+        })
+    }
+}
+
+export class TestSlStyleComponentDifferentTag {
+    constructor() {
+    }
+
+    slStyle() {
+        return 'nav { background-color: #cacaca; }';
+    }
+
+    view() {
+        return markup('nav', {
+            attrs: {
+                'id': 'divslstyledifferenttag'
+            },
+            children: [
+                textNode('Styled nav')
+            ]
+        })
+    }
+}
+
 export class TestConsumedSlStyleComponent2 {
     constructor() {
     }
@@ -4623,7 +4787,8 @@ export class TestSlStyleComponent12 {
             children: [
                 markup('a', {
                     attrs: {
-                        'href': 'www.google.com'
+                        'href': 'www.google.com',
+                        slpreventdefault: true
                     },
                     children: [
                         textNode('Google')
@@ -4650,7 +4815,8 @@ export class TestSlStyleComponent13 {
             children: [
                 markup('a', {
                     attrs: {
-                        'href': 'www.google.com'
+                        'href': 'www.google.com',
+                        slpreventdefault: true
                     },
                     children: [
                         textNode('Google')
@@ -5132,7 +5298,8 @@ export class TestSlStyleComponent2 {
             children: [
                 markup('a', {
                     attrs: {
-                        target: "_complex{"
+                        target: "_complex{",
+                        slpreventdefault: true
                     },
                     children: [
                         textNode('Styled a')
@@ -5164,7 +5331,8 @@ export class TestSlStyleComponent3 {
             children: [
                 markup('a', {
                     attrs: {
-                        target: "_complex{"
+                        target: "_complex{",
+                        slpreventdefault: true
                     },
                     children: [
                         textNode('Styled a')
@@ -5196,7 +5364,8 @@ export class TestSlStyleComponent4 {
             children: [
                 markup('a', {
                     attrs: {
-                        target: "_complex{"
+                        target: "_complex{",
+                        slpreventdefault: true
                     },
                     children: [
                         textNode('Styled a')
@@ -5233,7 +5402,8 @@ export class TestSlStyleComponent5 {
             children: [
                 markup('a', {
                     attrs: {
-                        target: "_complex{"
+                        target: "_complex{",
+                        slpreventdefault: true
                     },
                     children: [
                         textNode('Styled a')
@@ -5963,6 +6133,40 @@ export class GlobalTestRunner {
 
             window.globalTestResults.push(result);
             window.globalTestCount++;
+        }, 25);
+    }
+
+    testFinalize100PreventDefault() {
+        const result = {
+            test: 'test prevent default applies one event listener',
+            success: false,
+            message: ''
+        };
+
+        mount('divpreventdefault1', new TestPreventDefault1());
+
+        let anchorEle = document.getElementById('preventdefaultanchor1');
+        anchorEle.click();
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            detectChanges();
+
+            s.DETACHED_SET_TIMEOUT(() => {
+                anchorEle = document.getElementById('preventdefaultanchor1');
+                const evtListeners = anchorEle['onclick'];
+
+                let listenerCount = 0;
+
+                if (evtListeners) {
+                    const evtListenerArray = Array.isArray(evtListeners) ? evtListeners : [evtListeners];
+                    listenerCount = evtListenerArray.length;
+                }
+
+                result.success = listenerCount === 1;
+
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+            }, 25);
         }, 25);
     }
 
@@ -7218,6 +7422,118 @@ export class GlobalTestRunner {
 
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
             && bgColorClean !== 'rgb(202, 202, 202)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleSameTag() {
+        const result = {
+            test: 'test slStyle for same tag',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstylesametag', new TestSlStyleComponentSameTag());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstylesametag');
+
+        const cssObj = window.getComputedStyle(ele, null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleDifferentTag() {
+        const result = {
+            test: 'test slStyle for different tag',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstyledifferenttag', new TestSlStyleComponentDifferentTag());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstyledifferenttag');
+
+        const cssObj = window.getComputedStyle(ele, null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleSameTagSlFor() {
+        const result = {
+            test: 'test slStyle for same tag with slfor',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslforstyle1', new TestSlStyleComponentSameTagSlFor());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslforstyle1');
+
+        const cssObj = window.getComputedStyle(ele, null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleDifferentTagSlFor() {
+        const result = {
+            test: 'test slStyle for different tag',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslforstyle2', new TestSlStyleComponentDifferentTagSlFor());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslforstyle2');
+
+        const cssObj = window.getComputedStyle(ele, null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)';
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10214,7 +10530,7 @@ export class GlobalTestRunner {
 
         const compStr = renderToString(new TestControllerComponent2());
 
-        result.success = compStr === '<div class="container" id="main2"><div class="jumbotron"><div class="row"><div class="col-md-6"><h1>Sling.js</h1></div><div class="col-md-6"><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="run2" onclick="">Create 1,000 rows</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="runlots2" onclick="">Create 10,000 rows</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="add2" onclick="">Append 1,000 rows</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="update2" onclick="">Update every 10th row</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="clear2" onclick="">Clear</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="swaprows2" onclick="">Swap Rows</button></div></div></div></div><table class="table table-hover table-striped test-data" id="idcontrollertable2"><tbody><tr class="" onclick="" onremove=""><td class="col-md-1">1</td><td class="col-md-4"><a href="#" onclick="">pretty red table</a></td><td class="col-md-1"><a href="#" id="id-row-delete-1" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">2</td><td class="col-md-4"><a href="#" onclick="">clean orange pizza</a></td><td class="col-md-1"><a href="#" id="id-row-delete-2" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">3</td><td class="col-md-4"><a href="#" onclick="">important black cookie</a></td><td class="col-md-1"><a href="#" id="id-row-delete-3" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">4</td><td class="col-md-4"><a href="#" onclick="">short white desk</a></td><td class="col-md-1"><a href="#" id="id-row-delete-4" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">5</td><td class="col-md-4"><a href="#" onclick="">helpful brown chair</a></td><td class="col-md-1"><a href="#" id="id-row-delete-5" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">6</td><td class="col-md-4"><a href="#" onclick="">pretty purple mouse</a></td><td class="col-md-1"><a href="#" id="id-row-delete-6" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">7</td><td class="col-md-4"><a href="#" onclick="">clean brown sandwich</a></td><td class="col-md-1"><a href="#" id="id-row-delete-7" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">8</td><td class="col-md-4"><a href="#" onclick="">important pink car</a></td><td class="col-md-1"><a href="#" id="id-row-delete-8" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">9</td><td class="col-md-4"><a href="#" onclick="">short green house</a></td><td class="col-md-1"><a href="#" id="id-row-delete-9" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">10</td><td class="col-md-4"><a href="#" onclick="">helpful blue keyboard</a></td><td class="col-md-1"><a href="#" id="id-row-delete-10" onclick=""><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr></tbody></table><span class="preloadicon glyphicon glyphicon-remove" aria-hidden="true"></span></div>';
+        result.success = compStr === '<div class="container" id="main2"><div class="jumbotron"><div class="row"><div class="col-md-6"><h1>Sling.js</h1></div><div class="col-md-6"><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="run2" onclick="">Create 1,000 rows</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="runlots2" onclick="">Create 10,000 rows</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="add2" onclick="">Append 1,000 rows</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="update2" onclick="">Update every 10th row</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="clear2" onclick="">Clear</button></div><div class="col-sm-6 smallpad"><button type="button" class="btn btn-primary btn-block" id="swaprows2" onclick="">Swap Rows</button></div></div></div></div><table class="table table-hover table-striped test-data" id="idcontrollertable2"><tbody><tr class="" onclick="" onremove=""><td class="col-md-1">1</td><td class="col-md-4"><a href="#" onclick="" slpreventdefault="true">pretty red table</a></td><td class="col-md-1"><a href="#" id="id-row-delete-1" onclick="" slpreventdefault="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">2</td><td class="col-md-4"><a href="#" onclick="" slpreventdefault="true">clean orange pizza</a></td><td class="col-md-1"><a href="#" id="id-row-delete-2" onclick="" slpreventdefault="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">3</td><td class="col-md-4"><a href="#" onclick="" slpreventdefault="true">important black cookie</a></td><td class="col-md-1"><a href="#" id="id-row-delete-3" onclick="" slpreventdefault="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">4</td><td class="col-md-4"><a href="#" onclick="" slpreventdefault="true">short white desk</a></td><td class="col-md-1"><a href="#" id="id-row-delete-4" onclick="" slpreventdefault="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">5</td><td class="col-md-4"><a href="#" onclick="" slpreventdefault="true">helpful brown chair</a></td><td class="col-md-1"><a href="#" id="id-row-delete-5" onclick="" slpreventdefault="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">6</td><td class="col-md-4"><a href="#" onclick="" slpreventdefault="true">pretty purple mouse</a></td><td class="col-md-1"><a href="#" id="id-row-delete-6" onclick="" slpreventdefault="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">7</td><td class="col-md-4"><a href="#" onclick="" slpreventdefault="true">clean brown sandwich</a></td><td class="col-md-1"><a href="#" id="id-row-delete-7" onclick="" slpreventdefault="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">8</td><td class="col-md-4"><a href="#" onclick="" slpreventdefault="true">important pink car</a></td><td class="col-md-1"><a href="#" id="id-row-delete-8" onclick="" slpreventdefault="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">9</td><td class="col-md-4"><a href="#" onclick="" slpreventdefault="true">short green house</a></td><td class="col-md-1"><a href="#" id="id-row-delete-9" onclick="" slpreventdefault="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr><tr class="" onclick="" onremove=""><td class="col-md-1">10</td><td class="col-md-4"><a href="#" onclick="" slpreventdefault="true">helpful blue keyboard</a></td><td class="col-md-1"><a href="#" id="id-row-delete-10" onclick="" slpreventdefault="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td><td class="col-md-6"></td></tr></tbody></table><span class="preloadicon glyphicon glyphicon-remove" aria-hidden="true"></span></div>';
 
         window.globalTestResults.push(result);
         window.globalTestCount++;

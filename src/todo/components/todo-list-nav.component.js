@@ -85,7 +85,8 @@ class TodoListNavComponent {
                                 ... this.routeString !== 'all' && { class: 'nav-link' },
                                 ... this.routeString === 'all' && { class: 'nav-link textBold' },
                                 onclick: this.performRouteAction.bind(this, 'all'),
-                                style: 'cursor:pointer;'
+                                style: 'cursor:pointer;',
+                                slpreventdefault: true
                             },
                             children: [
                                 textNode('All')
@@ -103,7 +104,8 @@ class TodoListNavComponent {
                                 ... this.routeString !== 'completed' && { class: 'nav-link' },
                                 ... this.routeString === 'completed' && { class: 'nav-link textBold' },
                                 onclick: this.performRouteAction.bind(this, 'completed'),
-                                style: 'cursor:pointer;'
+                                style: 'cursor:pointer;',
+                                slpreventdefault: true
                             },
                             children: [
                                 textNode('Completed')
