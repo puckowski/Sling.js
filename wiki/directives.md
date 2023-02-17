@@ -17,6 +17,7 @@ Attribute directives change the appearance or behavior of a DOM element.
 |------------------------------|----------|----------------------------------------------------------------------------------------------------|
 |```slanimatedestroy```        |Attribute |Wait for CSS class animation to finish before removal from the DOM.                                 |
 |```slanimatedestroytarget```  |Attribute |Used together with ```slanimatedestroy```. Should be a function which returns a DOM node to animate. The proposed node to animate is supplied as an argument to the function.|
+|```slpreventdefault```        |Attribute |Prevent default behavior on Event object. |
 
 Example directive usage:
 
