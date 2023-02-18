@@ -3189,6 +3189,67 @@ export class TestPreventDefault1 {
     }
 }
 
+export class TestPreserveScrollPosition1 {
+    constructor() {
+
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divpreservescroll1'
+            },
+            children: [
+                markup('span', {
+                    children: [
+                        textNode('Preserve scroll test.')
+                    ]
+                }),
+                markup('a', {
+                    attrs: {
+                        slpreventdefault: true,
+                        id: 'preservescrollanchor1',
+                        href: '#'
+                    },
+                    children: [
+                        textNode('Preserve scroll anchor.')
+                    ]
+                })
+            ]
+        });
+    }
+}
+
+export class TestNoPreserveScrollPosition1 {
+    constructor() {
+
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divnopreservescroll1'
+            },
+            children: [
+                markup('span', {
+                    children: [
+                        textNode('No preserve scroll test.')
+                    ]
+                }),
+                markup('a', {
+                    attrs: {
+                        id: 'nopreservescrollanchor1',
+                        href: '#'
+                    },
+                    children: [
+                        textNode('No preserve scroll anchor.')
+                    ]
+                })
+            ]
+        });
+    }
+}
+
 export class TestRenderHydrate1 {
     constructor() {
         this.data = function () { return Store5.data; };
@@ -5315,6 +5376,30 @@ export class TestSlStyleComponent2 {
     }
 }
 
+export class TestSlStyleContainer1 {
+    constructor() {
+    }
+
+    slStyle() {
+        return '@container (min-width: 100px) { nav { background-color: #cacaca; } }';
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstylecontainer1'
+            },
+            children: [
+                markup('nav', {
+                    children: [
+                        textNode('Styled nav')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class TestSlStyleComponent3 {
     constructor() {
     }
@@ -6170,6 +6255,70 @@ export class GlobalTestRunner {
         }, 25);
     }
 
+    testFinalize100PreserveScrollPosition() {
+        const result = {
+            test: 'test scroll position preserved',
+            success: false,
+            message: ''
+        };
+
+        const scrollPosition = window.pageYOffset;
+
+        mount('divpreservescroll1', new TestPreserveScrollPosition1());
+
+        const scrollPosition2 = window.pageYOffset;
+
+        let anchorEle = document.getElementById('preservescrollanchor1');
+        anchorEle.click();
+
+        const scrollPosition3 = window.pageYOffset;
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            detectChanges();
+
+            const scrollPosition4 = window.pageYOffset;
+
+            s.DETACHED_SET_TIMEOUT(() => {
+                result.success = scrollPosition === scrollPosition2 && scrollPosition === scrollPosition3 && scrollPosition === scrollPosition4;
+
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+            }, 25);
+        }, 25);
+    }
+
+    testFinalize100NoPreserveScrollPosition() {
+        const result = {
+            test: 'test scroll position not preserved',
+            success: false,
+            message: ''
+        };
+
+        const scrollPosition = window.pageYOffset;
+
+        mount('divnopreservescroll1', new TestNoPreserveScrollPosition1());
+
+        const scrollPosition2 = window.pageYOffset;
+
+        let anchorEle = document.getElementById('nopreservescrollanchor1');
+        anchorEle.click();
+
+        const scrollPosition3 = window.pageYOffset;
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            detectChanges();
+
+            const scrollPosition4 = window.pageYOffset;
+
+            s.DETACHED_SET_TIMEOUT(() => {
+                result.success = scrollPosition === scrollPosition2 && scrollPosition !== scrollPosition3 && scrollPosition !== scrollPosition4;
+
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+            }, 25);
+        }, 25);
+    }
+
     testRunLastDestroyMapNoDuplicates() {
         const result = {
             test: 'test destroy map contains no duplicate nodes',
@@ -6744,24 +6893,26 @@ export class GlobalTestRunner {
                 addRoute('querystring=:someId&foo=:someId2', { component: new TestQueryStringComponent1(), root: 'divquerystring1' });
                 route('querystring=2&foo=some+text');
 
-                const variableList = getRouteQueryVariables();
-                const rootEle = document.getElementById('divquerystring1');
+                s.DETACHED_SET_TIMEOUT(() => {
+                    const variableList = getRouteQueryVariables();
+                    const rootEle = document.getElementById('divquerystring1');
 
-                result.success = variableList && variableList.length === 2 && variableList[0].var === 'querystring' && variableList[0].value === '2'
-                    && variableList[1].var === 'foo' && variableList[1].value === 'some+text' && rootEle && rootEle.childNodes && rootEle.childNodes.length === 1
-                    && rootEle.childNodes[0].textContent === 'Query String Test' && window.location.href === 'http://localhost:8080/?/querystring=2&foo=some+text';
+                    result.success = variableList && variableList.length === 2 && variableList[0].var === 'querystring' && variableList[0].value === '2'
+                        && variableList[1].var === 'foo' && variableList[1].value === 'some+text' && rootEle && rootEle.childNodes && rootEle.childNodes.length === 1
+                        && rootEle.childNodes[0].textContent === 'Query String Test' && window.location.href === 'http://localhost:8080/?/querystring=2&foo=some+text';
 
-                setRouteStrategy('#');
+                    setRouteStrategy('#');
 
-                if (originalHref.includes('todo.html')) {
-                    originalHref = originalHref.substring(originalHref.indexOf('todo.html'));
-                }
+                    if (originalHref.includes('todo.html')) {
+                        originalHref = originalHref.substring(originalHref.indexOf('todo.html'));
+                    }
 
-                window.history.pushState(null, document.title, '/' + originalHref);
+                    window.history.pushState(null, document.title, '/' + originalHref);
 
-                window.globalTestResults.push(result);
-                window.globalTestCount++;
-                window.globalAsyncCount--;
+                    window.globalTestResults.push(result);
+                    window.globalTestCount++;
+                    window.globalAsyncCount--;
+                }, 25);
             }
 
             attempts++;
@@ -7326,6 +7477,34 @@ export class GlobalTestRunner {
 
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
             && bgColorClean === 'rgb(202, 202, 202)' && kbdColorClean === 'rgb(202, 202, 202)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleContainer() {
+        const result = {
+            test: 'test slStyle with container query',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstylecontainer1', new TestSlStyleContainer1());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstylecontainer1');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)';
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
