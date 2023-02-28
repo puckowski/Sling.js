@@ -5381,7 +5381,7 @@ export class TestSlStyleContainer1 {
     }
 
     slStyle() {
-        return '@container (min-width: 100px) { nav { background-color: #cacaca; } }';
+        return '#divslstylecontainer1 { container-type: inline-size; } @container (min-width: 100px) { nav { background-color: #cacaca; } }';
     }
 
     view() {
@@ -10341,8 +10341,14 @@ export class GlobalTestRunner {
                     buttonEle.click();
 
                     const endTime = new Date();
-                    const ellapsedMillis = endTime - startTime;
-                    const changeCycles = Math.ceil(ellapsedMillis / 17.0);
+                    
+                    let ellapsedMillis = endTime - startTime;
+                    let changeCycles = 0;
+
+                    while (ellapsedMillis > 17) {
+                        changeCycles++;
+                        ellapsedMillis -= 17;
+                    }
 
                     s.DETACHED_SET_TIMEOUT(() => {
                         state = getState();
