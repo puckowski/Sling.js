@@ -6094,6 +6094,131 @@ export class TestAnimationFunctionsPreserved1 {
     }
 }
 
+class TestCanUpdateDuringAnimation1 {
+    constructor() {
+        this.updated = false;
+    }
+
+    slAfterInit() {
+        const state = getState();
+        state.duringanimation = 0;
+        setState(state);
+    }
+
+    view() {
+        const state = getState();
+        if (state.duringanimation !== null && state.duringanimation !== undefined
+            && state.duringanimationcanproceed === true) {
+            state.duringanimation++;
+            this.updated = true;
+            setState(state);
+        }
+
+        return markup('div', {
+            attrs: {
+                id: 'divduringanimation',
+            },
+            children: [
+                ...(this.updated === false ? [
+                    markup('h1', {
+                        children: [
+                            textNode('Hello, world!'),
+                        ],
+                    }),
+                ] : [
+                    markup('h1', {
+                        children: [
+                            textNode('Updated during animation'),
+                        ],
+                    }),
+                ])
+            ],
+        });
+    }
+}
+
+class TestAnimateRouteToggle3 {
+    constructor() {
+        this.welcomeHidden = false;
+    }
+
+    hideWelcome() {
+        route('animroutetoggle4');
+    }
+
+    slDetachedOnNodeDestroy(node) {
+        return node;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divRouterOutlet3',
+                class: 'visible',
+                style:
+                    'display: flex; justify-content: center; align-items: center; height: 100%;',
+                slanimatedestroy: 'hide',
+                slanimatedestroytarget: this.slDetachedOnNodeDestroy.bind(this),
+            },
+            children: [
+                markup('h1', {
+                    children: [
+                        textNode('Hello, world!'),
+                        markup('button', {
+                            attrs: {
+                                id: 'toggleanimroute3',
+                                onclick: this.hideWelcome.bind(this),
+                            },
+                            children: [textNode('Hide')],
+                        })
+                    ],
+                }),
+            ],
+        });
+    }
+}
+
+class TestAnimateRouteToggle4 {
+    constructor() {
+        this.welcomeHidden = false;
+    }
+
+    hideWelcome() {
+        route('animroutetoggle3');
+    }
+
+    slDetachedOnNodeDestroy(node) {
+        return node;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divRouterOutlet3',
+                class: 'visible',
+                style:
+                    'display: flex; justify-content: center; align-items: center; height: 100%;',
+                slanimatedestroy: 'hide',
+                slanimatedestroytarget: this.slDetachedOnNodeDestroy.bind(this),
+            },
+            children: [
+                markup('h1', {
+                    children: [
+                        textNode('Hello, world 2!'),
+                        markup('button', {
+                            attrs: {
+                                id: 'toggleanimroute4',
+                                onclick: this.hideWelcome.bind(this),
+                            },
+                            children: [textNode('Hide 2')],
+                        })
+                    ],
+                }),
+            ],
+        });
+    }
+}
+
 class TestAnimateRouteToggle1 {
     constructor() {
         this.welcomeHidden = false;
@@ -6447,6 +6572,102 @@ export class GlobalTestRunner {
                                             }, 600);
                                         }, 1500);
                                     }, 25);
+                                }, 2600);
+                            }, 1500);
+                        }, 25);
+                    }, 2100);
+                }, 25);
+            }
+
+            attempts++;
+
+            if (attempts === 90 && window.globalAsyncCount > 0) {
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+
+                clearInterval(waitForStableInterval);
+                window.globalAsyncCount--;
+            }
+        }, 500);
+    }
+
+    testFinalize999IslandCanUpdateDuringAnimation() {
+        const result = {
+            test: 'test island can update during keyed animation',
+            success: false,
+            message: ''
+        };
+
+        let attempts = 0;
+        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+            const state = getState();
+
+            if (window.globalAsyncCount === 0 && window.globalTestCount >= state.testCount && window.runAnimRouteToggle) {
+                window.globalAsyncCount++;
+                clearInterval(waitForStableInterval);
+                mount('divduringanimation', new TestCanUpdateDuringAnimation1());
+
+                addRoute('animroutetoggle3', {
+                    component: new TestAnimateRouteToggle3(),
+                    root: 'divRouterOutlet3',
+                    animateDestroy: true
+                });
+                addRoute('animroutetoggle4', {
+                    component: new TestAnimateRouteToggle4(),
+                    root: 'divRouterOutlet3',
+                    animateDestroy: true
+                });
+
+                route('animroutetoggle3');
+
+                s.DETACHED_SET_TIMEOUT(() => {
+                    let rootEle = document.getElementById('divRouterOutlet3');
+
+                    s.DETACHED_SET_TIMEOUT(() => {
+                        // Animation ended
+                        route('animroutetoggle4');
+
+                        let state = getState();
+                        state.duringanimationcanproceed = true;
+                        setState(state);
+
+                        detectChanges();
+
+                        const duringAnimationCount = state.duringanimation;
+
+                        const duringRoot = document.getElementById('divduringanimation');
+                        const duringRootCorrect = duringRoot && duringRoot.children && duringRoot.children.length === 1 && duringRoot.children[0].textContent === 'Updated during animation';
+
+                        s.DETACHED_SET_TIMEOUT(() => {
+                            rootEle = document.getElementById('divRouterOutlet3');
+                            const rootCorrectFinal2 = rootEle && rootEle.children && rootEle.children.length === 1 && rootEle.children[0].tagName === 'H1';
+                            const h1CorrectFinal2 = rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
+                                && rootEle.children[0].childNodes[0].textContent === 'Hello, world!' && rootEle.children[0].childNodes[1].tagName === 'BUTTON'
+                                && rootEle.children[0].childNodes[1].textContent === 'Hide';
+
+                            s.DETACHED_SET_TIMEOUT(() => {
+                                rootEle = document.getElementById('divRouterOutlet3');
+                                const rootCorrectFinal3 = rootEle && rootEle.children && rootEle.children.length === 1 && rootEle.children[0].tagName === 'H1';
+                                const h1CorrectFinal3 = rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
+                                    && rootEle.children[0].childNodes[0].textContent === 'Hello, world!' && rootEle.children[0].childNodes[1].tagName === 'BUTTON'
+                                    && rootEle.children[0].childNodes[1].textContent === 'Hide';
+
+                                detectChanges();
+
+                                s.DETACHED_SET_TIMEOUT(() => {
+                                    rootEle = document.getElementById('divRouterOutlet3');
+                                    const rootCorrectFinal4 = rootEle && rootEle.children && rootEle.children.length === 1 && rootEle.children[0].tagName === 'H1';
+                                    const h1CorrectFinal4 = rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
+                                        && rootEle.children[0].childNodes[0].textContent === 'Hello, world 2!' && rootEle.children[0].childNodes[1].tagName === 'BUTTON'
+                                        && rootEle.children[0].childNodes[1].textContent === 'Hide 2';
+
+                                    result.success = rootCorrectFinal2 && rootCorrectFinal3 && rootCorrectFinal4
+                                        && h1CorrectFinal2 && h1CorrectFinal3 && h1CorrectFinal4
+                                        && duringAnimationCount === 1 && duringRootCorrect;
+
+                                    window.globalTestResults.push(result);
+                                    window.globalTestCount++;
+                                    window.globalAsyncCount--;
                                 }, 2600);
                             }, 1500);
                         }, 25);
@@ -10341,7 +10562,7 @@ export class GlobalTestRunner {
                     buttonEle.click();
 
                     const endTime = new Date();
-                    
+
                     let ellapsedMillis = endTime - startTime;
                     let changeCycles = 0;
 
