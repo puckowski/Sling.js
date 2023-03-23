@@ -406,6 +406,144 @@ export class TimeoutTestComponent1 {
     }
 }
 
+export class AnimateKeyframesComponent1 {
+
+    slStyle() {
+        return `
+        @keyframes fadeInAnimation {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+             }
+        }
+        button {
+            background-color: #cacaca;
+            animation: fadeInAnimation 1s;
+        }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'animatekeyframesdiv1'
+            }, 
+            children: [
+                markup('button', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class AnimateKeyframesComponent2 {
+
+    slStyle() {
+        return `
+        @keyframes fadeInAnimation {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+             }
+        }
+        button {
+            background-color: #cacaca;
+            animation: fadeInAnimation 1s;
+        }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'animatekeyframesdiv2'
+            }, 
+            children: [
+                markup('button', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class AnimateKeyframesComponent3 {
+
+    slStyle() {
+        return `
+        @keyframes fadeInAnimate {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+             }
+        }
+        button {
+            background-color: #cacaca;
+            animation: fadeInAnimate 1s;
+        }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'animatekeyframesdiv3'
+            }, 
+            children: [
+                markup('button', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class AnimateKeyframesComponent4 {
+
+    slStyle() {
+        return `
+        button {
+            background-color: #cacaca;
+        }
+        @keyframes fadeInAnimation {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }}
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'animatekeyframesdiv4'
+            }, 
+            children: [
+                markup('button', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class TestRow1 {
     constructor(id, classList, label, onclick, ondelete) {
         this.id = id;
@@ -7663,6 +7801,114 @@ export class GlobalTestRunner {
 
         result.success = headChildCountFinal === headChildCountOriginal && bgColor === 'rgba(0, 0, 0, 0)'
             && bgColorClean === 'rgba(0, 0, 0, 0)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleAnimateKeyframesOnMount() {
+        const result = {
+            test: 'test slStyle for @keyframes animation on mount',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('animatekeyframesdiv2', new AnimateKeyframesComponent2());
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('animatekeyframesdiv2');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleAnimateKeyframesOnMountWithReservedWord() {
+        const result = {
+            test: 'test slStyle for @keyframes animation on mount with reserved word',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('animatekeyframesdiv3', new AnimateKeyframesComponent3());
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('animatekeyframesdiv3');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleAnimateKeyframes() {
+        const result = {
+            test: 'test slStyle for @keyframes animation',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('animatekeyframesdiv1', new AnimateKeyframesComponent1());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('animatekeyframesdiv1');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleAnimateKeyframesWithoutUsage() {
+        const result = {
+            test: 'test slStyle for @keyframes animation without animation property',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('animatekeyframesdiv4', new AnimateKeyframesComponent4());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('animatekeyframesdiv4');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)';
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
