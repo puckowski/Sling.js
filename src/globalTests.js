@@ -544,6 +544,48 @@ export class AnimateKeyframesComponent4 {
     }
 }
 
+export class AnimateKeyframesComponent5 {
+
+    slStyle() {
+        return `
+        button {
+            background-color: #cacaca;
+        }
+        @keyframes fadeInAnimation {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }}
+
+            nav {
+                background-color: #cacaca;
+            }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'animatekeyframesdiv5'
+            }, 
+            children: [
+                markup('button', {
+                    children: [
+                        textNode('Hello,')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode(' world!')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class TestRow1 {
     constructor(id, classList, label, onclick, ondelete) {
         this.id = id;
@@ -7914,6 +7956,38 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
+    testFinalize100SlStyleAnimateKeyframesComplexCss() {
+        const result = {
+            test: 'test slStyle for @keyframes animation surrounded by declarations',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('animatekeyframesdiv5', new AnimateKeyframesComponent5());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('animatekeyframesdiv5');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const cssObjNav = window.getComputedStyle(ele.childNodes[1], null);
+        const bgColorNav = cssObjNav.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+        && bgColorNav === 'rgb(202, 202, 202)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
     testFinalize100SlStyleWithBracesAndCommaAndMultipleClauses() {
         const result = {
             test: 'test slStyle for parent class for selector with braces and comma and multiple clauses',
@@ -10815,6 +10889,10 @@ export class GlobalTestRunner {
                     while (ellapsedMillis > 17) {
                         changeCycles++;
                         ellapsedMillis -= 17;
+                    }
+
+                    if (changeCycles === 0) {
+                        changeCycles++;
                     }
 
                     s.DETACHED_SET_TIMEOUT(() => {
