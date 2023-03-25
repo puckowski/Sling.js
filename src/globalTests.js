@@ -586,6 +586,42 @@ export class AnimateKeyframesComponent5 {
     }
 }
 
+export class AnimateKeyframesComponent6 {
+
+    slStyle() {
+        return `
+        @keyframes fadeInAnimate {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+             }
+        }
+        button {
+            animation-name: fadeInAnimate;
+            animation-duration: 1s;
+            background-color: #cacaca;
+        }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'animatekeyframesdiv6'
+            }, 
+            children: [
+                markup('button', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class TestRow1 {
     constructor(id, classList, label, onclick, ondelete) {
         this.id = id;
@@ -7890,6 +7926,32 @@ export class GlobalTestRunner {
         const headChildCountFinal = head.childNodes.length;
 
         let ele = document.getElementById('animatekeyframesdiv3');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleAnimateKeyframesWithAnimationName() {
+        const result = {
+            test: 'test slStyle for @keyframes animation with animation name declared',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('animatekeyframesdiv6', new AnimateKeyframesComponent6());
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('animatekeyframesdiv6');
 
         const cssObj = window.getComputedStyle(ele.childNodes[0], null);
         const bgColor = cssObj.getPropertyValue('background-color');
