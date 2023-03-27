@@ -622,6 +622,116 @@ export class AnimateKeyframesComponent6 {
     }
 }
 
+export class AtRuleMediaComponent1 {
+
+    slStyle() {
+        return `
+        button {
+            background-color: #cacaca;
+        }
+
+        @media (min-width: 1em), (min-height: 1em) {
+            @media only screen and (min-resolution: 10dpi) {
+                nav {
+                    color: blue;
+                }
+                h5 {
+                    color: blue;
+                }
+            }
+        }
+
+        nav {
+            background-color: #cacaca;
+        }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divatrulemedia1'
+            }, 
+            children: [
+                markup('button', {
+                    children: [
+                        textNode('Hello,')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode(' world!')
+                    ]
+                }),
+                markup('h5', {
+                    children: [
+                        textNode('A header.')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class AtRuleMediaComponent2 {
+
+    slStyle() {
+        return `
+        button {
+            background-color: #cacaca;
+        }
+
+        @media (min-width: 1em), (min-height: 1em) {
+            @media only screen and (min-resolution: 10dpi) {
+                nav {
+                    color: blue;
+                }
+                h5 {
+                    color: blue;
+                }
+                @media (min-width: 2em) { 
+                    h4 { color: blue; }
+                } 
+            }
+        }
+
+        nav {
+            background-color: #cacaca;
+        }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divatrulemedia2'
+            }, 
+            children: [
+                markup('button', {
+                    children: [
+                        textNode('Hello,')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode(' world!')
+                    ]
+                }),
+                markup('h5', {
+                    children: [
+                        textNode('A header.')
+                    ]
+                }),
+                markup('h4', {
+                    children: [
+                        textNode('A header again.')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class TestRow1 {
     constructor(id, classList, label, onclick, ondelete) {
         this.id = id;
@@ -8045,6 +8155,82 @@ export class GlobalTestRunner {
 
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
         && bgColorNav === 'rgb(202, 202, 202)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleAtRuleMediaComplexCss() {
+        const result = {
+            test: 'test slStyle for @media query surrounded by declarations',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divatrulemedia1', new AtRuleMediaComponent1());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divatrulemedia1');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const cssObjNav = window.getComputedStyle(ele.childNodes[1], null);
+        const bgColorNav = cssObjNav.getPropertyValue('background-color');
+        const colorNav = cssObjNav.getPropertyValue('color');
+
+        const cssObjHeader = window.getComputedStyle(ele.childNodes[2], null);
+        const colorHeader = cssObjHeader.getPropertyValue('color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+        && bgColorNav === 'rgb(202, 202, 202)' && colorNav === 'rgb(0, 0, 255)' && colorHeader === 'rgb(0, 0, 255)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleAtRuleMediaComplexCssWithNesting() {
+        const result = {
+            test: 'test slStyle for @media query surrounded by declarations and @media nesting',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divatrulemedia2', new AtRuleMediaComponent2());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divatrulemedia2');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const cssObjNav = window.getComputedStyle(ele.childNodes[1], null);
+        const bgColorNav = cssObjNav.getPropertyValue('background-color');
+        const colorNav = cssObjNav.getPropertyValue('color');
+
+        const cssObjHeader = window.getComputedStyle(ele.childNodes[2], null);
+        const colorHeader = cssObjHeader.getPropertyValue('color');
+
+        const cssObjHeader2 = window.getComputedStyle(ele.childNodes[3], null);
+        const colorHeader2 = cssObjHeader.getPropertyValue('color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+        && bgColorNav === 'rgb(202, 202, 202)' && colorNav === 'rgb(0, 0, 255)' && colorHeader === 'rgb(0, 0, 255)'
+        && colorHeader2 === 'rgb(0, 0, 255)';
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
