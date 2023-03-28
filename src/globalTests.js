@@ -429,7 +429,7 @@ export class AnimateKeyframesComponent1 {
         return markup('div', {
             attrs: {
                 id: 'animatekeyframesdiv1'
-            }, 
+            },
             children: [
                 markup('button', {
                     children: [
@@ -464,7 +464,7 @@ export class AnimateKeyframesComponent2 {
         return markup('div', {
             attrs: {
                 id: 'animatekeyframesdiv2'
-            }, 
+            },
             children: [
                 markup('button', {
                     children: [
@@ -499,7 +499,7 @@ export class AnimateKeyframesComponent3 {
         return markup('div', {
             attrs: {
                 id: 'animatekeyframesdiv3'
-            }, 
+            },
             children: [
                 markup('button', {
                     children: [
@@ -532,7 +532,7 @@ export class AnimateKeyframesComponent4 {
         return markup('div', {
             attrs: {
                 id: 'animatekeyframesdiv4'
-            }, 
+            },
             children: [
                 markup('button', {
                     children: [
@@ -569,7 +569,7 @@ export class AnimateKeyframesComponent5 {
         return markup('div', {
             attrs: {
                 id: 'animatekeyframesdiv5'
-            }, 
+            },
             children: [
                 markup('button', {
                     children: [
@@ -610,7 +610,7 @@ export class AnimateKeyframesComponent6 {
         return markup('div', {
             attrs: {
                 id: 'animatekeyframesdiv6'
-            }, 
+            },
             children: [
                 markup('button', {
                     children: [
@@ -651,7 +651,7 @@ export class AtRuleMediaComponent1 {
         return markup('div', {
             attrs: {
                 id: 'divatrulemedia1'
-            }, 
+            },
             children: [
                 markup('button', {
                     children: [
@@ -705,7 +705,7 @@ export class AtRuleMediaComponent2 {
         return markup('div', {
             attrs: {
                 id: 'divatrulemedia2'
-            }, 
+            },
             children: [
                 markup('button', {
                     children: [
@@ -727,6 +727,108 @@ export class AtRuleMediaComponent2 {
                         textNode('A header again.')
                     ]
                 })
+            ]
+        })
+    }
+}
+
+export class CssNestingTestComponent1 {
+
+    slStyle() {
+        return `
+        .foo {
+            color: blue;
+            & > .bar { color: red; }
+            > .baz { color: green; }
+          }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divcssnestingtest1'
+            },
+            children: [
+                markup('div', {
+                    attrs: {
+                        "class": "foo"
+                    },
+                    children: [
+                        markup('div', {
+                            attrs: {
+                                "class": "baz"
+                            },
+                            children: [
+                                textNode('Hello, world!')
+                            ]
+                        }),
+                        markup('div', {
+                            attrs: {
+                                "class": "bar"
+                            },
+                            children: [
+                                textNode('Hello, world!')
+                            ]
+                        }),
+                    ]
+                }),
+            ]
+        })
+    }
+}
+
+export class CssNestingTestComponent2 {
+
+    slStyle() {
+        return `
+        @layer images {
+            .responsive-image {
+              max-inline-size: 50ch;
+              aspect-ratio: 16/9;
+              
+              > img {
+                max-inline-size: 100%;
+                block-size: 100%;
+                object-fit: cover;
+                object-position: bottom;
+              }
+              
+              > figcaption {
+                text-align: center;
+                padding-block: 1ch;
+              }
+            }
+          }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divcssnestingtest2'
+            },
+            children: [
+                markup('figure', {
+                    attrs: {
+                        "class": "responsive-image"
+                    },
+                    children: [
+                        markup('img', {
+                            attrs: {
+                                "height": "192",
+                                "width": "320",
+                                "src": "https://www.oubliette3d.com/assets/images/screens/title_screen.png",
+                                "alt": "An epic fantasy 2.5D RPG reviving the atmosphere of classic dungeons."
+                            }
+                        }),
+                        markup('div', {
+                            children: [
+                                textNode('Hello, world!')
+                            ]
+                        }),
+                    ]
+                }),
             ]
         })
     }
@@ -6745,8 +6847,13 @@ export class GlobalTestRunner {
             message: ''
         };
 
-        const scrollPosition = window.pageYOffset;
+        let scrollPosition = window.pageYOffset;
 
+        if (scrollPosition === 0) {
+            window.scrollTo(0, 10);
+            scrollPosition = window.pageYOffset;
+        }
+        
         mount('divnopreservescroll1', new TestNoPreserveScrollPosition1());
 
         const scrollPosition2 = window.pageYOffset;
@@ -8154,7 +8261,7 @@ export class GlobalTestRunner {
         const bgColorNav = cssObjNav.getPropertyValue('background-color');
 
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
-        && bgColorNav === 'rgb(202, 202, 202)';
+            && bgColorNav === 'rgb(202, 202, 202)';
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -8190,7 +8297,7 @@ export class GlobalTestRunner {
         const colorHeader = cssObjHeader.getPropertyValue('color');
 
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
-        && bgColorNav === 'rgb(202, 202, 202)' && colorNav === 'rgb(0, 0, 255)' && colorHeader === 'rgb(0, 0, 255)';
+            && bgColorNav === 'rgb(202, 202, 202)' && colorNav === 'rgb(0, 0, 255)' && colorHeader === 'rgb(0, 0, 255)';
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -8229,8 +8336,73 @@ export class GlobalTestRunner {
         const colorHeader2 = cssObjHeader.getPropertyValue('color');
 
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
-        && bgColorNav === 'rgb(202, 202, 202)' && colorNav === 'rgb(0, 0, 255)' && colorHeader === 'rgb(0, 0, 255)'
-        && colorHeader2 === 'rgb(0, 0, 255)';
+            && bgColorNav === 'rgb(202, 202, 202)' && colorNav === 'rgb(0, 0, 255)' && colorHeader === 'rgb(0, 0, 255)'
+            && colorHeader2 === 'rgb(0, 0, 255)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleCssNestingSyntaxChildren() {
+        const result = {
+            test: 'test slStyle with CSS Nesting Module syntax for descendants',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divcssnestingtest1', new CssNestingTestComponent1());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divcssnestingtest1');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const color = cssObj.getPropertyValue('color');
+
+        const parentDiv = ele.childNodes[0];
+
+        const cssObj2 = window.getComputedStyle(parentDiv.childNodes[0], null);
+        const color2 = cssObj2.getPropertyValue('color');
+
+        const cssObj3 = window.getComputedStyle(parentDiv.childNodes[1], null);
+        const color3 = cssObj3.getPropertyValue('color');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && color === 'rgb(0, 0, 255)'
+            && color2 === 'rgb(0, 128, 0)' && color3 === 'rgb(255, 0, 0)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleCssNestingSyntaxWithLayer() {
+        const result = {
+            test: 'test slStyle with CSS Nesting Module syntax with @layer',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divcssnestingtest2', new CssNestingTestComponent2());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divcssnestingtest2');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0].childNodes[0], null);
+        const objectFit = cssObj.getPropertyValue('object-fit');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && objectFit === 'cover';
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
