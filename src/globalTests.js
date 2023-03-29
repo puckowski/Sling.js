@@ -834,6 +834,110 @@ export class CssNestingTestComponent2 {
     }
 }
 
+export class CssNestingTestComponent3 {
+
+    slStyle() {
+        return `
+        @layer demo, images, cards;
+
+        @layer cards {
+            display: grid;
+            background: oklch(50% none none / 20%);
+            border-radius: 10px;
+            border: 1px solid oklch(50% none none / 20%);
+              
+            @media (prefers-color-scheme: light) {
+                background: white;
+                box-shadow: 0 30px 10px -20px oklch(0% none none / 25%);
+            }
+        
+            > header {
+                display: grid !important;
+                gap: .5ch;
+                padding: 2ch;
+            }
+        
+            > article {
+                max-inline-size: 50ch;
+                line-height: 1.5;
+                padding: 2ch 2ch 1ch;
+            }
+        
+            > footer {
+                display: flex;
+                justify-content: flex-end;
+                padding: 1ch 2ch;
+                gap: 1ch;
+            }
+        }
+        
+        @layer images {
+          .responsive-image {
+            max-inline-size: 50ch;
+            aspect-ratio: 16/9;
+            
+            > img {
+              max-inline-size: 100%;
+              block-size: 100%;
+              object-fit: cover;
+              object-position: bottom;
+            }
+            
+            > figcaption {
+              text-align: center;
+              padding-block: 1ch;
+            }
+          }
+        }
+        
+        @layer demo.support {
+          * {
+            box-sizing: border-box;
+            margin: 0;
+          }
+        
+          nav {
+            block-size: 100%;
+            color-scheme: dark light;
+            
+            @media (prefers-color-scheme: light) {
+              background: #ccc;
+            }
+          }
+        
+          figure {
+            min-block-size: 100%;
+            font-family: system-ui, sans-serif;
+        
+            display: grid !important;
+            place-content: center;
+            place-items: center;
+          }
+        }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divcssnestingtest3'
+            },
+            children: [
+                markup('figure', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                }),
+                markup('header', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class TestRow1 {
     constructor(id, classList, label, onclick, ondelete) {
         this.id = id;
@@ -6853,7 +6957,7 @@ export class GlobalTestRunner {
             window.scrollTo(0, 10);
             scrollPosition = window.pageYOffset;
         }
-        
+
         mount('divnopreservescroll1', new TestNoPreserveScrollPosition1());
 
         const scrollPosition2 = window.pageYOffset;
@@ -8403,6 +8507,34 @@ export class GlobalTestRunner {
         const objectFit = cssObj.getPropertyValue('object-fit');
 
         result.success = headChildCountFinal === headChildCountOriginal + 1 && objectFit === 'cover';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleCssNestingSyntaxWithLayerComplex() {
+        const result = {
+            test: 'test slStyle with CSS Nesting Module syntax with @layer and nesting',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divcssnestingtest3', new CssNestingTestComponent3());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divcssnestingtest3');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const display = cssObj.getPropertyValue('display');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && display === 'grid';
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
