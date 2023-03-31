@@ -938,6 +938,268 @@ export class CssNestingTestComponent3 {
     }
 }
 
+export class CssNestingTestComponent4 {
+
+    slStyle() {
+        return `
+        span {
+            color: blue;
+        }
+
+        @layer demo, images, cards;
+
+        nav {
+            a {
+                color: blue;
+            }
+        }
+
+        @layer cards {
+            display: grid;
+            background: oklch(50% none none / 20%);
+            border-radius: 10px;
+            border: 1px solid oklch(50% none none / 20%);
+              
+            @media (prefers-color-scheme: light) {
+                background: white;
+                box-shadow: 0 30px 10px -20px oklch(0% none none / 25%);
+            }
+        
+            > header {
+                display: grid !important;
+                gap: .5ch;
+                padding: 2ch;
+            }
+        
+            > article {
+                max-inline-size: 50ch;
+                line-height: 1.5;
+                padding: 2ch 2ch 1ch;
+            }
+        
+            > footer {
+                display: flex;
+                justify-content: flex-end;
+                padding: 1ch 2ch;
+                gap: 1ch;
+            }
+        }
+        
+        @layer images {
+          .responsive-image {
+            max-inline-size: 50ch;
+            aspect-ratio: 16/9;
+            
+            > img {
+              max-inline-size: 100%;
+              block-size: 100%;
+              object-fit: cover;
+              object-position: bottom;
+            }
+            
+            > figcaption {
+              text-align: center;
+              padding-block: 1ch;
+            }
+          }
+        }
+        
+        @layer demo.support {
+          * {
+            box-sizing: border-box;
+            margin: 0;
+          }
+        
+          nav {
+            block-size: 100%;
+            color-scheme: dark light;
+            
+            @media (prefers-color-scheme: light) {
+              background: #ccc;
+            }
+          }
+        
+          figure {
+            min-block-size: 100%;
+            font-family: system-ui, sans-serif;
+        
+            display: grid !important;
+            place-content: center;
+            place-items: center;
+          }
+
+          @nest .dark & {
+            color: blue;
+          }
+        }
+
+        img {
+            width: 128px;
+        }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divcssnestingtest4'
+            },
+            children: [
+                markup('figure', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                }),
+                markup('header', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                }),
+                markup('img', {
+                    attrs: {
+                        "height": "192",
+                        "src": "https://www.oubliette3d.com/assets/images/screens/title_screen.png",
+                        "alt": "An epic fantasy 2.5D RPG reviving the atmosphere of classic dungeons."
+                    }
+                }),
+            ]
+        })
+    }
+}
+
+export class CssNestingTestComponent5 {
+
+    slStyle() {
+        return `
+        span {
+            color: blue;
+        }
+
+        @layer demo, images, cards;
+
+        nav {
+            a {
+                color: blue;
+            }
+        }
+
+        @layer cards {
+            display: grid;
+            background: oklch(50% none none / 20%);
+            border-radius: 10px;
+            border: 1px solid oklch(50% none none / 20%);
+              
+            @media (prefers-color-scheme: light) {
+                background: white;
+                box-shadow: 0 30px 10px -20px oklch(0% none none / 25%);
+            }
+        
+            > header {
+                display: grid !important;
+                gap: .5ch;
+                padding: 2ch;
+            }
+        
+            > article {
+                max-inline-size: 50ch;
+                line-height: 1.5;
+                padding: 2ch 2ch 1ch;
+            }
+        
+            > footer {
+                display: flex;
+                justify-content: flex-end;
+                padding: 1ch 2ch;
+                gap: 1ch;
+            }
+        }
+        
+        @layer images {
+          .responsive-image {
+            max-inline-size: 50ch;
+            aspect-ratio: 16/9;
+            
+            > img {
+              max-inline-size: 100%;
+              block-size: 100%;
+              object-fit: cover;
+              object-position: bottom;
+            }
+            
+            > figcaption {
+              text-align: center;
+              padding-block: 1ch;
+            }
+          }
+        }
+        
+        @layer demo.support {
+          * {
+            box-sizing: border-box;
+            margin: 0;
+          }
+        
+          nav {
+            block-size: 100%;
+            color-scheme: dark light;
+            
+            @media (prefers-color-scheme: light) {
+              background: #ccc;
+            }
+          }
+        
+          figure {
+            min-block-size: 100%;
+            font-family: system-ui, sans-serif;
+        
+            display: grid !important;
+            place-content: center;
+            place-items: center;
+          }
+
+          @nest .dark & {
+            color: blue;
+          }
+
+          img {
+            width: 196px;
+          }
+        }
+
+        img {
+            width: 128px;
+        }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divcssnestingtest5'
+            },
+            children: [
+                markup('figure', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                }),
+                markup('header', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                }),
+                markup('img', {
+                    attrs: {
+                        "height": "192",
+                        "src": "https://www.oubliette3d.com/assets/images/screens/title_screen.png",
+                        "alt": "An epic fantasy 2.5D RPG reviving the atmosphere of classic dungeons."
+                    }
+                }),
+            ]
+        })
+    }
+}
+
 export class TestRow1 {
     constructor(id, classList, label, onclick, ondelete) {
         this.id = id;
@@ -1446,6 +1708,23 @@ export class TestControllerComponent2 {
         });
 
         return ret;
+    }
+}
+
+class TestSpanStylingLeakComponent1 {
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divspanstylingleak1',
+            },
+            children: [
+                markup('span', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                }),
+            ]
+        });
     }
 }
 
@@ -8540,6 +8819,70 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
+    testFinalize100SlStyleCssNestingSyntaxWithLayerComplexAndDeclarations() {
+        const result = {
+            test: 'test slStyle with CSS Nesting Module syntax with @layer and nesting surrounded by declarations',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divcssnestingtest4', new CssNestingTestComponent4());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divcssnestingtest4');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const display = cssObj.getPropertyValue('display');
+
+        const cssObj2 = window.getComputedStyle(ele.childNodes[2], null);
+        const width = cssObj2.getPropertyValue('width');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && display === 'grid'
+            && width === '128px';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleCssNestingSyntaxWithDeclarationAfterNest() {
+        const result = {
+            test: 'test slStyle with CSS Nesting Module syntax with declaration after @nest',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divcssnestingtest5', new CssNestingTestComponent5());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divcssnestingtest5');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const display = cssObj.getPropertyValue('display');
+
+        const cssObj2 = window.getComputedStyle(ele.childNodes[2], null);
+        const width = cssObj2.getPropertyValue('width');
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && display === 'grid'
+            && width === '128px';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
     testFinalize100SlStyleWithBracesAndCommaAndMultipleClauses() {
         const result = {
             test: 'test slStyle for parent class for selector with braces and comma and multiple clauses',
@@ -13039,6 +13382,50 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
+    manualTestCheckSpanStyling() {
+        const result = {
+            test: 'check styling for span has not leaked from component scoped CSS',
+            success: false,
+            message: ''
+        };
+
+        const comp = new TestSpanStylingLeakComponent1();
+        mount('divspanstylingleak1', comp);
+
+        const ele = document.getElementById('divspanstylingleak1');
+        const span = ele.childNodes[0];
+
+        const cssObj = window.getComputedStyle(span, null);
+        const color = cssObj.getPropertyValue('color');
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        result.success = color === 'rgb(33, 37, 41)' && bgColor === 'rgba(0, 0, 0, 0)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    manualTestCheckNavbarImageDimensions() {
+        const result = {
+            test: 'check styling for navbar image has not leaked from component scoped CSS',
+            success: false,
+            message: ''
+        };
+
+        let ele = document.querySelector('.navbar.navbar-light');
+        ele = ele.childNodes[0];
+        ele = ele.childNodes[0];
+
+        const cssObj = window.getComputedStyle(ele, null);
+        const width = cssObj.getPropertyValue('width');
+        const height = cssObj.getPropertyValue('height');
+
+        result.success = width === '30px' && height === '30px';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
     dummyTest() {
         const result = {
             test: 'test ',
@@ -13208,13 +13595,19 @@ export class GlobalTestRunner {
             await this.sleep(50);
         });
 
-        const testCount = this.getAllFuncs(this).filter(key => key && key.startsWith('test')).filter(key => key && key !== 'dummyTest').length;
+        let testCount = this.getAllFuncs(this).filter(key => key && key.startsWith('test')).filter(key => key && key !== 'dummyTest').length;
 
         let checkCount = 0;
         let startTime = new Date();
 
         const checkInterval = s.DETACHED_SET_INTERVAL(() => {
             if (window.globalTestCount === testCount) {
+                this.manualTestCheckSpanStyling();
+                testCount++;
+
+                this.manualTestCheckNavbarImageDimensions();
+                testCount++;
+
                 this.removeProcessing();
                 this.createResultList(new Date() - startTime);
                 clearInterval(checkInterval);
