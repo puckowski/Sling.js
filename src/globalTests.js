@@ -1211,7 +1211,7 @@ export class CssNestingTestComponent6 {
         @layer demo, images, cards;
 
         nav {
-            a, h4, h5 {
+            > a, > h4, > h5 {
                 color: blue;
             }
         }
@@ -1338,7 +1338,7 @@ export class CssNestingTestComponent7 {
     slStyle() {
         return `
         nav {
-            a, h4, h5 {
+            > a, > h4, > h5 {
                 color: blue;
             }
 
@@ -1386,6 +1386,15 @@ export class CssNestingTestComponent7 {
                         textNode('Hello, world!')
                     ]
                 }),
+                markup('nav', {
+                    children: [
+                        markup('h4', {
+                            children: [
+                                textNode('Hello, world!')
+                            ]
+                        }),
+                    ]
+                }),
             ]
         })
     }
@@ -1396,7 +1405,7 @@ export class CssNestingTestComponent8 {
     slStyle() {
         return `
         nav {
-            a, h4, h5 {
+            > a, > h4, > h5 {
                 color: blue;
             }
 
@@ -1458,6 +1467,15 @@ export class CssNestingTestComponent8 {
                 markup('header', {
                     children: [
                         textNode('Hello, world!')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        markup('h4', {
+                            children: [
+                                textNode('Hello, world!')
+                            ]
+                        }),
                     ]
                 }),
             ]
@@ -8795,7 +8813,13 @@ export class GlobalTestRunner {
         const cssObj = window.getComputedStyle(ele.childNodes[0], null);
         const bgColor = cssObj.getPropertyValue('background-color');
 
-        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)';
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+        const slCount = textContentStyle.split('slcss-').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+            && slCount === 3;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -8821,7 +8845,13 @@ export class GlobalTestRunner {
         const cssObj = window.getComputedStyle(ele.childNodes[0], null);
         const bgColor = cssObj.getPropertyValue('background-color');
 
-        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)';
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+        const slCount = textContentStyle.split('slcss-').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+            && slCount === 3;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -8849,7 +8879,13 @@ export class GlobalTestRunner {
         const cssObj = window.getComputedStyle(ele.childNodes[0], null);
         const bgColor = cssObj.getPropertyValue('background-color');
 
-        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)';
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+        const slCount = textContentStyle.split('slcss-').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+            && slCount === 3;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -8877,7 +8913,13 @@ export class GlobalTestRunner {
         const cssObj = window.getComputedStyle(ele.childNodes[0], null);
         const bgColor = cssObj.getPropertyValue('background-color');
 
-        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)';
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+        const slCount = textContentStyle.split('slcss-').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+            && slCount === 2;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -8908,8 +8950,13 @@ export class GlobalTestRunner {
         const cssObjNav = window.getComputedStyle(ele.childNodes[1], null);
         const bgColorNav = cssObjNav.getPropertyValue('background-color');
 
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+        const slCount = textContentStyle.split('slcss-').length - 1;
+
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
-            && bgColorNav === 'rgb(202, 202, 202)';
+            && bgColorNav === 'rgb(202, 202, 202)' && slCount === 3;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -9222,7 +9269,7 @@ export class GlobalTestRunner {
 
         let ele = document.getElementById('divcssnestingtest7');
 
-        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const cssObj = window.getComputedStyle(ele.childNodes[2].childNodes[0], null);
         const color = cssObj.getPropertyValue('color');
 
         const styleTags = document.querySelectorAll('style');
@@ -9259,7 +9306,7 @@ export class GlobalTestRunner {
 
         let ele = document.getElementById('divcssnestingtest8');
 
-        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const cssObj = window.getComputedStyle(ele.childNodes[2].childNodes[0], null);
         const color = cssObj.getPropertyValue('color');
 
         const styleTags = document.querySelectorAll('style');
@@ -9734,7 +9781,7 @@ export class GlobalTestRunner {
         const fgColorClean = navCssObj.getPropertyValue('color');
 
         result.success = headChildCountFinal === headChildCountOriginal + 1 && fgColor === 'rgb(202, 34, 34)'
-            && fgColorClean === 'rgb(0, 0, 255)';
+            && fgColorClean === 'rgb(33, 37, 41)';
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -13820,6 +13867,25 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
+    manualTestCheckTodoHeaderStyling() {
+        const result = {
+            test: 'check styling for Todo header has not leaked from component scoped CSS',
+            success: false,
+            message: ''
+        };
+
+        let ele = document.querySelector('#divTodoHeader');
+        ele = ele.childNodes[0];
+
+        const cssObj = window.getComputedStyle(ele, null);
+        const color = cssObj.getPropertyValue('color');
+
+        result.success = color === 'rgb(33, 37, 41)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
     dummyTest() {
         const result = {
             test: 'test ',
@@ -13997,6 +14063,9 @@ export class GlobalTestRunner {
         const checkInterval = s.DETACHED_SET_INTERVAL(() => {
             if (window.globalTestCount === testCount) {
                 this.manualTestCheckSpanStyling();
+                testCount++;
+
+                this.manualTestCheckNavbarImageDimensions();
                 testCount++;
 
                 this.manualTestCheckNavbarImageDimensions();
