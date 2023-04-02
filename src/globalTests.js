@@ -12850,7 +12850,7 @@ export class GlobalTestRunner {
                 }
 
                 window.globalTestCount++;
-            }, 600);
+            }, 1000);
         }
 
         window.globalTestResults.push(result);
