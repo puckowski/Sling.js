@@ -1400,6 +1400,174 @@ export class CssNestingTestComponent7 {
     }
 }
 
+export class CssNestingTestComponent9 {
+
+    slStyle() {
+        return `
+        a, h4, h5 {
+            color: blue;
+        }
+
+        @layer bluetheme {
+            h3 {
+                color: blue;
+            }
+        }
+            
+        @container (min-width: 100px) { 
+            nav { 
+                background-color: #cacaca; 
+            } 
+        }
+
+        @media (prefers-color-scheme: light) {
+            background: #ccc;
+        }
+
+        @media (min-width: 1em), (min-height: 1em) {
+            nav {
+                color: blue;
+            }
+            h5 {
+                color: blue;
+            }
+            @media (min-width: 2em) { 
+                h4 { color: blue; }
+            } 
+        }
+
+        @scope (.media-object) {
+            .author-image { border-radius: 50%; }
+        }
+
+        @scope (.media-object) to (.content > *) {
+            img { border-radius: 50%; }
+            .content { padding: 1em; }
+        }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divcssnestingtest9'
+            },
+            children: [
+                markup('h4', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                }),
+                markup('header', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        markup('h4', {
+                            children: [
+                                textNode('Hello, world!')
+                            ]
+                        }),
+                    ]
+                }),
+            ]
+        })
+    }
+}
+
+export class CssNestingTestComponent10 {
+
+    slStyle() {
+        return `
+        nav {
+            @scope (.media-object) {
+                .author-image { border-radius: 50%; }
+            }
+
+            @scope (.media-object) to (.content > *) {
+                .author-image { color: blue; }
+            }
+        }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divcssnestingtest10'
+            },
+            children: [
+                markup('nav', {
+                    children: [
+                        markup('div', {
+                            attrs: {
+                                "class": "media-object"
+                            },
+                            children: [
+                                markup('button', {
+                                    attrs: {
+                                        "class": "author-image"
+                                    },
+                                    children: [
+                                        textNode('Hello, world!')
+                                    ]
+                                })
+                            ]
+                        }),
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class CssNestingTestComponent11 {
+
+    slStyle() {
+        return `
+            nav:dir(ltr) {
+                @media (400px <= width < 900px) {
+                    h4 {
+                        color: blue;
+                    }
+                }
+            }
+
+            @media (400px <= width < 900px) {
+                h5 {
+                    color: blue;
+                }
+            }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divcssnestingtest11'
+            },
+            children: [
+                markup('nav', {
+                    children: [
+                        markup('h4', {
+                            children: [
+                                textNode('Hello, world!')
+                            ]
+                        })
+                    ]
+                }),
+                markup('h5', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class CssNestingTestComponent8 {
 
     slStyle() {
@@ -9281,6 +9449,115 @@ export class GlobalTestRunner {
         const countClose = textContentStyle.split('}').length - 1;
 
         result.success = headChildCountFinal === headChildCountOriginal + 1 && color === 'rgb(0, 0, 255)'
+            && countSlCss === 1 && countOpen === countClose;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleCssSyntaxWithAtRules() {
+        const result = {
+            test: 'test slStyle with CSS syntax with at-rules',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divcssnestingtest9', new CssNestingTestComponent9());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divcssnestingtest9');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[2].childNodes[0], null);
+        const color = cssObj.getPropertyValue('color');
+
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && color === 'rgb(0, 0, 255)'
+            && countSlCss === 11 && countOpen === countClose;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleCssNestingModuleWithScope() {
+        const result = {
+            test: 'test slStyle with CSS Nesting Module syntax with scope at-rule',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divcssnestingtest10', new CssNestingTestComponent10());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1
+            && countSlCss === 1 && countOpen === countClose;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleCssDirAndComplexMediaQuery() {
+        const result = {
+            test: 'test slStyle with CSS :dir pseudo-class and media query syntax improvements',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divcssnestingtest11', new CssNestingTestComponent11());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divcssnestingtest11');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0].childNodes[0], null);
+        const color = cssObj.getPropertyValue('color');
+
+        const cssObj2 = window.getComputedStyle(ele.childNodes[1], null);
+        const color2 = cssObj2.getPropertyValue('color');
+
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1
             && countSlCss === 1 && countOpen === countClose;
 
         window.globalTestResults.push(result);
