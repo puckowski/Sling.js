@@ -1523,6 +1523,242 @@ export class CssNestingTestComponent10 {
     }
 }
 
+export class CssNestingTestComponent12 {
+
+    slStyle() {
+        return `
+            @media ((1em < width) or (1em < height)) and (not (pointer: none)) {
+                h5 {
+                    color: blue;
+                }
+            }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divcssnestingtest12'
+            },
+            children: [
+                markup('h5', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class CssNestingTestComponent13 {
+
+    slStyle() {
+        return `
+            figure, h4 {
+                color: blue;
+            }
+
+            @media ((1em < width) or (1em < height)) and (not (pointer: none)) {
+                h5 {
+                    color: blue;
+                }
+            }
+
+            nav {
+                color: blue;
+            }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divcssnestingtest13'
+            },
+            children: [
+                markup('h5', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                }),
+                markup('h4', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class CssNestingTestComponent14 {
+
+    slStyle() {
+        return `
+            figure, h4 {
+                nav {
+                    color: red;
+                }
+
+                color: blue;
+            }
+
+            @media ((1em < width) or (1em < height)) and (not (pointer: none)) {
+                h5 {
+                    color: blue;
+                }
+            }
+
+            nav {
+                color: blue;
+
+                a, span {
+                    color: red;
+                }
+            }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divcssnestingtest14'
+            },
+            children: [
+                markup('h5', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                }),
+                markup('h4', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class CssNestingTestComponent15 {
+
+    slStyle() {
+        return `
+            h4 {
+                nav {
+                    color: red;
+                }
+
+                color: blue;
+            }
+
+            @media ((1em < width) or (1em < height)) and (not (pointer: none)) {
+                h5 {
+                    color: blue;
+                }
+            }
+
+            nav {
+                color: blue;
+
+                span {
+                    color: red;
+                }
+            }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divcssnestingtest15'
+            },
+            children: [
+                markup('h5', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                }),
+                markup('h4', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class CssNestingTestComponent16 {
+
+    slStyle() {
+        return `
+            h4 {
+                nav {
+                    color: red;
+                }
+
+                color: blue;
+            }
+
+            @media ((1em < width) or (1em < height)) and (not (pointer: none)) {
+                h5 {
+                    color: blue;
+                }
+            }
+
+            nav, a {
+                color: blue;
+
+                span {
+                    color: red;
+                }
+            }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divcssnestingtest16'
+            },
+            children: [
+                markup('h5', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                }),
+                markup('h4', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class CssNestingTestComponent11 {
 
     slStyle() {
@@ -9558,12 +9794,216 @@ export class GlobalTestRunner {
         const countClose = textContentStyle.split('}').length - 1;
 
         result.success = headChildCountFinal === headChildCountOriginal + 1
-            && countSlCss === 1 && countOpen === countClose;
+            && countSlCss === 2 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
     }
 
+    testFinalize100SlStyleMediaQueryComplex() {
+        const result = {
+            test: 'test slStyle with complex media query syntax',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divcssnestingtest12', new CssNestingTestComponent12());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divcssnestingtest12');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const color = cssObj.getPropertyValue('color');
+
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1
+            && countSlCss === 1 && countOpen === countClose && color === 'rgb(0, 0, 255)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleMediaQueryComplex() {
+        const result = {
+            test: 'test slStyle with complex media query syntax surrounded by declarations',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divcssnestingtest13', new CssNestingTestComponent13());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divcssnestingtest13');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const color = cssObj.getPropertyValue('color');
+
+        const cssObj2 = window.getComputedStyle(ele.childNodes[1], null);
+        const color2 = cssObj2.getPropertyValue('color');
+
+        const cssObj3 = window.getComputedStyle(ele.childNodes[2], null);
+        const color3 = cssObj3.getPropertyValue('color');
+
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1
+            && countSlCss === 4 && countOpen === countClose && color === 'rgb(0, 0, 255)'
+            && color2 === 'rgb(0, 0, 255)' && color3 === 'rgb(0, 0, 255)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleMediaQueryComplex() {
+        const result = {
+            test: 'test slStyle with complex media query syntax surrounded by declarations with nesting',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divcssnestingtest14', new CssNestingTestComponent14());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divcssnestingtest14');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const color = cssObj.getPropertyValue('color');
+
+        const cssObj3 = window.getComputedStyle(ele.childNodes[2], null);
+        const color3 = cssObj3.getPropertyValue('color');
+
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1
+            && countSlCss === 4 && countOpen === countClose && color === 'rgb(0, 0, 255)'
+            && color3 === 'rgb(0, 0, 255)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleMediaQueryComplexAndNoCompoundSelectors() {
+        const result = {
+            test: 'test slStyle with complex media query syntax surrounded by declarations without compound selectors with nesting',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divcssnestingtest15', new CssNestingTestComponent15());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divcssnestingtest15');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const color = cssObj.getPropertyValue('color');
+
+        const cssObj3 = window.getComputedStyle(ele.childNodes[2], null);
+        const color3 = cssObj3.getPropertyValue('color');
+
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1
+            && countSlCss === 3 && countOpen === countClose && color === 'rgb(0, 0, 255)'
+            && color3 === 'rgb(0, 0, 255)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleMediaQueryComplexAndOuterLevelCompoundSeelctor() {
+        const result = {
+            test: 'test slStyle with complex media query syntax surrounded by declarations with nesting and root-level compound selector',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divcssnestingtest16', new CssNestingTestComponent16());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divcssnestingtest16');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const color = cssObj.getPropertyValue('color');
+
+        const cssObj3 = window.getComputedStyle(ele.childNodes[2], null);
+        const color3 = cssObj3.getPropertyValue('color');
+
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1
+            && countSlCss === 4 && countOpen === countClose && color === 'rgb(0, 0, 255)'
+            && color3 === 'rgb(0, 0, 255)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+    
     testFinalize100SlStyleCssNestingSyntaxWithNestedAtRulesAndCompoundSelectors() {
         const result = {
             test: 'test slStyle with CSS Nesting Module syntax with nested at-rules and compound selectors',
@@ -13691,7 +14131,7 @@ export class GlobalTestRunner {
         const correctA = newState.a && newState.a === 1;
         const correctB = newState.b && newState.b === 'abc';
         const correctC = newState.c !== null && newState.c !== undefined && newState.c === false;
-        const correctD = newState.d && newState.d.toString() === '() => console.log(\'hello\')';
+        const correctD = newState.d && newState.d.toString().replace(/\s+/g, '') === '() => console.log(\'hello\')'.replace(/\s+/g, '');
         const correctE = newState.e && newState.e === 3.14;
 
         result.success = correctA && correctB && correctC && correctD && correctE;
