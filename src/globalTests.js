@@ -1804,6 +1804,108 @@ export class CssNestingTestComponent11 {
     }
 }
 
+export class CssNestingTestComponent17 {
+
+    slStyle() {
+        return `
+            nav:dir(ltr) {
+                @media (400px <= width < 900px) {
+                    h4, figure {
+                        color: blue;
+                    }
+                }
+            }
+
+            @media (400px <= width < 900px) {
+                h5, span {
+                    color: blue;
+                }
+            }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divcssnestingtest17'
+            },
+            children: [
+                markup('nav', {
+                    children: [
+                        markup('h4', {
+                            children: [
+                                textNode('Hello, world!')
+                            ]
+                        })
+                    ]
+                }),
+                markup('h5', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
+export class CssNestingTestComponent18 {
+
+    slStyle() {
+        return `
+            figure { 
+                span, a {
+                    background-color: #cacaca;
+                }
+            }
+
+            nav:dir(ltr) {
+                @media (400px <= width < 900px) {
+                    h4, figure {
+                        color: blue;
+                    }
+                }
+            }
+
+            @media (400px <= width < 900px) {
+                h5, span {
+                    color: blue;
+                }
+            }
+
+            nav { 
+                ul, li {
+                    background-color: #cacaca;
+                }
+            }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divcssnestingtest18'
+            },
+            children: [
+                markup('nav', {
+                    children: [
+                        markup('h4', {
+                            children: [
+                                textNode('Hello, world!')
+                            ]
+                        })
+                    ]
+                }),
+                markup('h5', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class CssNestingTestComponent8 {
 
     slStyle() {
@@ -6805,7 +6907,44 @@ export class TestSlStyleComponent25 {
     }
 
     slStyle() {
-        return 'p { color: blue; } table { button { --handle: { pointerdown(event) { console.log(event.type, event.target); }, async click(event) { console.log( await Promise.resolve(\'CSS can do that.\') ); }, }; --test: { async click(event) { console.log(\'test\'); } }; } & td { background-color: #888888; &:first-child { color: blue; }} & :where(tr) { padding: 0.25rem; display: block; } & th { background-color: #229999;} @nest .dark & { background-color: blue; } } span { color: blue; }';
+        return `p { color: blue; } 
+        table { 
+            button { 
+                --handle: { 
+                    pointerdown(event) { 
+                        console.log(event.type, event.target); 
+                    }, 
+                    async click(event) { 
+                        console.log( await Promise.resolve(\'CSS can do that.\') ); 
+                    }, 
+                }; 
+                --test: { 
+                    async click(event) { 
+                        console.log(\'test\'); 
+                    } 
+                }; 
+            } 
+            & td { 
+                background-color: #888888; 
+                
+                &:first-child { 
+                    color: blue; 
+                }
+            } 
+            & :where(tr) { 
+                padding: 0.25rem; 
+                display: block; 
+            } 
+            & th { 
+                background-color: #229999;
+            } 
+            @nest .dark & { 
+                background-color: blue; 
+            } 
+        } 
+        span { 
+            color: blue; 
+        }`;
     }
 
     view() {
@@ -9164,8 +9303,16 @@ export class GlobalTestRunner {
         const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
         const bgColorClean = navCssObj.getPropertyValue('background-color');
 
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
         result.success = headChildCountFinal === headChildCountOriginal && bgColor === 'rgba(0, 0, 0, 0)'
-            && bgColorClean === 'rgba(0, 0, 0, 0)';
+            && bgColorClean === 'rgba(0, 0, 0, 0)' && countSlCss === 1 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -9800,6 +9947,86 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
+    testFinalize100SlStyleCssDirAndComplexMediaQueryWithCompoundSelectors() {
+        const result = {
+            test: 'test slStyle with CSS :dir pseudo-class and media query syntax improvements and compound selectors',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divcssnestingtest17', new CssNestingTestComponent17());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divcssnestingtest17');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0].childNodes[0], null);
+        const color = cssObj.getPropertyValue('color');
+
+        const cssObj2 = window.getComputedStyle(ele.childNodes[1], null);
+        const color2 = cssObj2.getPropertyValue('color');
+
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1
+            && countSlCss === 3 && countOpen === countClose;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleCssDirAndComplexMediaQueryWithCompoundSelectorsSurroundedWithNesting() {
+        const result = {
+            test: 'test slStyle with CSS :dir pseudo-class and media query syntax improvements and compound selectors surrounded with nesting',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divcssnestingtest18', new CssNestingTestComponent18());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divcssnestingtest18');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0].childNodes[0], null);
+        const color = cssObj.getPropertyValue('color');
+
+        const cssObj2 = window.getComputedStyle(ele.childNodes[1], null);
+        const color2 = cssObj2.getPropertyValue('color');
+
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1
+            && countSlCss === 5 && countOpen === countClose;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
     testFinalize100SlStyleMediaQueryComplex() {
         const result = {
             test: 'test slStyle with complex media query syntax',
@@ -10003,7 +10230,7 @@ export class GlobalTestRunner {
         window.globalTestResults.push(result);
         window.globalTestCount++;
     }
-    
+
     testFinalize100SlStyleCssNestingSyntaxWithNestedAtRulesAndCompoundSelectors() {
         const result = {
             test: 'test slStyle with CSS Nesting Module syntax with nested at-rules and compound selectors',
@@ -10069,8 +10296,17 @@ export class GlobalTestRunner {
         const kbdCssObj = window.getComputedStyle(ele.childNodes[2], null);
         const kbdColorClean = kbdCssObj.getPropertyValue('background-color');
 
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
-            && bgColorClean === 'rgb(202, 202, 202)' && kbdColorClean === 'rgb(202, 202, 202)';
+            && bgColorClean === 'rgb(202, 202, 202)' && kbdColorClean === 'rgb(202, 202, 202)'
+            && countSlCss === 3 && countOpen === countClose + 1;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10098,7 +10334,16 @@ export class GlobalTestRunner {
         const cssObj = window.getComputedStyle(ele.childNodes[0], null);
         const bgColor = cssObj.getPropertyValue('background-color');
 
-        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)';
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+            && countSlCss === 2 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10129,8 +10374,16 @@ export class GlobalTestRunner {
         const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
         const bgColorClean = navCssObj.getPropertyValue('background-color');
 
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
-            && bgColorClean === 'rgb(202, 202, 202)';
+            && bgColorClean === 'rgb(202, 202, 202)' && countSlCss === 2 && countOpen === countClose + 1;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10161,8 +10414,16 @@ export class GlobalTestRunner {
         const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
         const bgColorClean = navCssObj.getPropertyValue('background-color');
 
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
-            && bgColorClean !== 'rgb(202, 202, 202)';
+            && bgColorClean !== 'rgb(202, 202, 202)' && countSlCss === 1 && countOpen === countClose + 1;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10193,8 +10454,16 @@ export class GlobalTestRunner {
         const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
         const bgColorClean = navCssObj.getPropertyValue('background-color');
 
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
-            && bgColorClean !== 'rgb(202, 202, 202)';
+            && bgColorClean !== 'rgb(202, 202, 202)' && countSlCss === 1 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10222,7 +10491,16 @@ export class GlobalTestRunner {
         const cssObj = window.getComputedStyle(ele, null);
         const bgColor = cssObj.getPropertyValue('background-color');
 
-        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)';
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+            && countSlCss === 1 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10250,7 +10528,16 @@ export class GlobalTestRunner {
         const cssObj = window.getComputedStyle(ele, null);
         const bgColor = cssObj.getPropertyValue('background-color');
 
-        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)';
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+            && countSlCss === 1 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10337,8 +10624,16 @@ export class GlobalTestRunner {
         const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
         const bgColorClean = navCssObj.getPropertyValue('background-color');
 
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
-            && bgColorClean !== 'rgb(202, 202, 202)';
+            && bgColorClean !== 'rgb(202, 202, 202)' && countSlCss === 1 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10369,8 +10664,16 @@ export class GlobalTestRunner {
         const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
         const bgColorClean = navCssObj.getPropertyValue('background-color');
 
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
-            && bgColorClean !== 'rgb(202, 202, 202)';
+            && bgColorClean !== 'rgb(202, 202, 202)' && countSlCss === 1 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10401,8 +10704,16 @@ export class GlobalTestRunner {
         const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
         const bgColorClean = navCssObj.getPropertyValue('background-color');
 
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
-            && bgColorClean !== 'rgb(202, 202, 202)';
+            && bgColorClean !== 'rgb(202, 202, 202)' && countSlCss === 1 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10433,8 +10744,16 @@ export class GlobalTestRunner {
         const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
         const bgColorClean = navCssObj.getPropertyValue('background-color');
 
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
-            && bgColorClean !== 'rgb(202, 202, 202)';
+            && bgColorClean !== 'rgb(202, 202, 202)' && countSlCss === 1 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10465,8 +10784,16 @@ export class GlobalTestRunner {
         const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
         const bgColorClean = navCssObj.getPropertyValue('background-color');
 
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
-            && bgColorClean !== 'rgb(202, 202, 202)';
+            && bgColorClean !== 'rgb(202, 202, 202)' && countSlCss === 2 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10497,8 +10824,16 @@ export class GlobalTestRunner {
         const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
         const fgColorClean = navCssObj.getPropertyValue('color');
 
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
         result.success = headChildCountFinal === headChildCountOriginal + 1 && fgColor === 'rgb(202, 34, 34)'
-            && fgColorClean === 'rgb(33, 37, 41)';
+            && fgColorClean === 'rgb(33, 37, 41)' && countSlCss === 1 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10526,7 +10861,16 @@ export class GlobalTestRunner {
         const cssObj = window.getComputedStyle(ele.childNodes[0], null);
         const fgColor = cssObj.getPropertyValue('color');
 
-        result.success = headChildCountFinal === headChildCountOriginal + 1 && fgColor === 'rgb(255, 165, 0)';
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && fgColor === 'rgb(255, 165, 0)'
+            && countSlCss === 1 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10554,7 +10898,16 @@ export class GlobalTestRunner {
         const cssObj = window.getComputedStyle(ele.childNodes[0], null);
         const fgColor = cssObj.getPropertyValue('color');
 
-        result.success = headChildCountFinal === headChildCountOriginal + 1 && fgColor === 'rgb(255, 165, 0)';
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && fgColor === 'rgb(255, 165, 0)'
+            && countSlCss === 1 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10588,8 +10941,16 @@ export class GlobalTestRunner {
         const divCssObj = window.getComputedStyle(ele.childNodes[2].childNodes[0], null);
         const bgColorDiv = divCssObj.getPropertyValue('background-color');
 
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
-            && bgColorClean !== 'rgb(202, 202, 202)' && bgColorDiv === 'rgb(250, 250, 250)';
+            && bgColorClean !== 'rgb(202, 202, 202)' && bgColorDiv === 'rgb(250, 250, 250)' && countSlCss === 3 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10626,9 +10987,17 @@ export class GlobalTestRunner {
         const pCssObj = window.getComputedStyle(ele.childNodes[2].childNodes[1], null);
         const bgColorP = pCssObj.getPropertyValue('color');
 
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
             && bgColorClean !== 'rgb(202, 202, 202)' && bgColorDiv === 'rgb(250, 250, 250)'
-            && bgColorP === 'rgb(0, 0, 255)';
+            && bgColorP === 'rgb(0, 0, 255)' && countSlCss === 4 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10665,9 +11034,17 @@ export class GlobalTestRunner {
         const pCssObj = window.getComputedStyle(ele.childNodes[2].childNodes[1], null);
         const bgColorP = pCssObj.getPropertyValue('color');
 
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
             && bgColorClean !== 'rgb(202, 202, 202)' && bgColorDiv === 'rgb(250, 250, 250)'
-            && bgColorP === 'rgb(0, 0, 255)';
+            && bgColorP === 'rgb(0, 0, 255)' && countSlCss === 5 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10704,9 +11081,17 @@ export class GlobalTestRunner {
         const pCssObj = window.getComputedStyle(ele.childNodes[2].childNodes[1], null);
         const bgColorP = pCssObj.getPropertyValue('color');
 
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
             && bgColorClean !== 'rgb(202, 202, 202)' && bgColorDiv === 'rgb(250, 250, 250)'
-            && bgColorP === 'rgb(0, 0, 255)';
+            && bgColorP === 'rgb(0, 0, 255)' && countSlCss === 8 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10737,8 +11122,17 @@ export class GlobalTestRunner {
         const btnCssObj = window.getComputedStyle(ele.childNodes[1], null);
         const code = btnCssObj.getPropertyValue('--handle').trim();
 
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(250, 250, 250)'
-            && code === '{ pointerdown(event) { console.log(event.type, event.target); }, async click(event) { console.log( await Promise.resolve("CSS can do that.") ); }, }';
+            && code === '{ pointerdown(event) { console.log(event.type, event.target); }, async click(event) { console.log( await Promise.resolve("CSS can do that.") ); }, }'
+            && countSlCss === 3 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10769,8 +11163,17 @@ export class GlobalTestRunner {
         const btnCssObj = window.getComputedStyle(ele.childNodes[1], null);
         const code = btnCssObj.getPropertyValue('--handle').trim();
 
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(250, 250, 250)'
-            && code === '{ pointerdown(event) { console.log(event.type, event.target); }, async click(event) { console.log( await Promise.resolve("CSS can do that.") ); }, }';
+            && code === '{ pointerdown(event) { console.log(event.type, event.target); }, async click(event) { console.log( await Promise.resolve("CSS can do that.") ); }, }'
+            && countSlCss === 3 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10801,8 +11204,16 @@ export class GlobalTestRunner {
         const btnCssObj = window.getComputedStyle(ele.childNodes[1], null);
         const handleValue = btnCssObj.getPropertyValue('--handle').trim();
 
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(250, 250, 250)'
-            && handleValue === '#444444';
+            && handleValue === '#444444' && countSlCss === 3 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10833,7 +11244,15 @@ export class GlobalTestRunner {
         const tdCssObj = window.getComputedStyle(ele.childNodes[1].childNodes[0], null);
         const tdBgColor = tdCssObj.getPropertyValue('background-color');
 
-        result.success = headChildCountFinal === headChildCountOriginal + 1;
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && countSlCss === 3 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10867,7 +11286,15 @@ export class GlobalTestRunner {
         const spanCssObj = window.getComputedStyle(ele.childNodes[1].childNodes[0].childNodes[0], null);
         const spanColor = spanCssObj.getPropertyValue('color');
 
-        result.success = headChildCountFinal === headChildCountOriginal + 1;
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && countSlCss === 3 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10901,7 +11328,15 @@ export class GlobalTestRunner {
         const spanCssObj = window.getComputedStyle(ele.childNodes[1].childNodes[0].childNodes[0], null);
         const spanColor = spanCssObj.getPropertyValue('color');
 
-        result.success = headChildCountFinal === headChildCountOriginal + 1;
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && countSlCss === 3 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10935,7 +11370,15 @@ export class GlobalTestRunner {
         const spanCssObj = window.getComputedStyle(ele.childNodes[1].childNodes[0].childNodes[0], null);
         const spanColor = spanCssObj.getPropertyValue('color');
 
-        result.success = headChildCountFinal === headChildCountOriginal + 1;
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && countSlCss === 4 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10969,7 +11412,15 @@ export class GlobalTestRunner {
         const spanCssObj = window.getComputedStyle(ele.childNodes[1].childNodes[0].childNodes[0], null);
         const spanColor = spanCssObj.getPropertyValue('color');
 
-        result.success = headChildCountFinal === headChildCountOriginal + 1;
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && countSlCss === 3 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
