@@ -6980,6 +6980,85 @@ export class TestSlStyleComponent25 {
     }
 }
 
+export class TestSlStyleComponentQuoted1 {
+    constructor() {
+    }
+
+    slStyle() {
+        return `
+        div a[target="_complex{"], nav {
+            background-color: #cacaca; 
+        }
+        
+        @layer bluetheme {
+            h3[target="_complex{"] {
+                color: blue;
+            }
+
+            @layer bluethemetwo {
+                h3[target="_complex{"], nav[target="_complex{"] {
+                    color: red;
+                }
+            }
+        }
+        
+        @container (min-width: 100px) { 
+            nav[target="_complex{"] { 
+                background-color: #cacaca; 
+            } 
+
+            @layer bluethemetwo {
+                h6[target="_complex{"], nav[target="_complex{"] {
+                    color: red;
+                }
+            }
+
+            figure[target="_complex{"], aside[target="_complex{"] {
+                color: #cacaca;
+            }
+        }
+
+        @media (prefers-color-scheme: light) {
+            background: #ccc;
+
+            nav[target="_complex{"] {
+                color: blue;
+            }
+        }
+
+        @scope (.media-object) {
+            .author-image[target="_complex{"] { 
+                border-radius: 50%; 
+            }
+        }
+        `;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divslstylequoted1'
+            },
+            children: [
+                markup('a', {
+                    attrs: {
+                        target: "_complex{",
+                        slpreventdefault: true
+                    },
+                    children: [
+                        textNode('Styled a')
+                    ]
+                }),
+                markup('nav', {
+                    children: [
+                        textNode('Styled nav')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class TestSlStyleComponent2 {
     constructor() {
     }
@@ -10384,6 +10463,46 @@ export class GlobalTestRunner {
 
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
             && bgColorClean === 'rgb(202, 202, 202)' && countSlCss === 2 && countOpen === countClose + 1;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100SlStyleWithQuotedBraces() {
+        const result = {
+            test: 'test slStyle for parent class for selector with braces and nesting',
+            success: false,
+            message: ''
+        };
+
+        let head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountOriginal = head.childNodes.length;
+
+        mount('divslstylequoted1', new TestSlStyleComponentQuoted1());
+
+        detectChanges();
+
+        head = document.head || document.getElementsByTagName('head')[0];
+        const headChildCountFinal = head.childNodes.length;
+
+        let ele = document.getElementById('divslstylequoted1');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const bgColor = cssObj.getPropertyValue('background-color');
+
+        const navCssObj = window.getComputedStyle(ele.childNodes[1], null);
+        const bgColorClean = navCssObj.getPropertyValue('background-color');
+
+        const styleTags = document.querySelectorAll('style');
+        const lastStyleTag = styleTags[styleTags.length - 1];
+        const textContentStyle = lastStyleTag.textContent;
+
+        const countSlCss = textContentStyle.split('slcss-').length - 1;
+        const countOpen = textContentStyle.split('{').length - 1;
+        const countClose = textContentStyle.split('}').length - 1;
+
+        result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(202, 202, 202)'
+            && bgColorClean === 'rgb(202, 202, 202)' && countSlCss === 12 && countOpen === countClose + 11;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
