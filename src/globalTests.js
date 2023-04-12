@@ -1,5 +1,5 @@
 import { getRouteQueryVariables, setRouteStrategy, renderElementWithoutClass, renderElement, detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll, getRouteSegments, hydrate, renderToString, removeRoute, version, update, setDetectionStrategy, wrapWithChangeDetector, isDetectorAttached, detachDetector, getRoute } from "../dist/sling.min";
-import { FormControl, Observable } from '../dist/sling-reactive.min';
+import { BehaviorSubject, FormControl, Observable } from '../dist/sling-reactive.min';
 
 function _random(max, idx) {
     return Math.round((idx / 100) * 1000) % max;
@@ -5185,6 +5185,35 @@ export class TestSlStyleComponentDifferentTagSlFor {
                         'slfor': 'slstylefor2:data:makeRow:updateRow'
                     }
                 })
+            ]
+        })
+    }
+}
+
+export class SetIntervalTestComponent1 {
+    constructor() {
+        this.sub = BehaviorSubject(0);
+        this.interval = null;
+        this.count = 0;
+    }
+
+    slOnInit() {
+        this.interval = setInterval(() => {
+            this.sub.next(this.sub.getData() + 1);
+            this.count++;
+
+            if (this.count > 2) {
+                clearInterval(this.interval);
+            }
+        }, 500);
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'setintervaltestdiv1'
+            }, children: [
+                textNode(this.sub.getData())
             ]
         })
     }
@@ -12313,6 +12342,34 @@ export class GlobalTestRunner {
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
+    }
+
+    testFinalize105SetInterval() {
+        const result = {
+            test: 'test interval triggers change detection',
+            success: false,
+            message: ''
+        };
+
+        mount('setintervaltestdiv1', new SetIntervalTestComponent1());
+
+        let ele = document.getElementById('setintervaltestdiv1');
+        const initialValue = ele.textContent;
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            ele = document.getElementById('setintervaltestdiv1');
+            const initialValue2 = ele.textContent;
+
+            s.DETACHED_SET_TIMEOUT(() => {
+                ele = document.getElementById('setintervaltestdiv1');
+                const initialValue3 = ele.textContent;
+
+                result.success = initialValue === '0' && initialValue2 === '1' && initialValue3 === '2';
+
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+            }, 600);
+        }, 600);
     }
 
     testFinalize990RouteBasic() {
