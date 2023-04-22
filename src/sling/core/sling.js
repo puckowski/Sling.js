@@ -612,7 +612,9 @@ const removeAfterAnimationIfNeeded = (vNode) => {
                     s._isAnimatingKeyed = null;
 
                     if (!s._router.currentRoute.animateDestroy) {
-                        vNode.remove();
+                        if (s._router.currentRoute && vNode.id !== s._router.currentRoute.root) {
+                            vNode.remove();
+                        }
                         nodeToAnim.onanimationend = animProxy;
                         nodeToAnim.onanimationstart = animStartProxy;
                     } else {
@@ -636,10 +638,14 @@ const removeAfterAnimationIfNeeded = (vNode) => {
                 nodeToAnim.classList.add(classToAdd);
                 vNode.slAnimateDestroy = true;
             } else {
-                vNode.remove();
+                if (s._router.currentRoute && vNode.id !== s._router.currentRoute.root) {
+                    vNode.remove();
+                }
             }
         } else {
-            vNode.remove();
+            if (s._router.currentRoute && vNode.id !== s._router.currentRoute.root) {
+                vNode.remove();
+            }
         }
     } else if (vNode.nodeType !== 3
         && vNode.attributes.slanimatedestroy !== undefined
@@ -663,7 +669,9 @@ const removeAfterAnimationIfNeeded = (vNode) => {
                 result = animProxy.apply(this, [].slice.call(arguments));
             }
 
-            vNode.remove();
+            if (s._router.currentRoute && vNode.id !== s._router.currentRoute.root) {
+                vNode.remove();
+            }
 
             vNode.slAnimationName = null;
             vNode.onanimationend = animProxy;
@@ -676,7 +684,9 @@ const removeAfterAnimationIfNeeded = (vNode) => {
         vNode.classList.add(classToAdd);
         vNode.slAnimateDestroy = true;
     } else if (!vNode.slAnimateDestroy) {
-        vNode.remove();
+        if (s._router.currentRoute && vNode.id !== s._router.currentRoute.root) {
+            vNode.remove();
+        }
     }
 }
 
@@ -984,7 +994,7 @@ const _mountInternal = (target, component, attachDetector) => {
 }
 
 export function version() {
-    return '18.0.0';
+    return '18.0.1';
 }
 
 function xmur3(str) {
@@ -1032,17 +1042,17 @@ const seekToFirstUnquotedChar = (string, charToSeek, startIndex = 0) => {
         }
 
         //if (!opened && !openedDouble) {
-            data += string[i];
+        data += string[i];
         //}
 
         if (charToSeek.length === 1) {
-        if (string[i] === charToSeek && !openedDouble && !opened) {
+            if (string[i] === charToSeek && !openedDouble && !opened) {
+                break;
+            }
+        } else if (string.length > i + charToSeek.length && string.substring(i, i + charToSeek.length) === charToSeek && !openedDouble && !opened) {
+            data += string.substring(i, i + charToSeek.length - 1);
             break;
         }
-    } else if (string.length > i + charToSeek.length && string.substring(i, i+charToSeek.length)===charToSeek && !openedDouble && !opened) {
-        data += string.substring(i, i + charToSeek.length - 1);
-        break;
-    }
     }
 
     return data;
@@ -1135,7 +1145,7 @@ const applyScopedCss = (model, cssText) => {
                 }
 
                 if (openBraceCount == 1) {
-                    startOpenBraceIndex = startOpenBraceIndex + seekToFirstUnquotedChar(matches[i], ';', startOpenBraceIndex).length ;
+                    startOpenBraceIndex = startOpenBraceIndex + seekToFirstUnquotedChar(matches[i], ';', startOpenBraceIndex).length;
 
                     finalCss += matches[i].substring(appendedIndex, startOpenBraceIndex);
                     appendedIndex = startOpenBraceIndex;
@@ -1199,11 +1209,11 @@ const applyScopedCss = (model, cssText) => {
 
                             if (isNestedCount === 0 && countSubstr(unquotedProposedStr, '}') > 0) {
                                 const len = unquotedProposedStr.length;
-                                const evalStr =  unquotedProposedStr.replace(/^}+/, '');
+                                const evalStr = unquotedProposedStr.replace(/^}+/, '');
                                 unclosedBraceCount -= countSubstr(evalStr, '}');
                                 if (unclosedBraceCount >= len - evalStr.length) {
                                     if (unclosedBraceCount !== 1 || openBraceCount !== 1) {
-                                        nestedCloseCount += len - evalStr.length;         
+                                        nestedCloseCount += len - evalStr.length;
                                     }
                                 }
                             }
@@ -1390,7 +1400,7 @@ const applyScopedCss = (model, cssText) => {
             }
 
             if (matches[i].includes('--') && openBraceCount > 1) {
-                let indexCustom =seekToFirstUnquotedChar(matches[i], '--', 0).length;
+                let indexCustom = seekToFirstUnquotedChar(matches[i], '--', 0).length;
                 const beginMatch = matches[i].substring(0, indexCustom);
                 let unquotedBegin = '';
 

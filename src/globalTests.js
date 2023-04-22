@@ -1989,6 +1989,47 @@ export class CssNestingTestComponent8 {
     }
 }
 
+class AnimateUserProfileComponent {
+    constructor() {
+        this.id = "Unknown";
+    }
+
+    slOnInit() {
+        this.id = getRouteSegments()[1];
+    }
+
+    view() {
+        return markup("div", {
+            attrs: {
+                id: "divAnimate2"
+            },
+            children: [textNode("Your user ID: " + this.id)]
+        });
+    }
+}
+
+class AnimateDefaultRouteComponent {
+    slDetachedOnNodeDestroy(node) {
+        return node;
+    }
+
+    view() {
+        return markup("div", {
+            attrs: {
+                id: "divAnimate2",
+                class: "visible",
+                slanimatedestroy: "hide",
+                slanimatedestroytarget: this.slDetachedOnNodeDestroy.bind(this)
+            },
+            children: [
+                markup("div", {
+                    children: [textNode("Default route.")]
+                })
+            ]
+        });
+    }
+}
+
 export class TestRow1 {
     constructor(id, classList, label, onclick, ondelete) {
         this.id = id;
@@ -9655,6 +9696,42 @@ export class GlobalTestRunner {
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
+    }
+
+    testFinalize100AnimateRouteRootNotDestroyed() {
+        const result = {
+            test: 'test animate destroy root not destroyed when reusing same root',
+            success: false,
+            message: ''
+        };
+
+        addRoute("useranim/:userId", {
+            component: new AnimateUserProfileComponent(),
+            root: "divAnimate2",
+            onCanDeactivate: () => {
+                return true;
+            }
+        });
+        addRoute("defaultanim", {
+            component: new AnimateDefaultRouteComponent(),
+            root: "divAnimate2",
+            animateDestroy: true
+        });
+
+        route('defaultanim');
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            route('useranim/5');
+
+            s.DETACHED_SET_TIMEOUT(() => {
+                let ele = document.getElementById('divAnimate2');
+
+                result.success = ele.textContent === 'Your user ID: 5';
+
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+            }, 2250);
+        }, 2250);
     }
 
     testFinalize100SlStyleAtRuleMediaComplexCssWithNesting() {
