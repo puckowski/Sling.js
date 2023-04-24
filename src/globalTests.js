@@ -299,6 +299,47 @@ var Store6 = {
     }
 };
 
+class TestAttributeUserProfileComponent {
+    constructor() {
+        this.id = "Unknown";
+    }
+
+    slOnInit() {
+        this.id = getRouteSegments()[1];
+    }
+
+    view() {
+        return markup("div", {
+            attrs: {
+                id: "divTestAttr1"
+            },
+            children: [textNode("Your user ID: " + this.id)]
+        });
+    }
+}
+
+class TestAttributeDefaultRouteComponent {
+    slDetachedOnNodeDestroy(node) {
+        return node;
+    }
+
+    view() {
+        return markup("div", {
+            attrs: {
+                id: "divTestAttr1",
+                class: "visible",
+                slanimatedestroy: "hide",
+                slanimatedestroytarget: this.slDetachedOnNodeDestroy.bind(this)
+            },
+            children: [
+                markup("div", {
+                    children: [textNode("Default route.")]
+                })
+            ]
+        });
+    }
+}
+
 class TestDestroyAnimateComponent1 {
     constructor() {
         this.hide = false;
@@ -9732,6 +9773,50 @@ export class GlobalTestRunner {
                 window.globalTestCount++;
             }, 2250);
         }, 2250);
+    }
+
+    testFinalize100AnimateRouteAttributesCorrect() {
+        const result = {
+            test: 'test animate destroy attributes are correct',
+            success: false,
+            message: ''
+        };
+
+        addRoute("useranim2/:userId", {
+            component: new TestAttributeUserProfileComponent(),
+            root: "divTestAttr1",
+            onCanDeactivate: () => {
+                return true;
+            }
+        });
+        addRoute("defaultanim2", {
+            component: new TestAttributeDefaultRouteComponent(),
+            root: "divTestAttr1",
+            animateDestroy: true
+        });
+
+        route('defaultanim2');
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            route('useranim2/5');
+
+            let ele = document.getElementById('divTestAttr1');
+
+            const hasDirective = ele.hasAttribute('slanimatedestroy');
+            const hasClass = ele.hasAttribute('class');
+
+            s.DETACHED_SET_TIMEOUT(() => {
+                ele = document.getElementById('divTestAttr1');
+
+                const hasDirective2 = ele.hasAttribute('slanimatedestroy');
+                const hasClass2 = ele.hasAttribute('class');
+
+                result.success = !hasDirective && !hasDirective2 && !hasClass && !hasClass2;
+
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+            }, 2250);
+        }, 500);
     }
 
     testFinalize100SlStyleAtRuleMediaComplexCssWithNesting() {

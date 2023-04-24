@@ -419,17 +419,22 @@ const prepareNodeForDestroyHook = (node, fn) => {
 
 const diffVAttrs = (node, oldAttrs, newAttrs) => {
     let vType;
+    const toRemove = [];
 
     for (let attrib of oldAttrs) {
         let newValue = newAttrs[attrib.name];
         if (!newValue) {
             if (!attrib.name.startsWith('slcss-')) {
-                node.removeAttribute(attrib.nodeName);
+                toRemove.push(attrib.nodeName);
             }
         } else if (newValue.length === attrib.nodeValue.length && newValue === attrib.nodeValue) {
             delete newAttrs[attrib.name];
         }
     }
+
+    toRemove.forEach(remove => {
+        node.removeAttribute(remove);
+    });
 
     const isPreventDefault = newAttrs['slpreventdefault'];
     let appliedPrevention = false;
@@ -994,7 +999,7 @@ const _mountInternal = (target, component, attachDetector) => {
 }
 
 export function version() {
-    return '18.0.1';
+    return '18.1.0';
 }
 
 function xmur3(str) {
