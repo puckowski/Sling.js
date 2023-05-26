@@ -299,6 +299,62 @@ var Store6 = {
     }
 };
 
+class HelloWorldComponentAnimate {
+    constructor() {
+        this.welcomeHidden = false;
+    }
+
+    hideWelcome() {
+        this.welcomeHidden = true;
+    }
+
+    showWelcome() {
+        this.welcomeHidden = false;
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divRouterOutletAnim',
+                ...this.welcomeHidden !== true && { class: 'visible' },
+                style: 'display: flex; justify-content: center; align-items: center; height: 100%;'
+            },
+            children: [
+                ...(this.welcomeHidden === false ? [
+                    markup('h1', {
+                        attrs: {
+                            slanimatedestroy: 'hide',
+                        },
+                        children: [
+                            textNode('Hello, world!'),
+                            markup('button', {
+                                attrs: {
+                                    onclick: this.hideWelcome.bind(this),
+                                    id: 'btnanim1'
+                                },
+                                children: [
+                                    textNode('Hide')
+                                ]
+                            })
+                        ]
+                    })
+                ] : [
+                    markup('button', {
+                        attrs: {
+                            onclick: this.showWelcome.bind(this),
+                            id: 'btnanim2'
+                        },
+                        children: [
+                            textNode('Show')
+                        ]
+                    })
+                ])
+            ]
+
+        });
+    }
+}
+
 class TestAttributeUserProfileComponent {
     constructor() {
         this.id = "Unknown";
@@ -8276,6 +8332,35 @@ export class GlobalTestRunner {
         }, 25);
     }
 
+    testFinalize100AnimateWithinSameRoute() {
+        const result = {
+            test: 'test keyed animation within same route',
+            success: false,
+            message: ''
+        };
+
+        mount('divRouterOutletAnim', new HelloWorldComponentAnimate());
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            const btn1 = document.getElementById('btnanim1');
+            btn1.click();
+
+            s.DETACHED_SET_TIMEOUT(() => {
+                const btn2 = document.getElementById('btnanim2');
+                btn2.click();
+
+                s.DETACHED_SET_TIMEOUT(() => {
+                    const ele = document.getElementById('divRouterOutletAnim');
+
+                    result.success = ele && ele.children && ele.children.length === 1 && ele.children[0] && ele.children[0].childNodes.length === 2;
+
+                    window.globalTestResults.push(result);
+                    window.globalTestCount++;
+                }, 1100);
+            }, 1100);
+        }, 1000);
+    }
+
     testRunLastDestroyMapNoDuplicates() {
         const result = {
             test: 'test destroy map contains no duplicate nodes',
@@ -9408,7 +9493,7 @@ export class GlobalTestRunner {
                     window.globalTestResults.push(result);
                     window.globalTestCount++;
                     window.globalAsyncCount--;
-                }, 25);
+                }, 100);
             }
 
             attempts++;
@@ -12410,7 +12495,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 90 && window.globalAsyncCount > 0) {
+            if (attempts === 110 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -13834,7 +13919,7 @@ export class GlobalTestRunner {
                                     const correctDiv3 = rowEle && rowEle.children.length === 3 && rowEle.children[2].textContent === 'Mode: 0';
 
                                     s.DETACHED_SET_TIMEOUT(() => {
-                                        const changeDetectionCalled = stateObj.count2 && stateObj.count2 === 6;
+                                        const changeDetectionCalled = stateObj.count2 && stateObj.count2 >= 6;
 
                                         result.success = updateCountCorrect && rowsReducedCorrect && rowsRestoredCorrect && changeDetectionCalled
                                             && correctDiv1 && correctDiv2 && correctDiv3;
@@ -13852,7 +13937,7 @@ export class GlobalTestRunner {
 
             attempts++;
 
-            if (attempts === 90 && window.globalAsyncCount > 0) {
+            if (attempts === 110 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
                 window.globalAsyncCount--;

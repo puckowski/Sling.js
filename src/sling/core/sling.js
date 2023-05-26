@@ -588,6 +588,8 @@ const diffVChildren = (oldNode, oldVChildren, newVChildren) => {
 };
 
 const removeAfterAnimationIfNeeded = (vNode) => {
+    const routeCount = s._router.count;
+
     if (vNode['slanimatedestroytarget'] !== undefined && vNode['slanimatedestroytarget'] !== '' && !vNode.slAnimateDestroy
         && vNode.attributes.slanimatedestroy !== undefined && vNode.getAttribute('slanimatedestroy') !== '') {
         const targetFn = vNode['slanimatedestroytarget'];
@@ -619,6 +621,8 @@ const removeAfterAnimationIfNeeded = (vNode) => {
                     if (!s._router.currentRoute.animateDestroy) {
                         if (s._router.currentRoute && vNode.id !== s._router.currentRoute.root) {
                             vNode.remove();
+                        } else if (routeCount === s._router.count) {
+                            vNode.remove();
                         }
                         nodeToAnim.onanimationend = animProxy;
                         nodeToAnim.onanimationstart = animStartProxy;
@@ -645,10 +649,14 @@ const removeAfterAnimationIfNeeded = (vNode) => {
             } else {
                 if (s._router.currentRoute && vNode.id !== s._router.currentRoute.root) {
                     vNode.remove();
+                } else if (routeCount === s._router.count) {
+                    vNode.remove();
                 }
             }
         } else {
             if (s._router.currentRoute && vNode.id !== s._router.currentRoute.root) {
+                vNode.remove();
+            } else if (routeCount === s._router.count) {
                 vNode.remove();
             }
         }
@@ -676,6 +684,8 @@ const removeAfterAnimationIfNeeded = (vNode) => {
 
             if (s._router.currentRoute && vNode.id !== s._router.currentRoute.root) {
                 vNode.remove();
+            } else if (routeCount === s._router.count) {
+                vNode.remove();
             }
 
             vNode.slAnimationName = null;
@@ -690,6 +700,8 @@ const removeAfterAnimationIfNeeded = (vNode) => {
         vNode.slAnimateDestroy = true;
     } else if (!vNode.slAnimateDestroy) {
         if (s._router.currentRoute && vNode.id !== s._router.currentRoute.root) {
+            vNode.remove();
+        } else if (routeCount === s._router.count) {
             vNode.remove();
         }
     }
@@ -999,7 +1011,7 @@ const _mountInternal = (target, component, attachDetector) => {
 }
 
 export function version() {
-    return '18.1.0';
+    return '18.2.0';
 }
 
 function xmur3(str) {
@@ -1743,7 +1755,8 @@ s._router = {
     lastHash: false,
     currentRoute: null,
     mountRoute: '',
-    strategy: '#'
+    strategy: '#',
+    count: 0
 };
 
 Object.seal(s._router);
@@ -1911,6 +1924,7 @@ export function route(routeStr, routeParams = {}, attachDetector = true) {
             }
 
             s._router.lastHash = routeStr;
+            s._router.count++;
 
             const scrollPosition = slContext.pageYOffset;
 
