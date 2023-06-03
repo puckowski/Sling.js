@@ -9463,7 +9463,7 @@ export class GlobalTestRunner {
         }, 500);
     }
 
-    testFinalize100DetachedFunctionInAutomaticMode() {
+    testFinalize999DetachedFunctionInAutomaticMode() {
         const result = {
             test: 'test detached bound function in automatic mode',
             success: false,
@@ -9493,12 +9493,12 @@ export class GlobalTestRunner {
                     window.globalTestResults.push(result);
                     window.globalTestCount++;
                     window.globalAsyncCount--;
-                }, 100);
+                }, 19);
             }
 
             attempts++;
 
-            if (attempts === 90 && window.globalAsyncCount > 0) {
+            if (attempts === 120 && window.globalAsyncCount > 0) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
 
@@ -9508,7 +9508,7 @@ export class GlobalTestRunner {
         }, 500);
     }
 
-    testFinalize100DetachedFunctionInAutomaticModeWithoutBind() {
+    testFinalize998DetachedFunctionInAutomaticModeWithoutBind() {
         const result = {
             test: 'test detached function in automatic mode',
             success: false,
@@ -9538,7 +9538,7 @@ export class GlobalTestRunner {
                     window.globalTestResults.push(result);
                     window.globalTestCount++;
                     window.globalAsyncCount--;
-                }, 25);
+                }, 19);
             }
 
             attempts++;
@@ -12440,7 +12440,7 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
-    testFinalize100ManualChangeDetection() {
+    testFinalize998ManualChangeDetection() {
         const result = {
             test: 'test delete with manual change detection mode',
             success: false,
@@ -12486,7 +12486,7 @@ export class GlobalTestRunner {
                                     window.globalTestResults.push(result);
                                     window.globalTestCount++;
                                     window.globalAsyncCount--;
-                                }, 100);
+                                }, 19);
                             }
                         }
                     }
@@ -13830,8 +13830,8 @@ export class GlobalTestRunner {
                         window.globalTestResults.push(result);
                         window.globalTestCount++;
                         window.globalAsyncCount--;
-                    }, 100);
-                }, 100);
+                    }, 19);
+                }, 19);
             }
 
             attempts++;
@@ -13870,7 +13870,7 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
-    testFinalize950RebindDetection() {
+    testFinalize996RebindDetection() {
         const result = {
             test: 'test rebinding change detection to bound functions',
             success: false,
@@ -13927,12 +13927,12 @@ export class GlobalTestRunner {
                                         window.globalTestResults.push(result);
                                         window.globalTestCount++;
                                         window.globalAsyncCount--;
-                                    }, 25);
-                                }, 25);
-                            }, 25);
-                        }, 25);
-                    }, 25);
-                }, 25);
+                                    }, 19);
+                                }, 19);
+                            }, 19);
+                        }, 19);
+                    }, 19);
+                }, 19);
             }
 
             attempts++;
@@ -14247,7 +14247,7 @@ export class GlobalTestRunner {
         }, 500);
     }
 
-    testFinalize960RebindDetection() {
+    testFinalize997RebindDetection() {
         const result = {
             test: 'test rebinding change detection to bound functions with complex markup',
             success: false,
@@ -14305,11 +14305,11 @@ export class GlobalTestRunner {
                                     window.globalTestResults.push(result);
                                     window.globalTestCount++;
                                     window.globalAsyncCount--;
-                                }, 200);
-                            }, 200);
-                        }, 200);
-                    }, 200);
-                }, 200);
+                                }, 19);
+                            }, 19);
+                        }, 19);
+                    }, 19);
+                }, 19);
             }
 
             attempts++;

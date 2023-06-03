@@ -1011,7 +1011,7 @@ const _mountInternal = (target, component, attachDetector) => {
 }
 
 export function version() {
-    return '18.2.0';
+    return '18.2.1';
 }
 
 function xmur3(str) {
@@ -1924,7 +1924,6 @@ export function route(routeStr, routeParams = {}, attachDetector = true) {
             }
 
             s._router.lastHash = routeStr;
-            s._router.count++;
 
             const scrollPosition = slContext.pageYOffset;
 
@@ -1981,6 +1980,8 @@ export function route(routeStr, routeParams = {}, attachDetector = true) {
                 setUrlSegments();
                 s._router.currentRoute = value;
             }
+
+            s._router.count++;
 
             if (value.component) {
                 // Set new destroy functions
