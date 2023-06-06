@@ -11,6 +11,7 @@ Scoped CSS may be applied to a class by specifying a ```slStyle``` function whic
 - Media Queries (https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries)
 - Layers (https://developer.mozilla.org/en-US/docs/Web/CSS/@layer)
 - Keyframe Animations (https://developer.mozilla.org/en-US/docs/Web/CSS/@keyframes)
+- @scope at-rule (https://chromestatus.com/feature/5100672734199808)
 
 ### Not Supported
 
