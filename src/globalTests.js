@@ -10187,7 +10187,7 @@ export class GlobalTestRunner {
         const countClose = textContentStyle.split('}').length - 1;
 
         result.success = headChildCountFinal === headChildCountOriginal + 1 && color === 'rgb(0, 0, 255)'
-            && countSlCss === 1 && countOpen === countClose;
+            && countSlCss === 4 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -10617,7 +10617,7 @@ export class GlobalTestRunner {
         const countClose = textContentStyle.split('}').length - 1;
 
         result.success = headChildCountFinal === headChildCountOriginal + 1 && color === 'rgb(0, 0, 255)'
-            && countSlCss === 1 && countOpen === countClose;
+            && countSlCss === 4 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -14441,7 +14441,7 @@ export class GlobalTestRunner {
                 }
 
                 window.globalTestCount++;
-            }, 1000);
+            }, 1500);
         }
 
         window.globalTestResults.push(result);

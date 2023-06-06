@@ -1011,7 +1011,7 @@ const _mountInternal = (target, component, attachDetector) => {
 }
 
 export function version() {
-    return '18.2.1';
+    return '18.3.0';
 }
 
 function xmur3(str) {
@@ -1236,7 +1236,7 @@ const applyScopedCss = (model, cssText) => {
                             }
 
                             let countOpen = countSubstr(unquotedProposedStr, '{') - countSubstr(unquotedProposedStr, '}');
-                            let regex = /(@layer|@container|@media)[^{]*\{/g;
+                            let regex = /(@layer|@container|@media|@scope)[^{]*\{/g;
                             let matches = unquotedProposedStr.replace(/\s/g, '').match(regex);
                             const openLayerCount = matches ? matches.length : 0;
                             countOpen -= isNestedCount > 0 ? 0 : openLayerCount;
