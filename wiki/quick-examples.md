@@ -150,7 +150,7 @@ mount("divRouterOutlet", new HelloWorldComponent());
 </html>
 ```
 
-### Routing
+## Routing
 
 ```javascript
 import {
