@@ -348,3 +348,45 @@ dialog{background-color:var(--background500);color:var(--foreground500);border:n
 
 </html>
 ```
+
+## Promise Change Detection
+
+```javascript
+import {
+  mount,
+  textNode,
+  markup,
+  enableDetectOnThen
+} from "https://cdn.skypack.dev/slingjs";
+import { slGet } from "https://cdn.jsdelivr.net/npm/slingjs@18.4.0/sling-xhr.min.js";
+
+class HelloWorldComponent {
+  constructor() {
+    this.data = "";
+  }
+
+  slAfterInit() {
+    slGet("https://www.apimock.live").then((xhrResp) => {
+      this.data = xhrResp.response;
+    });
+  }
+
+  view() {
+    return markup("div", {
+      attrs: {
+        id: "divRouterOutlet",
+        style:
+          "display: flex; justify-content: center; align-items: center; height: 100%;"
+      },
+      children: [textNode(this.data)]
+    });
+  }
+}
+
+enableDetectOnThen();
+mount("divRouterOutlet", new HelloWorldComponent());
+```
+
+```html
+<html><body><div id="divRouterOutlet"></div></body></html>
+```
