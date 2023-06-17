@@ -2,7 +2,7 @@
 
 # Sling
 
-Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **28KB minified, and less than 9KB gzipped**.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **29KB minified, and less than 9KB gzipped**.
 
 Sling creates and uses an Incremental DOM to perform differential updates for fast rendering.
 
@@ -1058,6 +1058,11 @@ Valid options for ```optionsObject``` are listed in the table below.
 |Key              |Purpose                          |Usage                     |
 |-----------------|---------------------------------|--------------------------|
 |slpreventdefault |Prevent default on Event object. |slpreventdefault: true    |
+
+## enableDetectOnThen
+__void enableDetectOnThen ( )__
+
+Enable automatic change detection for every successful Promise resolve.
 
 # XHR API
 

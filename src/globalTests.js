@@ -1,5 +1,6 @@
-import { getRouteQueryVariables, setRouteStrategy, renderElementWithoutClass, renderElement, detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll, getRouteSegments, hydrate, renderToString, removeRoute, version, update, setDetectionStrategy, wrapWithChangeDetector, isDetectorAttached, detachDetector, getRoute } from "../dist/sling.min";
+import { getRouteQueryVariables, setRouteStrategy, enableDetectOnThen, renderElementWithoutClass, renderElement, detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll, getRouteSegments, hydrate, renderToString, removeRoute, version, update, setDetectionStrategy, wrapWithChangeDetector, isDetectorAttached, detachDetector, getRoute } from "../dist/sling.min";
 import { BehaviorSubject, FormControl, Observable } from '../dist/sling-reactive.min';
+import { slGet } from '../dist/sling-xhr.min';
 
 function _random(max, idx) {
     return Math.round((idx / 100) * 1000) % max;
@@ -7460,6 +7461,33 @@ export class TestSlDetachedInAutomaticMode2 {
     }
 }
 
+export class TestThenDetectComponent1 {
+    constructor() {
+        this.data = '';
+    }
+
+    slAfterInit() {
+        slGet('https://www.apimock.live').then(xhrResp => {
+            this.data = xhrResp.response;
+
+            if (this.data.length > 50) {
+                this.data = this.data.substring(0, 50);
+            }
+        });
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                'id': 'divdetectthen1'
+            },
+            children: [
+                textNode(this.data)
+            ]
+        })
+    }
+}
+
 export class TestKeyedHideAnimation1 {
     constructor() {
         this.list = ['a', 'b', 'c'];
@@ -9331,6 +9359,27 @@ export class GlobalTestRunner {
         }, 500);
     }
 
+    manualTestDetectOnThen() {
+        const result = {
+            test: 'test change detection runs after Promise.then',
+            success: false,
+            message: ''
+        };
+
+        enableDetectOnThen();
+
+        mount('divdetectthen1', new TestThenDetectComponent1());
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            const ele = document.getElementById('divdetectthen1');
+
+            result.success = ele && ele.textContent && ele.textContent.length > 0;
+
+            window.globalTestResults.push(result);
+            window.globalTestCount++;
+        }, 1000);
+    }
+
     testFinalize100SlStyleReapply() {
         const result = {
             test: 'test slStyle reapply for same component',
@@ -9463,7 +9512,7 @@ export class GlobalTestRunner {
         }, 500);
     }
 
-    testFinalize999DetachedFunctionInAutomaticMode() {
+    testFinalize997DetachedFunctionInAutomaticMode() {
         const result = {
             test: 'test detached bound function in automatic mode',
             success: false,
@@ -9824,7 +9873,7 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
-    testFinalize100AnimateRouteRootNotDestroyed() {
+    testFinalize999AnimateRouteRootNotDestroyed() {
         const result = {
             test: 'test animate destroy root not destroyed when reusing same root',
             success: false,
@@ -12591,7 +12640,7 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
-    testFinalize105SetInterval() {
+    testFinalize998SetInterval() {
         const result = {
             test: 'test interval triggers change detection',
             success: false,
@@ -14441,7 +14490,7 @@ export class GlobalTestRunner {
                 }
 
                 window.globalTestCount++;
-            }, 1500);
+            }, 2000);
         }
 
         window.globalTestResults.push(result);
@@ -15651,7 +15700,7 @@ export class GlobalTestRunner {
         let checkCount = 0;
         let startTime = new Date();
 
-        const checkInterval = s.DETACHED_SET_INTERVAL(() => {
+        const checkInterval = s.DETACHED_SET_INTERVAL(async () => {
             if (window.globalTestCount === testCount) {
                 this.manualTestCheckSpanStyling();
                 testCount++;
@@ -15662,9 +15711,13 @@ export class GlobalTestRunner {
                 this.manualTestCheckNavbarImageDimensions();
                 testCount++;
 
+                this.manualTestDetectOnThen();
+                clearInterval(checkInterval);
+                await this.sleep(1150);
+                testCount++;
+
                 this.removeProcessing();
                 this.createResultList(new Date() - startTime);
-                clearInterval(checkInterval);
                 this.removeRunTestsButton();
             }
 

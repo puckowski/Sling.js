@@ -1011,7 +1011,7 @@ const _mountInternal = (target, component, attachDetector) => {
 }
 
 export function version() {
-    return '18.3.0';
+    return '18.4.0';
 }
 
 function xmur3(str) {
@@ -2161,6 +2161,19 @@ export function isDetectorAttached(checkEleId) {
 
 export function detachDetector(eleId) {
     s._updateMap.delete(eleId);
+}
+
+const originalThen = Promise.prototype.then;
+
+export function enableDetectOnThen() {
+    Promise.prototype.then = function (onFulfill, onReject) {
+        const wrappedOnFulfill = (result) => {
+            _performChangeDetection();
+            return onFulfill(result);
+        };
+
+        return originalThen.call(this, wrappedOnFulfill, onReject);
+    };
 }
 
 export function wrapWithChangeDetector(func, config) {
