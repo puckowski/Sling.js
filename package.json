@@ -9,10 +9,11 @@
     "build": "webpack --mode development",
     "buildProd": "webpack --mode production",
     "devServer": "webpack-dev-server --content-base dist/",
-    "buildAll": "npm run buildSlingCore && npm run buildSlingXhr && npm run buildSlingReactive && npm run buildEs5 && npm run buildEs5Min && npm run buildBrowser && npm run buildProd",
+    "buildAll": "npm run buildSlingCore && npm run buildSlingXhr && npm run buildSlingReactive && npm run buildEs5 && npm run buildEs5Min && npm run buildBrowser && npm run buildSlingCoreSlim && npm run buildProd",
     "buildEs5": "babel .\\dist\\sling.min.js --out-file .\\dist\\sling.es5.js --presets=@babel/preset-env",
     "buildEs5Min": "terser --compress --mangle toplevel,reserved=['m'] --output .\\dist\\sling.min.es5.js -- .\\dist\\sling.es5.js",
     "buildSlingCore": "terser --toplevel --compress --mangle toplevel,reserved=['m'] --output .\\dist\\sling.min.js -- .\\src\\sling\\core\\sling.js",
+    "buildSlingCoreSlim": "terser --toplevel --compress --mangle toplevel,reserved=['m'] --output .\\dist\\sling.slim.min.js -- .\\src\\sling\\core\\sling.slim.js",
     "buildSlingXhr": "terser --compress --mangle toplevel --output .\\dist\\sling-xhr.min.js -- .\\src\\sling\\xhr\\sling-xhr.js",
     "buildSlingReactive": "terser --compress --mangle toplevel --output .\\dist\\sling-reactive.min.js -- .\\src\\sling\\reactive\\sling-reactive.js"
   },
