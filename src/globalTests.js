@@ -9906,7 +9906,7 @@ export class GlobalTestRunner {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
             }, 2250);
-        }, 2250);
+        }, 1950);
     }
 
     testFinalize100AnimateRouteAttributesCorrect() {
