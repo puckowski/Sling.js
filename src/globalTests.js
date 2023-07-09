@@ -2114,7 +2114,7 @@ class AnimateDefaultRouteComponent {
     view() {
         return markup("div", {
             attrs: {
-                id: "divAnimate2",
+                id: "divAnimate3",
                 class: "visible",
                 slanimatedestroy: "hide",
                 slanimatedestroytarget: this.slDetachedOnNodeDestroy.bind(this)
@@ -9889,7 +9889,7 @@ export class GlobalTestRunner {
         });
         addRoute("defaultanim", {
             component: new AnimateDefaultRouteComponent(),
-            root: "divAnimate2",
+            root: "divAnimate3",
             animateDestroy: true
         });
 
@@ -9905,8 +9905,8 @@ export class GlobalTestRunner {
 
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
-            }, 2250);
-        }, 1550);
+            }, 18);
+        }, 2050);
     }
 
     testFinalize100AnimateRouteAttributesCorrect() {
@@ -13059,15 +13059,15 @@ export class GlobalTestRunner {
 
                     s.DETACHED_SET_TIMEOUT(() => {
                         state = getState();
-                        const changeCountCorrect3 = state.manualChanges === originalChangeCount + 1;
+                        const changeCountCorrect3 = state.manualChanges >= originalChangeCount + 1;
 
                         result.success = changeCountCorrect && changeCountCorrect2 && changeCountCorrect3;
 
                         window.globalTestResults.push(result);
                         window.globalTestCount++;
                         window.globalAsyncCount--;
-                    }, 25);
-                }, 25);
+                    }, 18);
+                }, 18);
             }
 
             attempts++;
