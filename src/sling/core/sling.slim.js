@@ -592,8 +592,10 @@ const removeAfterAnimationIfNeeded = (vNode) => {
                     if (!s._router.currentRoute.animateDestroy) {
                         if (s._router.currentRoute && vNode.id !== s._router.currentRoute.root) {
                             vNode.remove();
+                            s._updateMap.delete(vNode.id);
                         } else if (routeCount === s._router.count) {
                             vNode.remove();
+                            s._updateMap.delete(vNode.id);
                         }
                         nodeToAnim.onanimationend = animProxy;
                         nodeToAnim.onanimationstart = animStartProxy;
@@ -620,15 +622,19 @@ const removeAfterAnimationIfNeeded = (vNode) => {
             } else {
                 if (s._router.currentRoute && vNode.id !== s._router.currentRoute.root) {
                     vNode.remove();
+                    s._updateMap.delete(vNode.id);
                 } else if (routeCount === s._router.count) {
                     vNode.remove();
+                    s._updateMap.delete(vNode.id);
                 }
             }
         } else {
             if (s._router.currentRoute && vNode.id !== s._router.currentRoute.root) {
                 vNode.remove();
+                s._updateMap.delete(vNode.id);
             } else if (routeCount === s._router.count) {
                 vNode.remove();
+                s._updateMap.delete(vNode.id);
             }
         }
     } else if (vNode.nodeType !== 3
@@ -655,8 +661,10 @@ const removeAfterAnimationIfNeeded = (vNode) => {
 
             if (s._router.currentRoute && vNode.id !== s._router.currentRoute.root) {
                 vNode.remove();
+                s._updateMap.delete(vNode.id);
             } else if (routeCount === s._router.count) {
                 vNode.remove();
+                s._updateMap.delete(vNode.id);
             }
 
             vNode.slAnimationName = null;
@@ -672,8 +680,10 @@ const removeAfterAnimationIfNeeded = (vNode) => {
     } else if (!vNode.slAnimateDestroy) {
         if (s._router.currentRoute && vNode.id !== s._router.currentRoute.root) {
             vNode.remove();
+            s._updateMap.delete(vNode.id);
         } else if (routeCount === s._router.count) {
             vNode.remove();
+            s._updateMap.delete(vNode.id);
         }
     }
 }
@@ -952,7 +962,7 @@ const _mountInternal = (target, component, attachDetector) => {
 }
 
 export function version() {
-    return '18.4.1';
+    return '18.4.2';
 }
 
 export function resolveAll(promiseArr) {
