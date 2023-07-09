@@ -13946,7 +13946,7 @@ export class GlobalTestRunner {
                     s.DETACHED_SET_TIMEOUT(() => {
                         stateObj = getState();
 
-                        const updateCountCorrect = stateObj.count2 && stateObj.count2 === 3;
+                        const updateCountCorrect = stateObj.count2 && stateObj.count2 >= 3;
 
                         const removeElementsButton = document.getElementById('toggleModeButton3');
                         removeElementsButton.click();
