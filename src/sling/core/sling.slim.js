@@ -953,13 +953,14 @@ const _mountInternal = (target, component, attachDetector) => {
         prepareNodeForDestroyHook(target, component.slOnDestroy.bind(component));
     }
 
-    const refs = target.querySelectorAll('[slref]');
+    let refs = target.querySelectorAll('[slref]');
     if (target.slref !== undefined) {
+        refs = Array.from(refs);
         refs.push(target);
     }
     for (let index = 0; index < refs.length; ++index) {
         const slrefValue = refs[index].getAttribute('slref');
-        slrefValue = refs[index].slref;
+        component[slrefValue] = refs[index].slref;
     }
 
     if (component.slAfterInit) {
@@ -975,7 +976,7 @@ const _mountInternal = (target, component, attachDetector) => {
 }
 
 export function version() {
-    return '19.0.0';
+    return '19.0.1';
 }
 
 export function resolveAll(promiseArr) {
@@ -1037,13 +1038,14 @@ export function update(rootEl, component) {
         rootEl = diffVDom(rootEl, vNewApp, component);
     }
 
-    const refs = rootEl.querySelectorAll('[slref]');
+    let refs = rootEl.querySelectorAll('[slref]');
     if (rootEl.slref !== undefined) {
-        refs.push(target);
+        refs = Array.from(refs);
+        refs.push(rootEl);
     }
     for (let index = 0; index < refs.length; ++index) {
         const slrefValue = refs[index].getAttribute('slref');
-        slrefValue = refs[index].slref;
+        component[slrefValue] = refs[index].slref;
     }
 
     s._afterInitArr.forEach((afterInitFn) => {
