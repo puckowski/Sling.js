@@ -417,6 +417,10 @@ const diffVAttrs = (node, oldAttrs, newAttrs) => {
         node.removeAttribute(remove);
     });
 
+    if (newAttrs.slref !== undefined) {
+        node.slref = node;
+    }
+
     const isPreventDefault = newAttrs['slpreventdefault'];
     let appliedPrevention = false;
 
@@ -949,6 +953,15 @@ const _mountInternal = (target, component, attachDetector) => {
         prepareNodeForDestroyHook(target, component.slOnDestroy.bind(component));
     }
 
+    const refs = target.querySelectorAll('[slref]');
+    if (target.slref !== undefined) {
+        refs.push(target);
+    }
+    for (let index = 0; index < refs.length; ++index) {
+        const slrefValue = refs[index].getAttribute('slref');
+        slrefValue = refs[index].slref;
+    }
+
     if (component.slAfterInit) {
         component.slAfterInit();
         _performChangeDetection();
@@ -962,7 +975,7 @@ const _mountInternal = (target, component, attachDetector) => {
 }
 
 export function version() {
-    return '18.4.2';
+    return '19.0.0';
 }
 
 export function resolveAll(promiseArr) {
@@ -1022,6 +1035,15 @@ export function update(rootEl, component) {
         let vNewApp = component.view.bind(component)();
         applyModelForStructuralDirectives(vNewApp, component);
         rootEl = diffVDom(rootEl, vNewApp, component);
+    }
+
+    const refs = rootEl.querySelectorAll('[slref]');
+    if (rootEl.slref !== undefined) {
+        refs.push(target);
+    }
+    for (let index = 0; index < refs.length; ++index) {
+        const slrefValue = refs[index].getAttribute('slref');
+        slrefValue = refs[index].slref;
     }
 
     s._afterInitArr.forEach((afterInitFn) => {

@@ -10,6 +10,7 @@ Structural directives modify interactions with the DOM layout.
 |```trustchildren```|Structural|Render HTML string children.                                      |
 |```slfor```        |Structural|Render a named list using a node factory and an update function.  |
 |```slfornamed```        |Structural|Render a named list using a node factory and an update function. This directive may be used instead of ```slfor``` where function names are minified in builds.  |
+|```slref```     |Structural|Store the DOM node reference in the component variable name.         |
 
 Attribute directives change the appearance or behavior of a DOM element.
 
@@ -312,6 +313,39 @@ export class TestKeyedHideAnimation1 {
                 })
             ]
         });
+    }
+}
+```
+
+Below is an example of ```slref``` directive usage.
+
+```javascript
+export class TestRefComponent1 {
+
+    constructor() {
+        this.ref1 = null;
+    }
+
+    slAfterInit() {
+        const state = getState();
+        state.ref1 = this.ref1 !== null && this.ref1 !== undefined && this.ref1.id === 'divtestrefcomp1';
+        setState(state);
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divtestrefcomp1',
+                slref: 'ref1'
+            },
+            children: [
+                markup('button', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                })
+            ]
+        })
     }
 }
 ```

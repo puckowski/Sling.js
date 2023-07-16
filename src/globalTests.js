@@ -720,6 +720,35 @@ export class AnimateKeyframesComponent6 {
     }
 }
 
+export class TestRefComponent1 {
+
+    constructor() {
+        this.ref1 = null;
+    }
+
+    slAfterInit() {
+        const state = getState();
+        state.ref1 = this.ref1 !== null && this.ref1 !== undefined && this.ref1.id === 'divtestrefcomp1';
+        setState(state);
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divtestrefcomp1',
+                slref: 'ref1'
+            },
+            children: [
+                markup('button', {
+                    children: [
+                        textNode('Hello, world!')
+                    ]
+                })
+            ]
+        })
+    }
+}
+
 export class AtRuleMediaComponent1 {
 
     slStyle() {
@@ -12671,6 +12700,26 @@ export class GlobalTestRunner {
     testFinalize990RouteBasic() {
         const result = {
             test: 'test basic route with parameter',
+            success: false,
+            message: ''
+        };
+
+        mount('divtestrefcomp1', new TestRefComponent1());
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            const ref = s._updateMap.get('divtestrefcomp1').ref1;
+            const state = getState();
+
+            result.success = state.ref1 && ref !== null && ref !== undefined && ref.id === 'divtestrefcomp1';
+
+            window.globalTestResults.push(result);
+            window.globalTestCount++;
+        }, 18);
+    }
+
+    testFinalize990WithSimpleRef() {
+        const result = {
+            test: 'test simple reference',
             success: false,
             message: ''
         };
