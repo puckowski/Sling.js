@@ -276,12 +276,13 @@ Structural directives modify interactions with the DOM layout.
 
 |Directive            |Type      |Behavior                                                       |
 |---------------------|----------|---------------------------------------------------------------|
-|```useexisting```  |Structural|Create the element or, if it exists, use the existing element.    |
-|```onlychildren``` |Structural|Only perform change detection on element's children.              |
-|```onlyself```     |Structural|Only perform change detection on the element and not children.    |
-|```trustchildren```|Structural|Render HTML string children.                                      |
-|```slfor```        |Structural|Render a named list using a node factory and an update function.  |
-|```slfornamed```        |Structural|Render a named list using a node factory and an update function. This directive may be used instead of ```slfor``` where function names are minified in builds.  |
+|```useexisting```    |Structural|Create the element or, if it exists, use the existing element.    |
+|```onlychildren```   |Structural|Only perform change detection on element's children.              |
+|```onlyself```       |Structural|Only perform change detection on the element and not children.    |
+|```trustchildren```  |Structural|Render HTML string children.                                      |
+|```slfor```          |Structural|Render a named list using a node factory and an update function.  |
+|```slfornamed```     |Structural|Render a named list using a node factory and an update function. This directive may be used instead of ```slfor``` where function names are minified in builds.  |
+|```slref```          |Structural|Store the DOM node reference in the component. Takes in variable name. |
 
 Attribute directives change the appearance or behavior of a DOM element.
 
