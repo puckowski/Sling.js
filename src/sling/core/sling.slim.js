@@ -976,7 +976,7 @@ const _mountInternal = (target, component, attachDetector) => {
 }
 
 export function version() {
-    return '19.0.1';
+    return '19.0.2';
 }
 
 export function resolveAll(promiseArr) {
@@ -1508,7 +1508,7 @@ export function enableDetectOnThen() {
     Promise.prototype.then = function (onFulfill, onReject) {
         const wrappedOnFulfill = (result) => {
             _performChangeDetection();
-            return onFulfill(result);
+            return typeof onFulfill === 'function' && onFulfill instanceof Function ? onFulfill(result) : onFulfill;
         };
 
         return originalThen.call(this, wrappedOnFulfill, onReject);

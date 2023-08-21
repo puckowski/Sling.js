@@ -1,6 +1,6 @@
 import NoteService from '../services/note.service.js';
 
-import { getState, textNode, markup, getRouteSegments, route } from '../../../dist/sling.min';
+import { getState, textNode, markup, getRouteSegments, route } from '../../../dist_sling/sling.min';
 
 class TodoListNavComponent {
 

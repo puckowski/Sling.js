@@ -1,4 +1,4 @@
-import { textNode, markup } from '../../../dist/sling.min';
+import { textNode, markup } from '../../../dist_sling/sling.min';
 
 class TodoHeaderComponent {
 

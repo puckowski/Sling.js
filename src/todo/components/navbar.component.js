@@ -1,4 +1,4 @@
-import { markup, textNode, version } from '../../../dist/sling.min';
+import { markup, textNode, version } from '../../../dist_sling/sling.min';
 
 class NavbarComponent {
 

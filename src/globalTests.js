@@ -1,6 +1,6 @@
-import { getRouteQueryVariables, setRouteStrategy, enableDetectOnThen, renderElementWithoutClass, renderElement, detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll, getRouteSegments, hydrate, renderToString, removeRoute, version, update, setDetectionStrategy, wrapWithChangeDetector, isDetectorAttached, detachDetector, getRoute } from "../dist/sling.min";
-import { BehaviorSubject, FormControl, Observable } from '../dist/sling-reactive.min';
-import { slGet } from '../dist/sling-xhr.min';
+import { getRouteQueryVariables, setRouteStrategy, enableDetectOnThen, renderElementWithoutClass, renderElement, detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll, getRouteSegments, hydrate, renderToString, removeRoute, version, update, setDetectionStrategy, wrapWithChangeDetector, isDetectorAttached, detachDetector, getRoute } from "../dist_sling/sling.min";
+import { BehaviorSubject, FormControl, Observable } from '../dist_sling/sling-reactive.min';
+import { slGet } from '../dist_sling/sling-xhr.min';
 
 function _random(max, idx) {
     return Math.round((idx / 100) * 1000) % max;
@@ -14986,7 +14986,7 @@ export class GlobalTestRunner {
         const bCorrect = params.b && params.b === true;
         const cCorrect = params.c && params.c === 'abc';
         const dCorrect = params.d && params.d === 3.14;
-        const eCorrect = params.e && params.e.toString().replace(/\s+/g, '') === "()=>{console.log('hello');}";
+        const eCorrect = params.e && params.e.toString().replace(/\s+/g, '').replace(/["';]/g, '') === "()=>{console.log(hello)}";
 
         result.success = aCorrect && bCorrect && cCorrect && dCorrect && eCorrect;
 
@@ -15103,7 +15103,7 @@ export class GlobalTestRunner {
         const correctA = newState.a && newState.a === 1;
         const correctB = newState.b && newState.b === 'abc';
         const correctC = newState.c !== null && newState.c !== undefined && newState.c === false;
-        const correctD = newState.d && newState.d.toString().replace(/\s+/g, '') === '() => console.log(\'hello\')'.replace(/\s+/g, '');
+        const correctD = newState.d && newState.d.toString().replace(/\s+/g, '').replace(/["';]/g, '') === '()=>console.log(hello)'.replace(/\s+/g, '');
         const correctE = newState.e && newState.e === 3.14;
 
         result.success = correctA && correctB && correctC && correctD && correctE;
