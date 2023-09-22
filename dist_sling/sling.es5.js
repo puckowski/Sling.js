@@ -487,7 +487,7 @@ var l = function l(_ref3) {
       }
     }
     var r;
-    if (e && e.slStyle && (r = t.style.display, t.style.display = "none"), e && e.view) {
+    if (e && e.slStyle && (r = t.style.display, t.style.display = "hidden"), e && e.view) {
       var _n16 = d(e, !1, !1, !1, t);
       e = _n16.view;
       var _r6 = Object.getPrototypeOf(_n16.model);

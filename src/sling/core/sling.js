@@ -782,7 +782,7 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
 
     if (vNewNode && vNewNode.slStyle) {
         oldDisplay = vOldNode.style.display;
-        vOldNode.style.display = 'none';
+        vOldNode.style.display = 'hidden';
     }
 
     if (vNewNode && vNewNode.view) {
