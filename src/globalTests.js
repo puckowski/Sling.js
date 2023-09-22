@@ -15762,7 +15762,7 @@ export class GlobalTestRunner {
 
                 this.manualTestDetectOnThen();
                 clearInterval(checkInterval);
-                await this.sleep(1150);
+                await this.sleep(1750);
                 testCount++;
 
                 this.removeProcessing();

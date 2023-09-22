@@ -1,6 +1,6 @@
 {
   "name": "sling.js",
-  "version": "19.0.0",
+  "version": "20.0.0",
   "description": "Client-side JavaScript framework for building Single Page Applications.",
   "main": "index.js",
   "scripts": {

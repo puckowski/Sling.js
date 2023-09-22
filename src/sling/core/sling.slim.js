@@ -976,7 +976,7 @@ const _mountInternal = (target, component, attachDetector) => {
 }
 
 export function version() {
-    return '19.0.2';
+    return '20.0.0';
 }
 
 export function resolveAll(promiseArr) {

@@ -731,11 +731,12 @@ const deepFunctions = x =>
 const distinctDeepFunctions = x => Array.from(new Set(deepFunctions(x)));
 const userFunctions = x => distinctDeepFunctions(x).filter(name => name !== "constructor" && !~name.indexOf("__"));
 
-const checkForScopedCss = (target, component) => {
+const checkForScopedCss = (target, component, oldDisplayValue = '') => {
     if (component.slStyle && !target.slScopedCss) {
         const identifier = applyScopedCss(component, component.slStyle());
         applyScopedCssIdentifier(target, identifier);
         target.slScopedCss = true;
+        target.style.display = oldDisplayValue;
     }
 }
 
@@ -775,6 +776,13 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
                 return vOldNode;
             }
         }
+    }
+
+    let oldDisplay;
+
+    if (vNewNode && vNewNode.slStyle) {
+        oldDisplay = vOldNode.style.display;
+        vOldNode.style.display = 'none';
     }
 
     if (vNewNode && vNewNode.view) {
@@ -830,7 +838,7 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
     if (vOldNode && vOldNode.tagName !== vNewNode.tagName) {
         if (vNewNode.tagName) {
             let el = document.createElement(vNewNode.tagName);
-            checkForScopedCss(el, vNewNode);
+            checkForScopedCss(el, vNewNode, oldDisplay);
             vOldNode.parentNode.insertBefore(el, vOldNode);
             removeFromDestroyList(vOldNode);
             callAllDestroyHooks(vOldNode);
@@ -855,7 +863,7 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
 
     switch (vNewNode.attrs.sldirective) {
         case 'useexisting': {
-            checkForScopedCss(vOldNode, vNewNode);
+            checkForScopedCss(vOldNode, vNewNode, oldDisplay);
 
             return vOldNode;
         }
@@ -866,13 +874,13 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
         }
         case 'onlyself': {
             diffVAttrs(vOldNode, vOldNode.attributes, vNewNode.attrs);
-            checkForScopedCss(vOldNode, vNewNode);
+            checkForScopedCss(vOldNode, vNewNode, oldDisplay);
 
             return vOldNode;
         }
         case 'trustchildren': {
             diffVAttrs(vOldNode, vOldNode.attributes, vNewNode.attrs);
-            checkForScopedCss(vOldNode, vNewNode);
+            checkForScopedCss(vOldNode, vNewNode, oldDisplay);
 
             let newHtml = '';
             vNewNode.children.forEach(childHtml => {
@@ -916,7 +924,7 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
         }
 
         diffVAttrs(vOldNode, vOldNode.attributes, vNewNode.attrs);
-        checkForScopedCss(vOldNode, vNewNode);
+        checkForScopedCss(vOldNode, vNewNode, oldDisplay);
 
         return vOldNode;
     } else if (vNewNode.attrs.slfornamed) {
@@ -968,14 +976,14 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
         }
 
         diffVAttrs(vOldNode, vOldNode.attributes, vNewNode.attrs);
-        checkForScopedCss(vOldNode, vNewNode);
+        checkForScopedCss(vOldNode, vNewNode, oldDisplay);
 
         return vOldNode;
     }
 
     diffVAttrs(vOldNode, vOldNode.attributes, vNewNode.attrs);
     diffVChildren(vOldNode, vOldNode.childNodes, vNewNode.children);
-    checkForScopedCss(vOldNode, vNewNode);
+    checkForScopedCss(vOldNode, vNewNode, oldDisplay);
 
     return vOldNode;
 };
@@ -1035,7 +1043,7 @@ const _mountInternal = (target, component, attachDetector) => {
 }
 
 export function version() {
-    return '19.0.2';
+    return '20.0.0';
 }
 
 function xmur3(str) {

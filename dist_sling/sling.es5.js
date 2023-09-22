@@ -208,7 +208,7 @@ var l = function l(_ref3) {
     t = o.view, o.afterInit && s._afterInitArr.push(o.afterInit);
     var a = l(t);
     if (o.scopedCss) {
-      var _t13 = R(o.model, o.model.slStyle());
+      var _t13 = S(o.model, o.model.slStyle());
       g(a, _t13), a.slScopedCss = !0;
     }
     c(a, o.destroyIndex, o.onDestroy), f(a), e.appendChild(a), i(a, r), n && C(a, t, o.model);
@@ -364,7 +364,7 @@ var l = function l(_ref3) {
         var _l2 = d(n[_t15], !1, !1, !1, e[_t15]);
         n[_t15] = _l2.view;
         var _a = Object.getPrototypeOf(_l2.model);
-        !0 !== _a.slDirty && (_l2.onInit && e[_t15].slOnInit && (e[_t15].slOnInit = !1), _l2.afterInit && e[_t15].slAfterInit && (e[_t15].slAfterInit = !1), _l2.scopedCss && e[_t15].slScopedCss && (e[_t15].slScopedCss = !1), _l2.onDestroy && e[_t15].slOnDestroy && (e[_t15].slOnDestroy = !1), _a.slDirty = !0), _l2.onInit && e[_t15] && !e[_t15].slOnInit && _l2.onInit.bind(_l2.model)(), _l2.afterInit && e[_t15] && !e[_t15].slAfterInit && (e[_t15].slAfterInit = !0, s._afterInitArr.push(_l2.afterInit)), _l2.scopedCss && e[_t15] && !e[_t15].slScopedCss && (_o = R(_l2.model, _l2.model.slStyle())), _l2.onDestroy && e[_t15] && !e[_t15].slOnDestroy && y(n[_t15], _l2.onDestroy), i(e[_t15], _l2.model), _r3 = _l2.model;
+        !0 !== _a.slDirty && (_l2.onInit && e[_t15].slOnInit && (e[_t15].slOnInit = !1), _l2.afterInit && e[_t15].slAfterInit && (e[_t15].slAfterInit = !1), _l2.scopedCss && e[_t15].slScopedCss && (e[_t15].slScopedCss = !1), _l2.onDestroy && e[_t15].slOnDestroy && (e[_t15].slOnDestroy = !1), _a.slDirty = !0), _l2.onInit && e[_t15] && !e[_t15].slOnInit && _l2.onInit.bind(_l2.model)(), _l2.afterInit && e[_t15] && !e[_t15].slAfterInit && (e[_t15].slAfterInit = !0, s._afterInitArr.push(_l2.afterInit)), _l2.scopedCss && e[_t15] && !e[_t15].slScopedCss && (_o = S(_l2.model, _l2.model.slStyle())), _l2.onDestroy && e[_t15] && !e[_t15].slOnDestroy && y(n[_t15], _l2.onDestroy), i(e[_t15], _l2.model), _r3 = _l2.model;
       }
       C(e[_t15], n[_t15], _r3), _o && (g(e[_t15], _o), e[_t15].slScopedCss = !0), a++;
     }
@@ -439,9 +439,10 @@ var l = function l(_ref3) {
     });
   },
   I = function I(t, e) {
+    var n = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "";
     if (e.slStyle && !t.slScopedCss) {
-      var _n14 = R(e, e.slStyle());
-      g(t, _n14), t.slScopedCss = !0;
+      var _s5 = S(e, e.slStyle());
+      g(t, _s5), t.slScopedCss = !0, t.style.display = n;
     }
   },
   v = function v(t) {
@@ -449,9 +450,9 @@ var l = function l(_ref3) {
       var n = t[_e11];
       if (null !== n.getAttribute("slpreventdefault")) for (var _t16 in n) if (_t16.startsWith("on")) {
         var _e12 = _t16.substring(2, _t16.length);
-        var _s5 = n[_t16];
-        if (_s5) {
-          (Array.isArray(_s5) ? _s5 : [_s5]).forEach(function (t) {
+        var _s6 = n[_t16];
+        if (_s6) {
+          (Array.isArray(_s6) ? _s6 : [_s6]).forEach(function (t) {
             n.removeEventListener(_e12, t);
           });
         }
@@ -473,10 +474,10 @@ var l = function l(_ref3) {
         for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
           var _step11$value = _slicedToArray(_step11.value, 2),
             _e13 = _step11$value[0],
-            _n15 = _step11$value[1];
+            _n14 = _step11$value[1];
           {
-            var _n16 = document.getElementById(_e13);
-            if (_n16.contains(s._isAnimatingKeyed) && _n16.contains(t)) return t;
+            var _n15 = document.getElementById(_e13);
+            if (_n15.contains(s._isAnimatingKeyed) && _n15.contains(t)) return t;
           }
         }
       } catch (err) {
@@ -485,93 +486,94 @@ var l = function l(_ref3) {
         _iterator11.f();
       }
     }
-    if (e && e.view) {
-      var _n17 = d(e, !1, !1, !1, t);
-      e = _n17.view;
-      var _r6 = Object.getPrototypeOf(_n17.model);
-      if (!0 !== _r6.slDirty && (_n17.onInit && t.slOnInit && (t.slOnInit = !1), _n17.afterInit && t.slAfterInit && (t.slAfterInit = !1), _n17.scopedCss && t.slScopedCss && (t.slScopedCss = !1), _n17.onDestroy && t.slOnDestroy && (t.slOnDestroy = !1), _r6.slDirty = !0), _n17.onInit && t && !t.slOnInit && _n17.onInit.bind(_n17.model)(), _n17.afterInit && t && !t.slAfterInit && (t.slAfterInit = !0, s._afterInitArr.push(_n17.afterInit)), _n17.scopedCss && t && !t.slScopedCss) {
-        var _e14 = R(_n17.model, _n17.model.slStyle());
+    var r;
+    if (e && e.slStyle && (r = t.style.display, t.style.display = "none"), e && e.view) {
+      var _n16 = d(e, !1, !1, !1, t);
+      e = _n16.view;
+      var _r6 = Object.getPrototypeOf(_n16.model);
+      if (!0 !== _r6.slDirty && (_n16.onInit && t.slOnInit && (t.slOnInit = !1), _n16.afterInit && t.slAfterInit && (t.slAfterInit = !1), _n16.scopedCss && t.slScopedCss && (t.slScopedCss = !1), _n16.onDestroy && t.slOnDestroy && (t.slOnDestroy = !1), _r6.slDirty = !0), _n16.onInit && t && !t.slOnInit && _n16.onInit.bind(_n16.model)(), _n16.afterInit && t && !t.slAfterInit && (t.slAfterInit = !0, s._afterInitArr.push(_n16.afterInit)), _n16.scopedCss && t && !t.slScopedCss) {
+        var _e14 = S(_n16.model, _n16.model.slStyle());
         g(t, _e14), t.slScopedCss = !0;
       }
-      _n17.onDestroy && t && !t.slOnDestroy && y(t, _n17.onDestroy);
+      _n16.onDestroy && t && !t.slOnDestroy && y(t, _n16.onDestroy);
     }
     if (!e) return t && (p(t), h(t), o(t), b(t)), t;
     if (t && t.tagName !== e.tagName) {
       if (!e.tagName) return p(t), h(t), t.replaceWith(e), t = e;
       {
-        var _n18 = document.createElement(e.tagName);
-        I(_n18, e), t.parentNode.insertBefore(_n18, t), p(t), h(t), o(t), b(t), t = _n18;
+        var _n17 = document.createElement(e.tagName);
+        I(_n17, e, r), t.parentNode.insertBefore(_n17, t), p(t), h(t), o(t), b(t), t = _n17;
       }
     }
     if ("string" == typeof e) return t.textContent !== e && (t.textContent = e), t;
     switch (e.attrs.sldirective) {
       case "useexisting":
-        return I(t, e), t;
+        return I(t, e, r), t;
       case "onlychildren":
         return A(t, t.childNodes, e.children), t;
       case "onlyself":
-        return _(t, t.attributes, e.attrs), I(t, e), t;
+        return _(t, t.attributes, e.attrs), I(t, e, r), t;
       case "trustchildren":
         {
-          _(t, t.attributes, e.attrs), I(t, e);
-          var _n19 = "";
+          _(t, t.attributes, e.attrs), I(t, e, r);
+          var _n18 = "";
           e.children.forEach(function (t) {
-            _n19 += t;
-          }), t.innerHTML !== _n19 && (t.innerHTML = _n19);
-          var _s6 = t.querySelectorAll("[slpreventdefault]");
-          return _s6.length > 0 && v(Array.from(_s6)), t;
+            _n18 += t;
+          }), t.innerHTML !== _n18 && (t.innerHTML = _n18);
+          var _s7 = t.querySelectorAll("[slpreventdefault]");
+          return _s7.length > 0 && v(Array.from(_s7)), t;
         }
     }
     if (e.attrs.slfor) {
-      var _n20 = e.attrs.slfor.split(":");
-      if (_n20.length >= 4) {
-        if (!s._structureForMap.has(_n20[0])) {
-          var _r7 = N(t, e.model[_n20[2]]);
-          if (s._structureForMap.set(_n20[0], _r7), t.children.length > 0) {
+      var _n19 = e.attrs.slfor.split(":");
+      if (_n19.length >= 4) {
+        if (!s._structureForMap.has(_n19[0])) {
+          var _r7 = N(t, e.model[_n19[2]]);
+          if (s._structureForMap.set(_n19[0], _r7), t.children.length > 0) {
             var _e15 = Object.create(null);
-            for (var _n21 = 0; _n21 < t.children.length; ++_n21) _e15[_n21] = t.children[_n21];
+            for (var _n20 = 0; _n20 < t.children.length; ++_n20) _e15[_n20] = t.children[_n20];
             _r7.map = _e15;
           }
         }
-        var _r8 = s._structureForMap.get(_n20[0]);
-        H.bind(e.model, _r8, e.model[_n20[1]], e.model[_n20[3]])();
+        var _r8 = s._structureForMap.get(_n19[0]);
+        H.bind(e.model, _r8, e.model[_n19[1]], e.model[_n19[3]])();
       }
-      return _(t, t.attributes, e.attrs), I(t, e), t;
+      return _(t, t.attributes, e.attrs), I(t, e, r), t;
     }
     if (e.attrs.slfornamed) {
-      var _n22 = e.attrs.slfornamed.split(":");
-      if (_n22.length >= 4) {
+      var _n21 = e.attrs.slfornamed.split(":");
+      if (_n21.length >= 4) {
         var _r9, _o4, _l4, _i8;
         for (var _i9 = 0, _Object$keys3 = Object.keys(e.model); _i9 < _Object$keys3.length; _i9++) {
           var _t17 = _Object$keys3[_i9];
-          (_i8 = e.model[_t17]).slfor === _n22[2] ? _r9 = _i8 : _i8.slfor === _n22[1] ? _l4 = _i8 : _i8.slfor === _n22[3] && (_o4 = _i8);
+          (_i8 = e.model[_t17]).slfor === _n21[2] ? _r9 = _i8 : _i8.slfor === _n21[1] ? _l4 = _i8 : _i8.slfor === _n21[3] && (_o4 = _i8);
         }
         var _iterator12 = _createForOfIteratorHelper(O(e.model)),
           _step12;
         try {
           for (_iterator12.s(); !(_step12 = _iterator12.n()).done;) {
             var _t18 = _step12.value;
-            (_i8 = e.model[_t18]).slfor === _n22[2] ? _r9 = _i8 : _i8.slfor === _n22[1] ? _l4 = _i8 : _i8.slfor === _n22[3] && (_o4 = _i8);
+            (_i8 = e.model[_t18]).slfor === _n21[2] ? _r9 = _i8 : _i8.slfor === _n21[1] ? _l4 = _i8 : _i8.slfor === _n21[3] && (_o4 = _i8);
           }
         } catch (err) {
           _iterator12.e(err);
         } finally {
           _iterator12.f();
         }
-        if (_l4 = _l4.bind(e.model), !s._structureForMap.has(_n22[0])) {
+        if (_l4 = _l4.bind(e.model), !s._structureForMap.has(_n21[0])) {
           var _e16 = N(t, _r9);
-          if (s._structureForMap.set(_n22[0], _e16), t.children.length > 0) {
-            var _n23 = Object.create(null);
-            for (var _e17 = 0; _e17 < t.children.length; ++_e17) _n23[_e17] = t.children[_e17];
-            _e16.map = _n23;
+          if (s._structureForMap.set(_n21[0], _e16), t.children.length > 0) {
+            var _n22 = Object.create(null);
+            for (var _e17 = 0; _e17 < t.children.length; ++_e17) _n22[_e17] = t.children[_e17];
+            _e16.map = _n22;
           }
         }
-        var _a2 = s._structureForMap.get(_n22[0]);
+        var _a2 = s._structureForMap.get(_n21[0]);
         H.bind(e.model, _a2, _l4, _o4)();
       }
-      return _(t, t.attributes, e.attrs), I(t, e), t;
+      return _(t, t.attributes, e.attrs), I(t, e, r), t;
     }
-    return _(t, t.attributes, e.attrs), A(t, t.childNodes, e.children), I(t, e), t;
+    return _(t, t.attributes, e.attrs), A(t, t.childNodes, e.children), I(t, e, r), t;
   },
   M = function M(t, e, n) {
     s._afterInitArr = [], e.slOnInit && e.slOnInit();
@@ -581,8 +583,8 @@ var l = function l(_ref3) {
       console.error("Mounted component root element changed from " + t.id + " to " + _e18);
     }
     if (t = C(t, o, e), e.slStyle && !t.slScopedCss) {
-      var _n24 = R(e, e.slStyle());
-      g(t, _n24), t.slScopedCss = !0;
+      var _n23 = S(e, e.slStyle());
+      g(t, _n23), t.slScopedCss = !0;
     }
     n && s._updateMap.set(t.id, e), e.slOnDestroy && y(t, e.slOnDestroy.bind(e));
     var l = t.querySelectorAll("[slref]");
@@ -595,7 +597,7 @@ var l = function l(_ref3) {
     }), t;
   };
 function version() {
-  return "19.0.2";
+  return "20.0.0";
 }
 var E = function E(t, e) {
     return t.split(e).length - 1;
@@ -614,7 +616,7 @@ var E = function E(t, e) {
     }
     return s;
   },
-  R = function R(t, e) {
+  S = function S(t, e) {
     var n = function (t) {
         for (var e = 0, n = 1779033703 ^ t.length; e < t.length; e++) n = (n = Math.imul(n ^ t.charCodeAt(e), 3432918353)) << 13 | n >>> 19;
         return function () {
@@ -648,41 +650,41 @@ var E = function E(t, e) {
       v = !1,
       C = !1,
       M = 0,
-      R = !1,
+      S = !1,
       T = 0;
     var w = new Map();
     if (a.includes("{") && a.includes("}") && a.split("{").length === a.split("}").length) for (var _t20 = 0; _t20 < l.length; ++_t20) {
-      h = 0, c = 0, d = 0, f = null, p = !1, C = !1, R = !1;
+      h = 0, c = 0, d = 0, f = null, p = !1, C = !1, S = !1;
       var _e19 = "";
       do {
         null != (u = i.exec(l[_t20])) && (u[1] || (_e19 += u[0]));
       } while (null != u);
-      var _n25 = E(_e19, "{");
+      var _n24 = E(_e19, "{");
       for (g = l[_t20].substring(c); g.replace(/}/g, "").trim().startsWith("@") && (g.includes("@layer") || g.includes("@scope") || g.includes("@container") || g.includes("@keyframes") || g.replace(/}/g, "").trim().startsWith("@media"));) {
-        if (b++, p = !0, l[_t20].substring(c).includes("@keyframes") ? v = !0 : l[_t20].substring(c).includes("@media") && (C = !0), 1 == _n25) c += x(l[_t20], ";", c).length, A += l[_t20].substring(d, c), d = c, b--;else {
+        if (b++, p = !0, l[_t20].substring(c).includes("@keyframes") ? v = !0 : l[_t20].substring(c).includes("@media") && (C = !0), 1 == _n24) c += x(l[_t20], ";", c).length, A += l[_t20].substring(d, c), d = c, b--;else {
           D++, b--, c += x(l[_t20], "{", c).length;
           var _e20 = x(l[_t20], ";", 0);
           if (v) {
             var _e21 = l[_t20].substring(d, c);
             (_e21 = (_e21 = _e21.replace("@keyframes", "")).trim()).endsWith("{") && (_e21 = (_e21 = _e21.substring(0, _e21.length - 2)).trim());
-            var _n26 = " " + _e21 + r;
-            w.set(_e21, _n26), A += " @keyframes " + _n26 + " { ";
+            var _n25 = " " + _e21 + r;
+            w.set(_e21, _n25), A += " @keyframes " + _n25 + " { ";
           } else {
-            var _s7 = l[_t20].substring(d, c);
-            if (_e20.length < _s7.length) A += _e20, c -= _s7.length - _e20.length, _n25--;else {
+            var _s8 = l[_t20].substring(d, c);
+            if (_e20.length < _s8.length) A += _e20, c -= _s8.length - _e20.length, _n24--;else {
               if (I > 0) {
-                var _t21 = _s7.trim();
-                for (; _t21.startsWith("}") && I > 0;) !(0 !== b || 1 !== I || _n25 <= I) && D - _n25 >= 1 || I--, _n25--, D--, _t21 = _t21.replace("}", "").trim();
+                var _t21 = _s8.trim();
+                for (; _t21.startsWith("}") && I > 0;) !(0 !== b || 1 !== I || _n24 <= I) && D - _n24 >= 1 || I--, _n24--, D--, _t21 = _t21.replace("}", "").trim();
               }
               var _t22 = "";
               u = null;
               do {
-                null != (u = i.exec(_s7)) && (u[1] || (_t22 += u[0]));
+                null != (u = i.exec(_s8)) && (u[1] || (_t22 += u[0]));
               } while (null != u);
-              if (A += _s7, 0 === I && E(_t22, "}") > 0) {
+              if (A += _s8, 0 === I && E(_t22, "}") > 0) {
                 var _e22 = _t22.length,
-                  _s8 = _t22.replace(/^}+/, "");
-                (D -= E(_s8, "}")) >= _e22 - _s8.length && (1 === D && 1 === _n25 || (T += _e22 - _s8.length));
+                  _s9 = _t22.replace(/^}+/, "");
+                (D -= E(_s9, "}")) >= _e22 - _s9.length && (1 === D && 1 === _n24 || (T += _e22 - _s9.length));
               }
               var _e23 = E(_t22, "{") - E(_t22, "}"),
                 _r10 = /(@layer|@container|@media|@scope)[^{]*\{/g,
@@ -695,10 +697,10 @@ var E = function E(t, e) {
         }
         g = l[_t20].substring(c);
       }
-      var _s9 = c + x(l[_t20], "{", c).length - 1;
-      -1 === _s9 && (_s9 = c);
-      var _o6 = l[_t20].substring(c, _s9);
-      for (; (_o6.split('"').length - 1) % 2 != 0;) _s9 = _s9 + 1 + x(l[_t20], "{", _s9 + 1).length, _o6 = l[_t20].substring(c, _s9);
+      var _s10 = c + x(l[_t20], "{", c).length - 1;
+      -1 === _s10 && (_s10 = c);
+      var _o6 = l[_t20].substring(c, _s10);
+      for (; (_o6.split('"').length - 1) % 2 != 0;) _s10 = _s10 + 1 + x(l[_t20], "{", _s10 + 1).length, _o6 = l[_t20].substring(c, _s10);
       if ("" !== _o6 && !/^\s*$/.test(_o6)) {
         var _e24 = _o6.split(",");
         var _a3 = void 0;
@@ -707,12 +709,12 @@ var E = function E(t, e) {
           for (_a3 = _e24[_o7].trim(); O > 0 && _a3.includes("}");) {
             var _t23 = void 0,
               _e25 = void 0,
-              _n27 = "";
-            for (; _a3.includes("}");) _t23 = _a3.indexOf("{"), ((_e25 = _a3.indexOf("}")) < _t23 || -1 === _t23) && (_n27 += _a3.substring(0, _e25 + 1), _a3 = _a3.substring(_e25 + 1), O--);
-            A += _n27 + "\n", f = _a3 = _a3.trim();
+              _n26 = "";
+            for (; _a3.includes("}");) _t23 = _a3.indexOf("{"), ((_e25 = _a3.indexOf("}")) < _t23 || -1 === _t23) && (_n26 += _a3.substring(0, _e25 + 1), _a3 = _a3.substring(_e25 + 1), O--);
+            A += _n26 + "\n", f = _a3 = _a3.trim();
           }
           if (0 === O) {
-            for (; _a3.startsWith("}");) _a3 = _a3.substring(1).trim(), A += "}", D--, R = !1, I > 0 && I--, 0 === I && (v = !1);
+            for (; _a3.startsWith("}");) _a3 = _a3.substring(1).trim(), A += "}", D--, S = !1, I > 0 && I--, 0 === I && (v = !1);
             if (_a3.includes(" ")) {
               var _c = _a3.substring(0, _a3.indexOf(" ")),
                 _d2 = _a3.substring(_a3.indexOf(" "));
@@ -721,17 +723,17 @@ var E = function E(t, e) {
                   _e26 = _t24.substring(0, _t24.indexOf(" "));
                 _t24 = _t24.substring(_e26.length, _t24.length), _c += " " + _e26, _d2 = _t24;
               }
-              if (R = _c.trim().startsWith("@"), y = _c.trim().endsWith(":")) {
+              if (S = _c.trim().startsWith("@"), y = _c.trim().endsWith(":")) {
                 var _r11 = x(_d2, ";");
                 for (; x(_d2, ";", _r11.length).trim().endsWith(";");) _r11 += x(_d2, ";", _r11.length);
                 var _a4 = _d2.substring(_r11.length, _d2.length);
                 _d2 = _r11;
-                var _f = l[_t20].substring(_s9);
-                _s9 = l[_t20].length;
+                var _f = l[_t20].substring(_s10);
+                _s10 = l[_t20].length;
                 var _p = _a4 + " ";
                 var _h = _e24.length > 1;
                 for (var _t25 = _o7 + 1; _t25 < _e24.length; ++_t25) _p += ", " + _e24[_t25] + " ", _e24.splice(_t25, 1), _t25--;
-                _p += _f, l.splice(_t20 + 1, 0, _p), _c.trim().endsWith(":") && I > 0 && _n25 > 0 && _h && (D++, T++);
+                _p += _f, l.splice(_t20 + 1, 0, _p), _c.trim().endsWith(":") && I > 0 && _n24 > 0 && _h && (D++, T++);
                 var _g = "";
                 u = null;
                 do {
@@ -740,38 +742,38 @@ var E = function E(t, e) {
                 var _y = E(_g, "{");
                 (_y -= E(_g, "}")) < 0 && (_y = 0), D += _y, M += _y;
               }
-              !(!I > 0) || v || C && 0 !== I || R && !_c.trim().startsWith("@nest") || y ? A += _c + _d2 : A += _c + (0 === I ? "[" + r + "]" : "") + _d2;
-            } else _o7 > 0 && (A += ", "), !(!I > 0) || v || C && 0 !== I || _a3.trim().startsWith("@") || R || _a3.trim().endsWith(":") ? A += _a3 : A += _a3 + (0 === I ? "[" + r + "]" : "");
+              !(!I > 0) || v || C && 0 !== I || S && !_c.trim().startsWith("@nest") || y ? A += _c + _d2 : A += _c + (0 === I ? "[" + r + "]" : "") + _d2;
+            } else _o7 > 0 && (A += ", "), !(!I > 0) || v || C && 0 !== I || _a3.trim().startsWith("@") || S || _a3.trim().endsWith(":") ? A += _a3 : A += _a3 + (0 === I ? "[" + r + "]" : "");
           }
         }
       }
-      if (O > 0 && (_s9 = null !== f ? l[_t20].indexOf(f) : 0), l[_t20].includes("--") && _n25 > 1) {
+      if (O > 0 && (_s10 = null !== f ? l[_t20].indexOf(f) : 0), l[_t20].includes("--") && _n24 > 1) {
         var _e27 = x(l[_t20], "--", 0).length;
-        var _s10 = l[_t20].substring(0, _e27);
+        var _s11 = l[_t20].substring(0, _e27);
         var _r12 = "";
         do {
-          null != (u = i.exec(_s10)) && (u[1] || (_r12 += u[0]));
+          null != (u = i.exec(_s11)) && (u[1] || (_r12 += u[0]));
         } while (null != u);
         var _o8 = E(_r12, "{") - 1;
-        h = _n25 - 1, _o8 > 0 && (h -= _o8), h > 0 && (O += h);
+        h = _n24 - 1, _o8 > 0 && (h -= _o8), h > 0 && (O += h);
       }
-      if (_n25 - O > 1 && !p) {
-        var _e28 = l[_t20].substring(_s9 + 1);
+      if (_n24 - O > 1 && !p) {
+        var _e28 = l[_t20].substring(_s10 + 1);
         l[_t20] = l[_t20].substring(0, l[_t20].length - _e28.length), l.splice(_t20 + 1, 0, _e28);
-        var _n28 = "";
+        var _n27 = "";
         u = null;
         do {
-          null != (u = i.exec(_e28)) && (u[1] || (_n28 += u[0]));
+          null != (u = i.exec(_e28)) && (u[1] || (_n27 += u[0]));
         } while (null != u);
-        _ = E(_n28, "{") - E(_n28, "}"), O -= h;
+        _ = E(_n27, "{") - E(_n27, "}"), O -= h;
       }
-      var _a5 = l[_t20].substring(_s9);
-      var _S = _a5.replace("{", "").replace(";", "");
-      if (_a5.includes("{") && E(_a5, "{") > 1 && !_S.trim().startsWith("--")) {
+      var _a5 = l[_t20].substring(_s10);
+      var _R = _a5.replace("{", "").replace(";", "");
+      if (_a5.includes("{") && E(_a5, "{") > 1 && !_R.trim().startsWith("--")) {
         var _e29 = x(_a5, "{", 0);
         _e29 = _e29 + " " + x(_a5, "{", _e29.length);
-        var _n29 = _a5.substring(_e29.length + 1, _a5.length);
-        _n29 = _e29.substring(_e29.lastIndexOf(";") + 1, _e29.length) + " " + _n29, _a5 = _e29 = _e29.substring(0, _e29.lastIndexOf(";") + 1), l.splice(_t20 + 1, 0, _n29), I++, M++;
+        var _n28 = _a5.substring(_e29.length + 1, _a5.length);
+        _n28 = _e29.substring(_e29.lastIndexOf(";") + 1, _e29.length) + " " + _n28, _a5 = _e29 = _e29.substring(0, _e29.lastIndexOf(";") + 1), l.splice(_t20 + 1, 0, _n28), I++, M++;
       }
       A += _a5;
       var _N = "";
@@ -787,7 +789,7 @@ var E = function E(t, e) {
     if (A += "\n", w.size > 0) {
       var _t26,
         _e30 = 0;
-      A = (_t26 = S(A, _e30, w, "animation")).finalCss, _e30 = _t26.startIndex, A = (_t26 = S(A, _e30 = 0, w, "animation-name")).finalCss, _e30 = _t26.startIndex;
+      A = (_t26 = R(A, _e30, w, "animation")).finalCss, _e30 = _t26.startIndex, A = (_t26 = R(A, _e30 = 0, w, "animation-name")).finalCss, _e30 = _t26.startIndex;
     }
     if ("" !== A.trim()) {
       var _t27 = document.head || document.getElementsByTagName("head")[0],
@@ -796,7 +798,7 @@ var E = function E(t, e) {
     }
     return r;
   },
-  S = function S(t, e, n, s) {
+  R = function R(t, e, n, s) {
     for (; -1 !== (e = t.indexOf(s, e));) {
       var _r13 = t.substring(0, e);
       var _o9 = t.substring(e, t.indexOf(";", e));
@@ -810,8 +812,8 @@ var E = function E(t, e) {
               var _step13$value = _slicedToArray(_step13.value, 2),
                 _t28 = _step13$value[0],
                 _r14 = _step13$value[1];
-              var _n30 = _o9.replace(s, "");
-              (_n30 = _n30.trim()).startsWith(":") && (_n30 = (_n30 = _n30.substring(1, _n30.length)).trim()), new RegExp(_t28 + "(\\s|;|$)").test(_n30) && _t28.length > 0 ? e += (_o9 = _o9.replaceAll(_t28, _r14)).length : e += s.length;
+              var _n29 = _o9.replace(s, "");
+              (_n29 = _n29.trim()).startsWith(":") && (_n29 = (_n29 = _n29.substring(1, _n29.length)).trim()), new RegExp(_t28 + "(\\s|;|$)").test(_n29) && _t28.length > 0 ? e += (_o9 = _o9.replaceAll(_t28, _r14)).length : e += s.length;
             }
           } catch (err) {
             _iterator13.e(err);
@@ -922,8 +924,8 @@ function renderToString(t) {
 function update(t, e) {
   var n = t;
   if (t = document.getElementById(t), s._afterInitArr = [], t) {
-    var _n31 = e.view.bind(e)();
-    r(_n31, e), t = C(t, _n31, e);
+    var _n30 = e.view.bind(e)();
+    r(_n30, e), t = C(t, _n30, e);
   } else console.error("ID " + n + " not mounted in DOM; attachDetector likely needs to be called.");
   var o = t.querySelectorAll("[slref]");
   void 0 !== t.slref && (o = Array.from(o)).push(t);
@@ -933,8 +935,8 @@ function update(t, e) {
   if (s._afterInitArr.forEach(function (t) {
     t();
   }), e.slStyle && !t.slScopedCss) {
-    var _n32 = R(e, e.slStyle());
-    g(t, _n32), t.slScopedCss = !0;
+    var _n31 = S(e, e.slStyle());
+    g(t, _n31), t.slScopedCss = !0;
   }
 }
 var T = e.onpopstate;
@@ -1056,13 +1058,13 @@ function route(t) {
   try {
     for (_iterator16.s(); !(_step16 = _iterator16.n()).done;) {
       var _step16$value = _slicedToArray(_step16.value, 2),
-        _n33 = _step16$value[0],
+        _n32 = _step16$value[0],
         _i11 = _step16$value[1];
-      if (_n33.test(t)) {
+      if (_n32.test(t)) {
         if (_i11.onActivationCheck && !_i11.onActivationCheck(t)) return _i11.onActivationFail && (l = route(_i11.onActivationFail.route, _i11.onActivationFail.params, "boolean" != typeof _i11.onActivationFail.attachDetector || _i11.onActivationFail.attachDetector)), void (t = void 0);
         _i11.onBeforeRoute && _i11.onBeforeRoute();
-        var _n34 = s._destroyNodeMap.get(getRoute());
-        _n34 && (_n34.forEach(function (t) {
+        var _n33 = s._destroyNodeMap.get(getRoute());
+        _n33 && (_n33.forEach(function (t) {
           t.slOnDestroyFn && t.slOnDestroyFn(), t.slOnDestroyFn = null;
         }), s._destroyNodeMap.set(getRoute(), []), s._destroyFuncMap.set(getRoute(), [])), s._router.lastHash = t;
         var _a6 = e.pageYOffset;
@@ -1072,16 +1074,16 @@ function route(t) {
             break;
           case "?":
             {
-              var _n35 = e.location.href;
-              var _s11 = e.location.pathname;
-              _n35 = _n35.substring(0, _n35.indexOf(_s11)), _n35 += "/?/" + t, e.history.pushState(null, document.title, _n35);
+              var _n34 = e.location.href;
+              var _s12 = e.location.pathname;
+              _n34 = _n34.substring(0, _n34.indexOf(_s12)), _n34 += "/?/" + t, e.history.pushState(null, document.title, _n34);
               break;
             }
           case "":
             {
-              var _n36 = e.location.href;
-              var _s12 = e.location.pathname;
-              _n36 = _n36.substring(0, _n36.indexOf(_s12)), _n36 += "/" + t, e.history.pushState(null, document.title, _n36);
+              var _n35 = e.location.href;
+              var _s13 = e.location.pathname;
+              _n35 = _n35.substring(0, _n35.indexOf(_s13)), _n35 += "/" + t, e.history.pushState(null, document.title, _n35);
               break;
             }
         }
@@ -1113,7 +1115,7 @@ var N = function N(t, e, n) {
 function F(t, e) {
   "function" == typeof e && (e = e());
   var n = [];
-  for (var _s13 = 0; _s13 < e.length; ++_s13) n.push(t.factory.bind(this, e[_s13])());
+  for (var _s14 = 0; _s14 < e.length; ++_s14) n.push(t.factory.bind(this, e[_s14])());
   return n;
 }
 function H(t, e, n) {
@@ -1137,9 +1139,9 @@ s.CHANGE_STRATEGY_AUTOMATIC = 100, s.CHANGE_STRATEGY_MANUAL = 200, s.CHANGE_DETE
 }, Object.seal(s._changeDetector), Object.freeze(s._changeStrategies);
 var W = function W(t, e) {
   if (e[t]) {
-    var _n37 = e[t];
+    var _n36 = e[t];
     e[t] = function () {
-      var t = _n37.apply(this, [].slice.call(arguments));
+      var t = _n36.apply(this, [].slice.call(arguments));
       return k(), t;
     };
   }
@@ -1220,8 +1222,8 @@ e.setTimeout = function () {
   var t = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : !0;
   var e;
   if (arguments.length > 2) {
-    var _n38 = [].slice.call(arguments, 1);
-    e = B.apply(this, _n38), t && k();
+    var _n37 = [].slice.call(arguments, 1);
+    e = B.apply(this, _n37), t && k();
   } else {
     var _t39 = [].slice.call(arguments);
     e = B.apply(this, _t39), k();
@@ -1233,13 +1235,13 @@ e.setInterval = function () {
   var t = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : !0;
   var e;
   if (arguments.length > 2) {
-    var _n39 = [].slice.call(arguments, 1);
-    e = q.apply(this, _n39), t && k();
+    var _n38 = [].slice.call(arguments, 1);
+    e = q.apply(this, _n38), t && k();
   } else {
     var _t40 = [].slice.call(arguments),
-      _n40 = _t40[0];
+      _n39 = _t40[0];
     _t40[0] = function () {
-      _n40(), k();
+      _n39(), k();
     }, e = q.apply(this, _t40), k();
   }
   return e;
