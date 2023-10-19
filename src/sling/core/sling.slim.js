@@ -170,7 +170,14 @@ const clearDataForStructuralDirectives = (domNode) => {
 }
 
 export function renderElementWithoutClass(tagName, attrs, children) {
-    let el = document.createElement(tagName);
+    let el;
+
+    if (attrs && attrs.slNs) {
+        el = document.createElementNS(attrs.slNs, tagName.toLowerCase());
+    } else {
+        el = document.createElement(tagName);
+    }
+
     let vType;
     let v;
 
@@ -185,6 +192,17 @@ export function renderElementWithoutClass(tagName, attrs, children) {
                 proxyEventForChangeDetection(k, el);
             }
         }
+        else if (k === 'slNsFor') {
+            const keyPairs = JSON.parse(attrs.slNsFor);
+
+            for (const [key, value] of Object.entries(keyPairs)) {
+                el.setAttributeNS(
+                    value.namespace,
+                    key,
+                    value.value
+                );
+            }
+        }
         else el.setAttribute(k, v);
     }
 
@@ -196,7 +214,13 @@ export function renderElementWithoutClass(tagName, attrs, children) {
 }
 
 export function renderElement({ tagName, attrs, children }, isDetached = false) {
-    let el = document.createElement(tagName);
+    let el;
+
+    if (attrs && attrs.slNs) {
+        el = document.createElementNS(attrs.slNs, tagName.toLowerCase());
+    } else {
+        el = document.createElement(tagName);
+    }
 
     // set attributes
     let vType;
@@ -208,6 +232,17 @@ export function renderElement({ tagName, attrs, children }, isDetached = false) 
 
             if (s._changeDetector.changeDetectionStrategy === s.CHANGE_STRATEGY_AUTOMATIC && !v.name.startsWith('bound slDetached') && !v.name.startsWith('slDetached')) {
                 proxyEventForChangeDetection(k, el);
+            }
+        }
+        else if (k === 'slNsFor') {
+            const keyPairs = JSON.parse(attrs.slNsFor);
+
+            for (const [key, value] of Object.entries(keyPairs)) {
+                el.setAttributeNS(
+                    value.namespace,
+                    key,
+                    value.value
+                );
             }
         }
         else el.setAttribute(k, v);
@@ -235,7 +270,13 @@ export function renderElement({ tagName, attrs, children }, isDetached = false) 
 }
 
 const renderElementInternal = ({ tagName, attrs, children }) => {
-    let el = document.createElement(tagName);
+    let el;
+
+    if (attrs && attrs.slNs) {
+        el = document.createElementNS(attrs.slNs, tagName.toLowerCase());
+    } else {
+        el = document.createElement(tagName);
+    }
 
     // set attributes
     let vType;
@@ -247,6 +288,17 @@ const renderElementInternal = ({ tagName, attrs, children }) => {
 
             if (s._changeDetector.changeDetectionStrategy === s.CHANGE_STRATEGY_AUTOMATIC && !v.name.startsWith('bound slDetached') && !v.name.startsWith('slDetached')) {
                 proxyEventForChangeDetection(k, el);
+            }
+        }
+        else if (k === 'slNsFor') {
+            const keyPairs = JSON.parse(attrs.slNsFor);
+
+            for (const [key, value] of Object.entries(keyPairs)) {
+                el.setAttributeNS(
+                    value.namespace,
+                    key,
+                    value.value
+                );
             }
         }
         else el.setAttribute(k, v);
@@ -454,6 +506,17 @@ const diffVAttrs = (node, oldAttrs, newAttrs) => {
 
             if (s._changeDetector.changeDetectionStrategy === s.CHANGE_STRATEGY_AUTOMATIC && !v.name.startsWith('bound slDetached') && !v.name.startsWith('slDetached')) {
                 proxyEventForChangeDetection(k, node);
+            }
+        }
+        else if (k === 'slNsFor') {
+            const keyPairs = JSON.parse(newAttrs.slNsFor);
+
+            for (const [key, value] of Object.entries(keyPairs)) {
+                node.setAttributeNS(
+                    value.namespace,
+                    key,
+                    value.value
+                );
             }
         } else {
             node.setAttribute(k, v);
@@ -784,7 +847,14 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
     // Tag mismatch
     if (vOldNode && vOldNode.tagName !== vNewNode.tagName) {
         if (vNewNode.tagName) {
-            let el = document.createElement(vNewNode.tagName);
+            let el;
+
+            if (vNewNode.attrs && vNewNode.attrs.slNs) {
+                el = document.createElementNS(vNewNode.attrs.slNs, vNewNode.tagName.toLowerCase());
+            } else {
+                el = document.createElement(vNewNode.tagName);
+            }
+
             vOldNode.parentNode.insertBefore(el, vOldNode);
             removeFromDestroyList(vOldNode);
             callAllDestroyHooks(vOldNode);
@@ -976,7 +1046,7 @@ const _mountInternal = (target, component, attachDetector) => {
 }
 
 export function version() {
-    return '20.0.0';
+    return '20.1.0';
 }
 
 export function resolveAll(promiseArr) {
