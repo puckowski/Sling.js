@@ -2,7 +2,7 @@
 
 # Sling
 
-Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **30KB minified, and less than 9KB gzipped**.
+Sling is a client-side JavaScript framework for building Single Page Applications (SPAs). Sling is lightweight, **31KB minified, and less than 9KB gzipped**.
 
 Sling creates and uses an Incremental DOM to perform differential updates for fast rendering.
 
@@ -291,6 +291,13 @@ Attribute directives change the appearance or behavior of a DOM element.
 |```slanimatedestroy```        |Attribute |Wait for CSS class animation to finish before removal from the DOM.                                 |
 |```slanimatedestroytarget```  |Attribute |Used together with ```slanimatedestroy```. Should be a function which returns a DOM node to animate. The proposed node to animate is supplied as an argument to the function.|
 |```slpreventdefault```        |Attribute |Prevent default behavior on Event object. |
+
+Namespace directives apply namespace information to an element or attribute.
+
+|Directive                     |Type      |Behavior                                                                                            |
+|------------------------------|----------|----------------------------------------------------------------------------------------------------|
+|```slns```                    |Namespace |Specify the element's namespace.                               |
+|```slnsfor```                 |Namespace |Specify attributes with different namespaces in the format: ```{ [key: string]: { namespace: string; value: string; } }```.|
 
 Example directive usage:
 
