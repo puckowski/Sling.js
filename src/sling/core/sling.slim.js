@@ -172,8 +172,8 @@ const clearDataForStructuralDirectives = (domNode) => {
 export function renderElementWithoutClass(tagName, attrs, children) {
     let el;
 
-    if (attrs && attrs.slNs) {
-        el = document.createElementNS(attrs.slNs, tagName.toLowerCase());
+    if (attrs && attrs.slns) {
+        el = document.createElementNS(attrs.slns, tagName.toLowerCase());
     } else {
         el = document.createElement(tagName);
     }
@@ -192,8 +192,8 @@ export function renderElementWithoutClass(tagName, attrs, children) {
                 proxyEventForChangeDetection(k, el);
             }
         }
-        else if (k === 'slNsFor') {
-            const keyPairs = JSON.parse(attrs.slNsFor);
+        else if (k === 'slnsfor') {
+            const keyPairs = JSON.parse(attrs.slnsfor);
 
             for (const [key, value] of Object.entries(keyPairs)) {
                 el.setAttributeNS(
@@ -216,8 +216,8 @@ export function renderElementWithoutClass(tagName, attrs, children) {
 export function renderElement({ tagName, attrs, children }, isDetached = false) {
     let el;
 
-    if (attrs && attrs.slNs) {
-        el = document.createElementNS(attrs.slNs, tagName.toLowerCase());
+    if (attrs && attrs.slns) {
+        el = document.createElementNS(attrs.slns, tagName.toLowerCase());
     } else {
         el = document.createElement(tagName);
     }
@@ -234,8 +234,8 @@ export function renderElement({ tagName, attrs, children }, isDetached = false) 
                 proxyEventForChangeDetection(k, el);
             }
         }
-        else if (k === 'slNsFor') {
-            const keyPairs = JSON.parse(attrs.slNsFor);
+        else if (k === 'slnsfor') {
+            const keyPairs = JSON.parse(attrs.slnsfor);
 
             for (const [key, value] of Object.entries(keyPairs)) {
                 el.setAttributeNS(
@@ -272,8 +272,8 @@ export function renderElement({ tagName, attrs, children }, isDetached = false) 
 const renderElementInternal = ({ tagName, attrs, children }) => {
     let el;
 
-    if (attrs && attrs.slNs) {
-        el = document.createElementNS(attrs.slNs, tagName.toLowerCase());
+    if (attrs && attrs.slns) {
+        el = document.createElementNS(attrs.slns, tagName.toLowerCase());
     } else {
         el = document.createElement(tagName);
     }
@@ -290,8 +290,8 @@ const renderElementInternal = ({ tagName, attrs, children }) => {
                 proxyEventForChangeDetection(k, el);
             }
         }
-        else if (k === 'slNsFor') {
-            const keyPairs = JSON.parse(attrs.slNsFor);
+        else if (k === 'slnsfor') {
+            const keyPairs = JSON.parse(attrs.slnsfor);
 
             for (const [key, value] of Object.entries(keyPairs)) {
                 el.setAttributeNS(
@@ -508,8 +508,8 @@ const diffVAttrs = (node, oldAttrs, newAttrs) => {
                 proxyEventForChangeDetection(k, node);
             }
         }
-        else if (k === 'slNsFor') {
-            const keyPairs = JSON.parse(newAttrs.slNsFor);
+        else if (k === 'slnsfor') {
+            const keyPairs = JSON.parse(newAttrs.slnsfor);
 
             for (const [key, value] of Object.entries(keyPairs)) {
                 node.setAttributeNS(
@@ -845,12 +845,13 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
     }
 
     // Tag mismatch
-    if (vOldNode && vOldNode.tagName !== vNewNode.tagName) {
+    if (vOldNode &&
+        (vOldNode.tagName || '').toLowerCase() !== ((vNewNode ? vNewNode.tagName : undefined) || '').toLowerCase()) {
         if (vNewNode.tagName) {
             let el;
 
-            if (vNewNode.attrs && vNewNode.attrs.slNs) {
-                el = document.createElementNS(vNewNode.attrs.slNs, vNewNode.tagName.toLowerCase());
+            if (vNewNode.attrs && vNewNode.attrs.slns) {
+                el = document.createElementNS(vNewNode.attrs.slns, vNewNode.tagName.toLowerCase());
             } else {
                 el = document.createElement(vNewNode.tagName);
             }
@@ -1046,7 +1047,7 @@ const _mountInternal = (target, component, attachDetector) => {
 }
 
 export function version() {
-    return '20.1.0';
+    return '20.2.0';
 }
 
 export function resolveAll(promiseArr) {
