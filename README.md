@@ -637,6 +637,8 @@ markup('div', {
 
 ## m
 __object markup ( tagString, { attrs: {}, children: [] } )__
+or
+__object markup ( tagString, {}, [] )__
 
 Terse alias for markup() function.
 
