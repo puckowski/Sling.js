@@ -1047,7 +1047,7 @@ const _mountInternal = (target, component, attachDetector) => {
 }
 
 export function version() {
-    return '20.2.0';
+    return '20.3.0';
 }
 
 export function resolveAll(promiseArr) {
@@ -1080,7 +1080,11 @@ export function markup(tagName, { attrs = {}, children = [] } = {}) {
 }
 
 export function m() {
-    return markup(arguments[0], arguments[1]);
+    if (typeof arguments[0] === 'string' && typeof arguments[1] === 'object' && Array.isArray(arguments[2])) {
+        return markup(arguments[0], { attrs: arguments[1], children: arguments[2] });
+    } else {
+        return markup(arguments[0], arguments[1]);
+    }
 }
 
 export function mount(eleId, component, attachDetector = true) {

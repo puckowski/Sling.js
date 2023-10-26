@@ -624,7 +624,7 @@ var l = function l(_ref3) {
     for (var _t22 = 0; _t22 < l.length; ++_t22) {
       e[l[_t22].getAttribute("slref")] = l[_t22].slref;
     }
-    return e.slAfterInit && (e.slAfterInit(), j()), s._afterInitArr.forEach(function (t) {
+    return e.slAfterInit && (e.slAfterInit(), W()), s._afterInitArr.forEach(function (t) {
       t();
     }), t;
   };
@@ -906,7 +906,10 @@ function markup(t) {
   };
 }
 function m() {
-  return markup(arguments[0], arguments[1]);
+  return "string" == typeof arguments[0] && "object" == _typeof(arguments[1]) && Array.isArray(arguments[2]) ? markup(arguments[0], {
+    attrs: arguments[1],
+    children: arguments[2]
+  }) : markup(arguments[0], arguments[1]);
 }
 function mount(t, e) {
   var n = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : !0;
@@ -1134,7 +1137,7 @@ function route(t) {
   } finally {
     _iterator16.f();
   }
-  return s._changeDetector.changeDetectionStrategy === s.CHANGE_STRATEGY_AUTOMATIC && j(), l;
+  return s._changeDetector.changeDetectionStrategy === s.CHANGE_STRATEGY_AUTOMATIC && W(), l;
 }
 N();
 var w = function w(t, e, n) {
@@ -1174,19 +1177,19 @@ var H = function H(t, e) {
     var _n40 = e[t];
     e[t] = function () {
       var t = _n40.apply(this, [].slice.call(arguments));
-      return j(), t;
+      return W(), t;
     };
   }
 };
-var W = function W() {
+var j = function j() {
     var t = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
     t ? update(t, s._updateMap.get(t)) : s._updateMap.forEach(function (t, e) {
       update(e, t);
     });
   },
-  j = function j() {
+  W = function W() {
     if (s._changeDetector.changeDetectionStrategy !== s.CHANGE_STRATEGY_AUTOMATIC) return;
-    new Date() - s._changeDetector.lastUpdateDate > 6 ? W() : s._debouncedPerformUpdates(), s._changeDetector.lastUpdateDate = new Date();
+    new Date() - s._changeDetector.lastUpdateDate > 6 ? j() : s._debouncedPerformUpdates(), s._changeDetector.lastUpdateDate = new Date();
   };
 function setDetectionStrategy(t) {
   s._changeStrategies.forEach(function (e) {
@@ -1195,7 +1198,7 @@ function setDetectionStrategy(t) {
 }
 function detectChanges() {
   var t = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-  W(t);
+  j(t);
 }
 function isDetectorAttached(t) {
   return s._updateMap.has(t);
@@ -1207,7 +1210,7 @@ var k = Promise.prototype.then;
 function enableDetectOnThen() {
   Promise.prototype.then = function (t, e) {
     return k.call(this, function (e) {
-      return j(), "function" == typeof t && t instanceof Function ? t(e) : t;
+      return W(), "function" == typeof t && t instanceof Function ? t(e) : t;
     }, e);
   };
 }
@@ -1215,7 +1218,7 @@ function wrapWithChangeDetector(t, e) {
   return function () {
     e && e.slpreventdefault && arguments.length > 0 && "function" == typeof arguments[0].preventDefault && arguments[0].preventDefault();
     var n = t.apply(this, [].slice.call(arguments));
-    return j(), n;
+    return W(), n;
   };
 }
 s._debouncedPerformUpdates = function (t, e) {
@@ -1229,7 +1232,7 @@ s._debouncedPerformUpdates = function (t, e) {
       return t.apply(o, r);
     }, e);
   };
-}(W, 17);
+}(j, 17);
 var G = e.XMLHttpRequest.prototype.send,
   U = new Map();
 function P() {
@@ -1238,7 +1241,7 @@ function P() {
     if (void 0 !== _t41 && _t41 === this._onreadystatechangecount) return void U["delete"](this);
     void 0 !== _t41 ? U.set(this, _t41 + 1) : U.set(this, 0);
     var _e41 = this._onreadystatechange.apply(this, arguments);
-    return j(), U["delete"](this), _e41;
+    return W(), U["delete"](this), _e41;
   }
 }
 e.XMLHttpRequest.prototype.send = function (t) {
@@ -1247,7 +1250,7 @@ e.XMLHttpRequest.prototype.send = function (t) {
 var Y = e.fetch;
 e.fetch = function () {
   var t = Y.apply(this, arguments);
-  return j(), t;
+  return W(), t;
 };
 var B = e.setTimeout;
 e.setTimeout = function () {
@@ -1255,10 +1258,10 @@ e.setTimeout = function () {
   var e;
   if (arguments.length > 2) {
     var _n41 = [].slice.call(arguments, 1);
-    e = B.apply(this, _n41), t && j();
+    e = B.apply(this, _n41), t && W();
   } else {
     var _t42 = [].slice.call(arguments);
-    e = B.apply(this, _t42), j();
+    e = B.apply(this, _t42), W();
   }
   return e;
 };
@@ -1268,13 +1271,13 @@ e.setInterval = function () {
   var e;
   if (arguments.length > 2) {
     var _n42 = [].slice.call(arguments, 1);
-    e = q.apply(this, _n42), t && j();
+    e = q.apply(this, _n42), t && W();
   } else {
     var _t43 = [].slice.call(arguments),
       _n43 = _t43[0];
     _t43[0] = function () {
-      _n43(), j();
-    }, e = q.apply(this, _t43), j();
+      _n43(), W();
+    }, e = q.apply(this, _t43), W();
   }
   return e;
 };
