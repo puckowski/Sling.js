@@ -629,7 +629,7 @@ var l = function l(_ref3) {
     }), t;
   };
 function version() {
-  return "20.2.0";
+  return "20.3.0";
 }
 var E = function E(t, e) {
     return t.split(e).length - 1;
@@ -906,7 +906,7 @@ function markup(t) {
   };
 }
 function m() {
-  return "string" == typeof arguments[0] && "object" == _typeof(arguments[1]) && Array.isArray(arguments[2]) ? markup(arguments[0], {
+  return 3 === arguments.length && "string" == typeof arguments[0] && "object" == _typeof(arguments[1]) && Array.isArray(arguments[2]) ? markup(arguments[0], {
     attrs: arguments[1],
     children: arguments[2]
   }) : markup(arguments[0], arguments[1]);

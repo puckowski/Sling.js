@@ -1080,7 +1080,7 @@ export function markup(tagName, { attrs = {}, children = [] } = {}) {
 }
 
 export function m() {
-    if (typeof arguments[0] === 'string' && typeof arguments[1] === 'object' && Array.isArray(arguments[2])) {
+    if (arguments.length === 3 && typeof arguments[0] === 'string' && typeof arguments[1] === 'object' && Array.isArray(arguments[2])) {
         return markup(arguments[0], { attrs: arguments[1], children: arguments[2] });
     } else {
         return markup(arguments[0], arguments[1]);

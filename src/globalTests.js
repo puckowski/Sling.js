@@ -506,6 +506,19 @@ class HelloWorldComponentAnimate {
     }
 }
 
+class TestTerserMarkupOverloadComponent {
+    view() {
+        return m("div", {
+            id: "divtersermarkup1"
+        },
+            [
+                m("span", { style: 'color: blue;' }, [textNode('Blue text.')]),
+                textNode('Regular text.')
+            ]
+        );
+    }
+}
+
 class TestAttributeUserProfileComponent {
     constructor() {
         this.id = "Unknown";
@@ -8566,6 +8579,29 @@ export class GlobalTestRunner {
                 }, 1100);
             }, 1100);
         }, 1000);
+    }
+
+    testFinalize300TerserMarkupFunctionOverload() {
+        const result = {
+            test: 'test terser markup function overload',
+            success: false,
+            message: ''
+        };
+
+        mount('divtersermarkup1', new TestTerserMarkupOverloadComponent());
+
+        const ele = document.getElementById('divtersermarkup1');
+
+        const cssObj = window.getComputedStyle(ele.childNodes[0], null);
+        const color = cssObj.getPropertyValue('color');
+
+        result.success = ele && ele.childNodes && ele.childNodes.length === 2 && ele.children[0] && ele.children[0].tagName === 'SPAN'
+            && ele.children[0].childNodes[0].textContent === 'Blue text.'
+            && ele.childNodes[1] && ele.childNodes[1].textContent === 'Regular text.'
+            && color === 'rgb(0, 0, 255)';
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
     }
 
     testRunLastDestroyMapNoDuplicates() {
