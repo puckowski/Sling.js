@@ -1115,7 +1115,7 @@ const _mountInternal = (target, component, attachDetector) => {
 }
 
 export function version() {
-    return '20.3.0';
+    return '20.3.1';
 }
 
 function xmur3(str) {

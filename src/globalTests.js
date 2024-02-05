@@ -13035,6 +13035,33 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
+    testClearSubscriptionForSubjectWorks() {
+        const result = {
+            test: 'test clearSubscription for BehaviorSubject works',
+            success: false,
+            message: ''
+        };
+
+        const sub = BehaviorSubject(0);
+        let subscriberRuns = 0;
+        const subscriber = () => {
+            subscriberRuns++;
+        };
+        const subscriberToClear = () => {
+            return;
+        };
+        sub.subscribe(subscriber);
+        sub.subscribe(subscriberToClear);
+        sub.next(1);
+        sub.clearSubscription(subscriberToClear);
+        sub.next(2);
+
+        result.success = subscriberRuns === 2;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
     testAfterInitListExists() {
         const result = {
             test: 'test internal slAfterInit list exists',

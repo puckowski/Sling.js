@@ -2,8 +2,8 @@ export const Observable = (array) => {
     const arrFns = ['pop', 'push', 'reverse', 'shift', 'unshift', 'splice', 'sort', 'map', 'filter', 'fill', 'copyWithin'];
     const noReturnFns = arrFns.slice(0, 6);
     const observeOps = {};
-    const subscribedFns = [];
-
+    
+    let subscribedFns = [];
     let data = array;
     let subCallCount = 0;
 
@@ -62,7 +62,7 @@ export const Observable = (array) => {
         const filteredFns = subscribedFns.filter(currFn => currFn !== fn);
         this.clearSubscriptions();
 
-        subscribedFns.concat(filteredFns);
+        subscribedFns = subscribedFns.concat(filteredFns);
 
         return this;
     }
@@ -89,8 +89,8 @@ export const Observable = (array) => {
 
 export const BehaviorSubject = (value) => {
     const subjectOps = {};
-    const subscribedFns = [];
-
+    
+    let subscribedFns = [];
     let data = value;
 
     const callCallback = function () {
@@ -110,7 +110,7 @@ export const BehaviorSubject = (value) => {
         const filteredFns = subscribedFns.filter(currFn => currFn !== fn);
         this.clearSubscriptions();
 
-        subscribedFns.concat(filteredFns);
+        subscribedFns = subscribedFns.concat(filteredFns);
 
         return this;
     }
@@ -146,8 +146,8 @@ export const Stream = () => {
     const dependentFns = [];
     const data = [];
     const streamOps = {};
-    const subscribedFns = [];
-
+    
+    let subscribedFns = [];
     let length = 0;
 
     const react = function () {
@@ -209,7 +209,7 @@ export const Stream = () => {
         const filteredFns = subscribedFns.filter(currFn => currFn !== fn);
         this.clearSubscriptions();
 
-        subscribedFns.concat(filteredFns);
+        subscribedFns = subscribedFns.concat(filteredFns);
 
         return this;
     }

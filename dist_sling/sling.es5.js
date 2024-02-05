@@ -629,7 +629,7 @@ var l = function l(_ref3) {
     }), t;
   };
 function version() {
-  return "20.3.0";
+  return "20.3.1";
 }
 var E = function E(t, e) {
     return t.split(e).length - 1;
