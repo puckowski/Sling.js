@@ -544,8 +544,7 @@ const diffVChildren = (oldNode, oldVChildren, newVChildren) => {
         let model = null;
 
         if (newVChildren[i] && newVChildren[i].view) {
-            const f1 = newVChildren[i].slOnDestroy;
-            if (oldVChildren[i].slUnboundOnDestroy !== f1) {
+            if (oldVChildren[i].slUnboundOnDestroy !== newVChildren[i].slOnDestroy) {
                 if (oldVChildren[i].slUnboundOnDestroy !== undefined) oldVChildren[i].slOnDestroyFn();
                 removeFromDestroyList(oldVChildren[i]);
                 oldVChildren[i].slOnDestroyFn = null;
