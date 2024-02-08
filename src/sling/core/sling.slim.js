@@ -345,7 +345,7 @@ const consumeClassViewAndAppend = (child, el, diffDom = false) => {
     child = buildObj.view;
     if (buildObj.afterInit) s._afterInitArr.push(buildObj.afterInit);
     const ele = renderElementInternal(child);
-    setHookStateForNode(ele, buildObj.destroyIndex, buildObj.onDestroy);
+    setHookStateForNode(ele, buildObj.destroyIndex, buildObj.onDestroy, buildObj.unboundOnDestroy);
     insertEleIntoDestroyMap(ele);
     el.appendChild(ele);
     applyClassPropertiesToElement(ele, origChild);
@@ -354,12 +354,13 @@ const consumeClassViewAndAppend = (child, el, diffDom = false) => {
     }
 }
 
-const setHookStateForNode = (ele, destroyIndex, destroyFn) => {
+const setHookStateForNode = (ele, destroyIndex, destroyFn, unboundDestroyFn) => {
     ele.slOnDestroy = true;
     ele.slAfterInit = true;
     ele.slOnInit = true;
     ele.slOnDestroyIndex = destroyIndex;
     ele.slOnDestroyFn = destroyFn;
+    ele.slUnboundOnDestroy = unboundDestroyFn;
 }
 
 const getViewFromClass = (child, appendDestroy, callOnInit, returnDestroyFn = false, oldChild = null) => {
@@ -392,6 +393,8 @@ const getViewFromClass = (child, appendDestroy, callOnInit, returnDestroyFn = fa
         onInit: !callOnInit && child.slOnInit ? child.slOnInit : null,
         destroyIndex: delFnIndex,
         model: child,
+        slUnboundOnDestroy: child.slOnDestroy,
+        slUnboundAfterInit: child.slAfterInit
     };
 }
 
@@ -438,7 +441,7 @@ const callAllDestroyHooks = (node) => {
     }
 }
 
-const prepareNodeForDestroyHook = (node, fn) => {
+const prepareNodeForDestroyHook = (node, fn, unboundDestroyFn) => {
     node.slOnDestroy = true;
 
     let fnList = s._destroyFuncMap.get(s._router.mountRoute);
@@ -448,6 +451,7 @@ const prepareNodeForDestroyHook = (node, fn) => {
 
     node.slOnDestroyIndex = fnList.length - 1;
     node.slOnDestroyFn = fn;
+    node.slUnboundOnDestroy = unboundDestroyFn;
 
     insertEleIntoDestroyMap(node);
 }
@@ -538,9 +542,17 @@ const diffVChildren = (oldNode, oldVChildren, newVChildren) => {
 
     for (let i = oldVChildren.length - 1; i >= 0; --i) {
         let model = null;
-        let identifier = null;
 
         if (newVChildren[i] && newVChildren[i].view) {
+            const f1 = newVChildren[i].slOnDestroy;
+            if (oldVChildren[i].slUnboundOnDestroy !== f1) {
+                if (oldVChildren[i].slUnboundOnDestroy !== undefined) oldVChildren[i].slOnDestroyFn();
+                removeFromDestroyList(oldVChildren[i]);
+                oldVChildren[i].slOnDestroyFn = null;
+                oldVChildren[i].slOnDestroy = false;
+                oldVChildren[i].slOnDestroyIndex = null;
+            }
+
             const buildObj = getViewFromClass(newVChildren[i], false, false, false, oldVChildren[i]);
             newVChildren[i] = buildObj.view;
 
@@ -561,12 +573,22 @@ const diffVChildren = (oldNode, oldVChildren, newVChildren) => {
             if (buildObj.onInit && oldVChildren[i] && !oldVChildren[i].slOnInit) {
                 buildObj.onInit.bind(buildObj.model)();
             }
-            if (buildObj.afterInit && oldVChildren[i] && !oldVChildren[i].slAfterInit) {
+            if (buildObj.afterInit && !oldVChildren[i].slAfterInit && oldVChildren[i].slUnboundAfterInit !== buildObj.slUnboundAfterInit) {
                 oldVChildren[i].slAfterInit = true;
+                oldVChildren[i].slUnboundAfterInit = buildObj.slUnboundAfterInit;
                 s._afterInitArr.push(buildObj.afterInit);
+            } else if (oldVChildren[i].slUnboundAfterInit !== undefined && !buildObj.afterInit) {
+                oldVChildren[i].slAfterInit = false;
+                oldVChildren[i].slUnboundAfterInit = null;
+            } else if (buildObj.afterInit && oldVChildren[i] && !oldVChildren[i].slAfterInit) {
+                oldVChildren[i].slAfterInit = true;
+                oldVChildren[i].slUnboundAfterInit = buildObj.slUnboundAfterInit;
+                s._afterInitArr.push(buildObj.afterInit);
+            } else if (buildObj.afterInit && oldVChildren[i].slAfterInit && oldVChildren[i].slUnboundAfterInit === undefined) {
+                oldVChildren[i].slUnboundAfterInit = buildObj.slUnboundAfterInit;
             }
             if (buildObj.onDestroy && oldVChildren[i] && !oldVChildren[i].slOnDestroy) {
-                prepareNodeForDestroyHook(newVChildren[i], buildObj.onDestroy);
+                prepareNodeForDestroyHook(oldVChildren[i], buildObj.onDestroy, buildObj.slUnboundOnDestroy);
             }
 
             applyClassPropertiesToElement(oldVChildren[i], buildObj.model);
@@ -826,10 +848,11 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
         }
         if (buildObj.afterInit && vOldNode && !vOldNode.slAfterInit) {
             vOldNode.slAfterInit = true;
+            vOldNode.slUnboundAfterInit = buildObj.slUnboundAfterInit;
             s._afterInitArr.push(buildObj.afterInit);
         }
         if (buildObj.onDestroy && vOldNode && !vOldNode.slOnDestroy) {
-            prepareNodeForDestroyHook(vOldNode, buildObj.onDestroy);
+            prepareNodeForDestroyHook(vOldNode, buildObj.onDestroy, buildObj.slUnboundOnDestroy);
         }
     }
 
@@ -1021,7 +1044,7 @@ const _mountInternal = (target, component, attachDetector) => {
         s._updateMap.set(target.id, component);
 
     if (component.slOnDestroy) {
-        prepareNodeForDestroyHook(target, component.slOnDestroy.bind(component));
+        prepareNodeForDestroyHook(target, component.slOnDestroy.bind(component), component.slOnDestroy);
     }
 
     let refs = target.querySelectorAll('[slref]');
@@ -1036,6 +1059,7 @@ const _mountInternal = (target, component, attachDetector) => {
 
     if (component.slAfterInit) {
         component.slAfterInit();
+        target.slUnboundAfterInit = component.slAfterInit;
         _performChangeDetection();
     }
 
