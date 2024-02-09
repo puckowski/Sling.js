@@ -2,6 +2,192 @@ import { getRouteQueryVariables, setRouteStrategy, enableDetectOnThen, renderEle
 import { BehaviorSubject, FormControl, Observable } from '../dist_sling/sling-reactive.min';
 import { slGet } from '../dist_sling/sling-xhr.min';
 
+class AfterInitCalledForRecycled1 {
+    constructor() {
+        this.toggle = true;
+        this.comp1 = new AfterInitCalledForRecycled2();
+        this.comp2 = new AfterInitCalledForRecycled3();
+        this.comp3 = new AfterInitCalledForRecycled4();
+    }
+
+    flip() {
+        this.toggle = !this.toggle;
+    }
+
+    view() {
+        return markup("div", {
+            attrs: {
+                id: "divafterinitrecycle1"
+            },
+            children: [
+                ...(this.toggle === true ? [this.comp1, this.comp2] : [this.comp3]),
+                markup('button', {
+                    attrs: {
+                        id: 'btn-after-recycle-test-1',
+                        onclick: this.flip.bind(this)
+                    },
+                    children: [
+                        textNode('Test after recycle')
+                    ]
+                })
+            ]
+        });
+    }
+}
+
+class AfterInitCalledForRecycled2 {
+    slAfterInit() {
+        const state = getState();
+        if (!state.recycle3) {
+            state.recycle3 = 0;
+        }
+        state.recycle3++;
+        setState(state);
+    }
+
+    view() {
+        return markup("div", {
+            children: [
+                markup('aside', {
+                    children: [
+                        textNode('Test recycling lifecycle hooks in aside.')
+                    ]
+                })
+            ]
+        });
+    }
+}
+
+class AfterInitCalledForRecycled3 {
+    slAfterInit() {
+        const state = getState();
+        if (!state.recycle4) {
+            state.recycle4 = 0;
+        }
+        state.recycle4++;
+        setState(state);
+    }
+
+    view() {
+        return markup("div", {
+            children: [
+                markup('p', {
+                    children: [
+                        textNode('Test recycling lifecycle hooks in p.')
+                    ]
+                })
+            ]
+        });
+    }
+}
+
+class AfterInitCalledForRecycled4 {
+    view() {
+        return markup("div", {
+            children: [
+                markup('span', {
+                    children: [
+                        textNode('Test recycling lifecycle hooks in span.')
+                    ]
+                })
+            ]
+        });
+    }
+}
+
+class OnDestroyCalledForRecycled1 {
+    constructor() {
+        this.toggle = true;
+        this.comp1 = new OnDestroyCalledForRecycled2();
+        this.comp2 = new OnDestroyCalledForRecycled3();
+        this.comp3 = new OnDestroyCalledForRecycled4();
+    }
+
+    flip() {
+        this.toggle = !this.toggle;
+    }
+
+    view() {
+        return markup("div", {
+            attrs: {
+                id: "divondestroyrecycle1"
+            },
+            children: [
+                ...(this.toggle === true ? [this.comp1, this.comp2] : [this.comp3]),
+                markup('button', {
+                    attrs: {
+                        id: 'btn-recycle-test-1',
+                        onclick: this.flip.bind(this)
+                    },
+                    children: [
+                        textNode('Test recycle')
+                    ]
+                })
+            ]
+        });
+    }
+}
+
+class OnDestroyCalledForRecycled2 {
+    slOnDestroy() {
+        const state = getState();
+        if (!state.recycle1) {
+            state.recycle1 = 0;
+        }
+        state.recycle1++;
+        setState(state);
+    }
+
+    view() {
+        return markup("div", {
+            children: [
+                markup('aside', {
+                    children: [
+                        textNode('Test recycling lifecycle hooks in aside.')
+                    ]
+                })
+            ]
+        });
+    }
+}
+
+class OnDestroyCalledForRecycled3 {
+    slOnDestroy() {
+        const state = getState();
+        if (!state.recycle2) {
+            state.recycle2 = 0;
+        }
+        state.recycle2++;
+        setState(state);
+    }
+
+    view() {
+        return markup("div", {
+            children: [
+                markup('p', {
+                    children: [
+                        textNode('Test recycling lifecycle hooks in p.')
+                    ]
+                })
+            ]
+        });
+    }
+}
+
+class OnDestroyCalledForRecycled4 {
+    view() {
+        return markup("div", {
+            children: [
+                markup('span', {
+                    children: [
+                        textNode('Test recycling lifecycle hooks in span.')
+                    ]
+                })
+            ]
+        });
+    }
+}
+
 class TestSvgComponent1 {
     view() {
         return markup("div", {
@@ -13035,6 +13221,64 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
+    testFinalize100OnDestroyLifecycleHookWithRecycling() {
+        const result = {
+            test: 'test slOnDestroy is called for recycled DOM nodes',
+            success: false,
+            message: ''
+        };
+
+        const comp = new OnDestroyCalledForRecycled1();
+
+        mount('divondestroyrecycle1', comp);
+
+        let btnEle = document.getElementById('btn-recycle-test-1');
+        btnEle.click();
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            btnEle = document.getElementById('btn-recycle-test-1');
+            btnEle.click();
+
+            s.DETACHED_SET_TIMEOUT(() => {
+                const state = getState();
+
+                result.success = state.recycle1 === 1 && state.recycle2 === 2;
+
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+            }, 17);
+        }, 17);
+    }
+
+    testFinalize100AfterInitLifecycleHookWithRecycling() {
+        const result = {
+            test: 'test slAfterInit is called for recycled DOM nodes',
+            success: false,
+            message: ''
+        };
+
+        const comp = new AfterInitCalledForRecycled1();
+
+        mount('divafterinitrecycle1', comp);
+
+        let btnEle = document.getElementById('btn-after-recycle-test-1');
+        btnEle.click();
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            btnEle = document.getElementById('btn-after-recycle-test-1');
+            btnEle.click();
+
+            s.DETACHED_SET_TIMEOUT(() => {
+                const state = getState();
+
+                result.success = state.recycle3 === 1 && state.recycle4 === 2;
+
+                window.globalTestResults.push(result);
+                window.globalTestCount++;
+            }, 17);
+        }, 17);
+    }
+
     testClearSubscriptionForSubjectWorks() {
         const result = {
             test: 'test clearSubscription for BehaviorSubject works',
@@ -13537,7 +13781,7 @@ export class GlobalTestRunner {
         state = getState();
         const destroyCalls = state.destroyCalls;
 
-        result.success = destroyCalls === 2;
+        result.success = destroyCalls === 1;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;

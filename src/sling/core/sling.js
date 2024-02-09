@@ -351,7 +351,7 @@ const consumeClassViewAndAppend = (child, el, diffDom = false) => {
         applyScopedCssIdentifier(ele, identifier);
         ele.slScopedCss = true;
     }
-    setHookStateForNode(ele, buildObj.destroyIndex, buildObj.onDestroy, buildObj.unboundOnDestroy);
+    setHookStateForNode(ele, buildObj.destroyIndex, buildObj.onDestroy, buildObj.slUnboundOnDestroy);
     insertEleIntoDestroyMap(ele);
     el.appendChild(ele);
     applyClassPropertiesToElement(ele, origChild);
@@ -406,12 +406,14 @@ const getViewFromClass = (child, appendDestroy, callOnInit, returnDestroyFn = fa
 }
 
 const insertEleIntoDestroyMap = (node) => {
-    if (node && node.slOnDestroyIndex !== null && node.slOnDestroyIndex !== undefined) {
+    if (node && node.slOnDestroyIndex !== null && node.slOnDestroyIndex !== undefined
+        && !node.slOnDestroyRoute) {
         let eleList = s._destroyNodeMap.get(s._router.mountRoute);
         if (!eleList) eleList = [];
         const existingEle = eleList.find(ele => ele.slOnDestroyIndex === node.slOnDestroyIndex);
         if (!existingEle) eleList.push(node);
         s._destroyNodeMap.set(s._router.mountRoute, eleList);
+        node.slOnDestroyRoute = s._router.mountRoute;
     }
 }
 
@@ -440,11 +442,13 @@ const callAllDestroyHooks = (node) => {
 
         if (node.slOnDestroyFn) {
             node.slOnDestroyFn();
-            node.slOnDestroyFn = null;
+            node.slOnDestroyFn = undefined;
+            node.slUnboundOnDestroy = undefined;
         }
     } else if (node.slOnDestroyFn) {
         node.slOnDestroyFn();
-        node.slOnDestroyFn = null;
+        node.slOnDestroyFn = undefined;
+        node.slUnboundOnDestroy = undefined;
     }
 }
 
@@ -564,14 +568,15 @@ const diffVChildren = (oldNode, oldVChildren, newVChildren) => {
         let model = null;
         let identifier = null;
 
+        if (newVChildren[i] && oldVChildren[i].slUnboundOnDestroy !== newVChildren[i].slOnDestroy) {
+            if (oldVChildren[i].slUnboundOnDestroy !== undefined && oldVChildren[i].slOnDestroyFn !== undefined) oldVChildren[i].slOnDestroyFn();
+            removeFromDestroyList(oldVChildren[i]);
+            oldVChildren[i].slOnDestroyFn = undefined;
+            oldVChildren[i].slOnDestroy = false;
+            oldVChildren[i].slOnDestroyIndex = null;
+        }
+
         if (newVChildren[i] && newVChildren[i].view) {
-            if (oldVChildren[i].slUnboundOnDestroy !== newVChildren[i].slOnDestroy) {
-                if (oldVChildren[i].slUnboundOnDestroy !== undefined) oldVChildren[i].slOnDestroyFn();
-                removeFromDestroyList(oldVChildren[i]);
-                oldVChildren[i].slOnDestroyFn = null;
-                oldVChildren[i].slOnDestroy = false;
-                oldVChildren[i].slOnDestroyIndex = null;
-            }
 
             const buildObj = getViewFromClass(newVChildren[i], false, false, false, oldVChildren[i]);
             newVChildren[i] = buildObj.view;
@@ -602,11 +607,11 @@ const diffVChildren = (oldNode, oldVChildren, newVChildren) => {
                 s._afterInitArr.push(buildObj.afterInit);
             } else if (oldVChildren[i].slUnboundAfterInit !== undefined && !buildObj.afterInit) {
                 oldVChildren[i].slAfterInit = false;
-                oldVChildren[i].slUnboundAfterInit = null;
             } else if (buildObj.afterInit && oldVChildren[i] && !oldVChildren[i].slAfterInit) {
                 oldVChildren[i].slAfterInit = true;
+                if (oldVChildren[i].slUnboundAfterInit === buildObj.slUnboundAfterInit) s._afterInitArr.push(buildObj.afterInit);
                 oldVChildren[i].slUnboundAfterInit = buildObj.slUnboundAfterInit;
-                s._afterInitArr.push(buildObj.afterInit);
+                //s._afterInitArr.push(buildObj.afterInit);
             } else if (buildObj.afterInit && oldVChildren[i].slAfterInit && oldVChildren[i].slUnboundAfterInit === undefined) {
                 oldVChildren[i].slUnboundAfterInit = buildObj.slUnboundAfterInit;
             }
@@ -872,6 +877,14 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
     }
 
     if (vNewNode && vNewNode.view) {
+        if (vOldNode.slUnboundOnDestroy !== vNewNode.slOnDestroy) {
+            if (vOldNode.slUnboundOnDestroy !== undefined) vOldNode.slOnDestroyFn();
+            removeFromDestroyList(vOldNode);
+            vOldNode.slOnDestroyFn = undefined;
+            vOldNode.slOnDestroy = false;
+            vOldNode.slOnDestroyIndex = null;
+        }
+
         const buildObj = getViewFromClass(vNewNode, false, false, false, vOldNode);
         vNewNode = buildObj.view;
 
@@ -938,6 +951,9 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
             callAllDestroyHooks(vOldNode);
             clearDataForStructuralDirectives(vOldNode);
             removeAfterAnimationIfNeeded(vOldNode);
+            //el.slAfterInit = false;//vOldNode.slAfterInit;
+            el.slUnboundAfterInit = vOldNode.slUnboundAfterInit;
+            if (el.slUnboundAfterInit !== undefined) el.slAfterInit = true;
             vOldNode = el;
         } else {
             removeFromDestroyList(vOldNode);
@@ -1133,6 +1149,8 @@ const _mountInternal = (target, component, attachDetector) => {
     s._afterInitArr.forEach((afterInitFn) => {
         afterInitFn();
     });
+
+    //s._destroyNodeMap.set(s._router.mountRoute, []);
 
     return target;
 }
@@ -2053,12 +2071,14 @@ export function route(routeStr, routeParams = {}, attachDetector = true) {
                 value.onBeforeRoute();
             }
 
+            let root = document.getElementById(value.root);
+
             // Handle destroy functions
             const destroyEleList = s._destroyNodeMap.get(getRoute());
             if (destroyEleList) {
                 destroyEleList.forEach(destroyEle => {
-                    if (destroyEle.slOnDestroyFn) destroyEle.slOnDestroyFn();
-                    destroyEle.slOnDestroyFn = null;
+                    if (destroyEle.slOnDestroyFn && root.contains(destroyEle)) destroyEle.slOnDestroyFn();
+                    destroyEle.slOnDestroyFn = undefined;
                 });
                 s._destroyNodeMap.set(getRoute(), []);
                 s._destroyFuncMap.set(getRoute(), []);
@@ -2099,8 +2119,6 @@ export function route(routeStr, routeParams = {}, attachDetector = true) {
 
             slContext.scrollTo(0, scrollPosition);
 
-            let root = document.getElementById(value.root);
-
             if (s._router.currentRoute && s._router.currentRoute.animateDestroy !== undefined) {
                 s._router.currentRoute.animateDestroy = true;
             }
@@ -2132,6 +2150,12 @@ export function route(routeStr, routeParams = {}, attachDetector = true) {
                 // Set new content
                 s._router.mountRoute = routeStr;
                 _mountInternal(root, value.component, attachDetector);
+
+                if (value.component.slOnDestroy) {
+                    root.slOnDestroyIndex = 0;
+                    s._destroyFuncMap.get(routeStr).pop();
+                    insertEleIntoDestroyMap(root);
+                }
 
                 comp = value.component;
             }
