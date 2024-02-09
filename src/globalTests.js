@@ -2,12 +2,517 @@ import { getRouteQueryVariables, setRouteStrategy, enableDetectOnThen, renderEle
 import { BehaviorSubject, FormControl, Observable } from '../dist_sling/sling-reactive.min';
 import { slGet } from '../dist_sling/sling-xhr.min';
 
+class HelpComponent {
+
+    constructor() {
+    }
+
+    view() {
+        let font = ' font: 400 13.3333px Arial;';
+
+        return markup('div', {
+            attrs: {
+                style: 'padding: 0.25rem; background-color: rgb(21, 24, 30); color: rgb(204, 204, 204); overflow: auto; height: calc(100% - 0.5rem); display: flex; flex-direction: column;'
+            },
+            children: [
+                markup('div', {
+                    attrs: {
+                        style: 'flex: 20;'
+                    },
+                    children: [
+                        markup('h4', {
+                            attrs: {
+                                style: 'margin: 0px;'
+                            },
+                            children: [
+                                textNode('Code Editor Help')
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('Click Add File to add a new file. Toggle Inject Script to inject the file as a <script> tag in the <head> of the preview. Toggle Inject CSS to inject the file as a <style> tag in the <head> of the preview.')
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('Click Expand and Shrink to change the size of the Code Editor.')
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('Click Run to update the preview.')
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('Click Export to export the preview page HTML.')
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('Click Import File to import a file\'s contents into the source panel.')
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('Click Import Workspace to import a previously exported HTML file. This may create multiple files.')
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('Click Toggle Preview on small screens to toggle the preview.')
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('Click Clear Console to clear the preview console.')
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('Click Format Code to format the code in the file editor.')
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('Click Toggle Mode to toggle collapsed editor mode.')
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('Click Sling.js Demo to build a \'Hello, world!\' Sling.js project.')
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('Press Control/Command and A or click on the suggested word popup to insert the suggested word.')
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('Press Control/Command and J simultaneously to format your code. Press Control/Command and M simultaneously to run your code.')
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('The Share feature is limited to links that are 6,237 characters or less.')
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('A custom build of Less.js 4.1.3 is used that supports CSS Container Queries, Media Queries Level 4, and Cascading and Inheritance Level 6. '),
+                                markup('a', {
+                                    attrs: {
+                                        href: 'https://github.com/puckowski/less.js'
+                                    },
+                                    children: [
+                                        textNode('https://github.com/puckowski/less.js')
+                                    ]
+                                })
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('Ness.js 1.5.0 supports SCSS-style CSS nesting, nested @media, and nested @layer queries. '),
+                                markup('a', {
+                                    attrs: {
+                                        href: 'https://github.com/puckowski/Ness.js'
+                                    },
+                                    children: [
+                                        textNode('https://github.com/puckowski/Ness.js')
+                                    ]
+                                })
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('To reset Code Editor to original state, click the following button.'),
+                            ]
+                        }),
+                        markup('div', {
+                            children: [
+                                markup('button', {
+                                    attrs: {
+                                        style: 'background-color: rgba(255,255,255,0.3); border: none; color: rgb(204, 204, 204); align-self: center;' + font
+                                    },
+                                    children: [
+                                        textNode('Reset')
+                                    ]
+                                })
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('To switch between normal and low resolution mode, click the following toggle.'),
+                            ]
+                        }),
+                        markup('div', {
+                            children: [
+                                textNode('Low Resolution: '),
+                                markup('input', {
+                                    attrs: {
+                                        id: 'low-resolution-checkbox',
+                                        type: 'checkbox',
+                                    }
+                                })
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('If you encounter any issues, please log an issue on GitHub: '),
+                                markup('a', {
+                                    attrs: {
+                                        href: 'https://github.com/puckowski/Tryit-Code-Editor'
+                                    },
+                                    children: [
+                                        textNode('https://github.com/puckowski/Tryit-Code-Editor')
+                                    ]
+                                })
+                            ]
+                        })
+                    ]
+                })
+            ]
+        });
+    }
+}
+
+class FileTreeComponent {
+
+    constructor() {
+        this.editNameIndex = 0;
+        this.editedFileName = 'edit';
+    }
+
+    applyCheckedValuesAfterRender() {
+        const fileList = [{ index: 0, name: 'one', injectScript: false, injectCss: false }, { index: 1, name: 'two', injectScript: false, injectCss: false }];
+
+        const divTreeElement = document.getElementById('div-file-tree');
+        const checkboxElements = divTreeElement.querySelectorAll('input[type=checkbox]');
+
+        for (let i = 0; i < checkboxElements.length; ++i) {
+            const file = fileList[Math.floor(i / 2)];
+
+            if (i % 2 === 0 && file.injectScript) {
+                checkboxElements[i].checked = true;
+            } else if (i % 2 !== 0 && file.injectCss) {
+                checkboxElements[i].checked = true;
+            } else {
+                checkboxElements[i].checked = false;
+            }
+        }
+    }
+
+    view() {
+        const fileList = [{ index: 0, name: 'one', injectScript: false, injectCss: false }, { index: 1, name: 'two', injectScript: false, injectCss: false }];
+        const editIndex = 0;
+
+        let font = ' font: 400 13.3333px Arial;';
+        font += ' font-weight: 900;';
+
+        s.DETACHED_SET_TIMEOUT(() => {
+            this.applyCheckedValuesAfterRender();
+        }, 0);
+
+        return markup('div', {
+            attrs: {
+                style: 'background-color: rgb(32, 35, 39); color: rgb(204, 204, 204); overflow: auto; max-height: inherit;' + font,
+                id: 'div-file-tree'
+            },
+            children: [
+                ...Array.from(fileList, (file, index) =>
+                    markup('div', {
+                        attrs: {
+                            ...editIndex !== file.index && index % 2 === 0 && { style: 'padding: 0.5rem;' },
+                            ...editIndex !== file.index && index % 2 !== 0 && { style: 'padding: 0.5rem; background-color: rgb(21, 24, 30);' },
+                            ...editIndex === file.index && { style: 'padding: 0.5rem; background-color: rgb(60, 68, 83);' },
+                        },
+                        children: [
+                            markup('button', {
+                                attrs: {
+                                    style: 'word-break: break-word; margin: 0 0.5rem 0.5rem 0; background-color: rgba(255,255,255,0.3); border: none; color: rgb(204, 204, 204);' + font,
+                                },
+                                children: [
+                                    ...(file.index === this.editNameIndex ? [
+                                        textNode('Save Name')
+                                    ] : [
+                                        textNode('Edit Name')
+                                    ])
+                                ],
+
+                            }),
+                            markup('button', {
+                                attrs: {
+                                    style: 'word-break: break-word; margin: 0 0.5rem 0.5rem 0; background-color: rgba(255,255,255,0.3); border: none; color: rgb(204, 204, 204);' + font,
+                                },
+                                children: [
+                                    textNode('Remove File')
+                                ],
+                            }),
+                            ...(file.index !== this.editNameIndex ? [
+                                markup('div', {
+                                    children: [
+                                        ...(editIndex === file.index ? [
+                                            markup('span', {
+                                                attrs: {
+                                                    style: 'word-break: break-word;'
+                                                },
+                                                children: [
+                                                    textNode('File ' + (file.index + 1) + ': ' + file.name)
+                                                ]
+                                            })
+                                        ] : [
+                                            markup('div', {
+                                                attrs: {
+                                                    style: 'word-break: break-word;'
+                                                },
+                                                children: [
+                                                    textNode('File ' + (file.index + 1) + ': ' + file.name)
+                                                ]
+                                            })
+                                        ])
+                                    ]
+                                })
+                            ] : []),
+                            ...(file.index === this.editNameIndex ? [
+                                markup('input', {
+                                    attrs: {
+                                        style: 'width: 100%; padding: 1px 2px;',
+                                        value: this.editedFileName
+                                    }
+                                })
+                            ] : []),
+                            markup('div', {
+                                children: [
+                                    markup('span', {
+                                        attrs: {
+                                            style: 'margin-right: 0.25rem;'
+                                        },
+                                        children: [
+                                            textNode('Inject Script')
+                                        ]
+                                    }),
+                                    markup('input', {
+                                        attrs: {
+                                            id: 'file-inject-script-checkbox' + file.index,
+                                            type: 'checkbox',
+                                        }
+                                    })
+                                ]
+                            }),
+                            markup('div', {
+                                children: [
+                                    markup('span', {
+                                        attrs: {
+                                            style: 'margin-right: 0.25rem;'
+                                        },
+                                        children: [
+                                            textNode('Inject CSS')
+                                        ]
+                                    }),
+                                    markup('input', {
+                                        attrs: {
+                                            id: 'file-inject-css-checkbox' + file.index,
+                                            type: 'checkbox',
+                                        }
+                                    })
+                                ]
+                            })
+                        ]
+                    })
+                )
+            ]
+        });
+    }
+}
+
+class ContentPanelComponent2 {
+
+    constructor() {
+        this.fileTreeComp = new FileTreeComponent();
+        this.previewComp = new PreviewComponent();
+        this.sourceComp = new SourcePanelComponent();
+        this.helpComp = new HelpComponent();
+    }
+
+    view() {
+        const state = getState();
+        const collapsedMode = false;
+        const showPreview = true;
+        const showHelp = state.showTryItHelp;
+        const portraitMode = false;
+        const heightStr = 'max-height: 480px; height: 480px;';
+
+        let rootDisplayStyle = 'display: flex;';
+        let fileTreeStyle = 'width: 12%;';
+
+        return markup('div', {
+            attrs: {
+                id: 'tryit-content-test1',
+            },
+            children: [
+                markup('div', {
+                    attrs: {
+                        style: rootDisplayStyle + ' justify-content: flex-start;' + heightStr
+                    },
+                    children: [
+                        markup('div', {
+                            attrs: {
+                                style: fileTreeStyle + ' min-width: 100px; max-height: inherit;'
+                            },
+                            children: [
+                                this.fileTreeComp
+                            ]
+                        }),
+                        ...(portraitMode === false ? [
+                            ...(showHelp === false ? [
+                                ...(collapsedMode === false ? [
+                                    markup('div', {
+                                        attrs: {
+                                            style: 'width: 44%; max-height: inherit; height: calc(200% - 1rem);'
+                                        },
+                                        children: [
+                                            this.sourceComp
+                                        ]
+                                    }),
+                                    markup('div', {
+                                        attrs: {
+                                            style: 'width: 44%; max-height: inherit;  height: calc(200% - 1rem);'
+                                        },
+                                        children: [
+                                            this.previewComp
+                                        ]
+                                    })
+                                ] : []),
+                                ...(collapsedMode === true ? [
+                                    ...(showPreview === true ? [
+                                        markup('div', {
+                                            attrs: {
+                                                style: 'width: calc(100% - max(12%, 100px)); max-height: inherit;  height: calc(200% - 1rem);'
+                                            },
+                                            children: [
+                                                this.previewComp
+                                            ]
+                                        })
+                                    ] : []),
+                                    ...(showPreview === false ? [
+                                        markup('div', {
+                                            attrs: {
+                                                style: 'width: calc(100% - max(12%, 100px) - 0.5rem); max-height: inherit;  height: calc(200% - 1rem);'
+                                            },
+                                            children: [
+                                                this.sourceComp
+                                            ]
+                                        })
+                                    ] : []),
+                                ] : [])
+                            ] : [
+                                markup('div', {
+                                    attrs: {
+                                        style: 'width: calc(100% - max(12%, 100px)); max-height: inherit;  height: calc(200% - 1rem);'
+                                    },
+                                    children: [
+                                        this.helpComp
+                                    ]
+                                })
+                            ]),
+                        ] : [
+                            ...(showHelp === false ? [
+                                ...(collapsedMode === false ? [
+                                    markup('div', {
+                                        attrs: {
+                                            style: 'width: 100%; max-height: inherit;  height: calc(200% - 1rem);'
+                                        },
+                                        children: [
+                                            this.sourceComp
+                                        ]
+                                    }),
+                                    markup('div', {
+                                        attrs: {
+                                            style: 'width: 100%; max-height: inherit;  height: calc(200% - 1rem);'
+                                        },
+                                        children: [
+                                            this.previewComp
+                                        ]
+                                    })
+                                ] : []),
+                                ...(collapsedMode === true ? [
+                                    ...(showPreview === true ? [
+                                        markup('div', {
+                                            attrs: {
+                                                style: 'width: calc(100% - max(12%, 100px)); max-height: inherit;  height: calc(200% - 1rem);'
+                                            },
+                                            children: [
+                                                this.previewComp
+                                            ]
+                                        })
+                                    ] : []),
+                                    ...(showPreview === false ? [
+                                        markup('div', {
+                                            attrs: {
+                                                style: 'width: calc(100% - max(12%, 100px) - 0.5rem); max-height: inherit;  height: calc(200% - 1rem);'
+                                            },
+                                            children: [
+                                                this.sourceComp
+                                            ]
+                                        })
+                                    ] : []),
+                                ] : [])
+                            ] : [
+                                ...(collapsedMode === false && portraitMode === true ? [
+                                    markup('div', {
+                                        attrs: {
+                                            style: 'width: 100%; max-height: inherit;  height: calc(200% - 1rem);'
+                                        },
+                                        children: [
+                                            this.helpComp
+                                        ]
+                                    })
+                                ] : []),
+                                ...(collapsedMode === true ? [
+                                    markup('div', {
+                                        attrs: {
+                                            style: 'width: 100%; max-height: inherit;  height: calc(200% - 1rem);'
+                                        },
+                                        children: [
+                                            this.helpComp
+                                        ]
+                                    })
+                                ] : []),
+                                ...(collapsedMode === false && portraitMode === false ? [
+                                    markup('div', {
+                                        attrs: {
+                                            style: 'width: calc(100% - max(12%, 100px)); max-height: inherit;  height: calc(200% - 1rem);'
+                                        },
+                                        children: [
+                                            this.helpComp
+                                        ]
+                                    })
+                                ] : []),
+                            ]),
+                        ])
+                    ]
+                })
+            ]
+        });
+    }
+}
+
 class AfterInitCalledForRecycled1 {
     constructor() {
         this.toggle = true;
         this.comp1 = new AfterInitCalledForRecycled2();
         this.comp2 = new AfterInitCalledForRecycled3();
         this.comp3 = new AfterInitCalledForRecycled4();
+    }
+
+    slOnInit() {
+        const state = getState();
+        if (!state.recycle6) {
+            state.recycle6 = 0;
+        }
+        state.recycle6++;
+        setState(state);
     }
 
     flip() {
@@ -59,6 +564,15 @@ class AfterInitCalledForRecycled2 {
 }
 
 class AfterInitCalledForRecycled3 {
+    slOnInit() {
+        const state = getState();
+        if (!state.recycle5) {
+            state.recycle5 = 0;
+        }
+        state.recycle5++;
+        setState(state);
+    }
+
     slAfterInit() {
         const state = getState();
         if (!state.recycle4) {
@@ -4727,6 +5241,33 @@ class PreviewComponent {
         this.injectedList = 'Injected files: 2';
     }
 
+    slOnInit() {
+        const state = getState();
+        if (state.oninit1 === null || state.oninit1 === undefined) {
+            state.oninit1 = 0;
+        }
+        state.oninit1++;
+        setState(state);
+    }
+
+    slOnDestroy() {
+        const state = getState();
+        if (state.ondestroy1 === null || state.ondestroy1 === undefined) {
+            state.ondestroy1 = 0;
+        }
+        state.ondestroy1++;
+        setState(state);
+    }
+
+    slAfterInit() {
+        const state = getState();
+        if (state.afterinit1 === null || state.afterinit1 === undefined) {
+            state.afterinit1 = 0;
+        }
+        state.afterinit1++;
+        setState(state);
+    }
+
     view() {
         return markup('div', {
             attrs: {
@@ -4778,9 +5319,33 @@ class SourcePanelComponent {
     constructor() {
     }
 
+    slOnInit() {
+        const state = getState();
+        if (state.oninit2 === null || state.oninit2 === undefined) {
+            state.oninit2 = 0;
+        }
+        state.oninit2++;
+        setState(state);
+    }
+
+    slOnDestroy() {
+        const state = getState();
+        if (state.ondestroy2 === null || state.ondestroy2 === undefined) {
+            state.ondestroy2 = 0;
+        }
+        state.ondestroy2++;
+        setState(state);
+    }
+
     slAfterInit() {
         const state = getState();
         state.sourcePanelAfterInit = true;
+
+        if (state.afterinit2 === null || state.afterinit2 === undefined) {
+            state.afterinit2 = 0;
+        }
+        state.afterinit2++;
+
         setState(state);
     }
 
@@ -8809,6 +9374,40 @@ export class GlobalTestRunner {
                         break;
                     } else {
                         nodeSet.add(value[i]);
+                    }
+                }
+            }
+
+            if (hasDuplicates) {
+                break;
+            }
+        }
+
+        result.success = !hasDuplicates;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testRunLastFunctionMapNoDuplicates() {
+        const result = {
+            test: 'test destroy function map contains no duplicates',
+            success: false,
+            message: ''
+        };
+
+        const fnSet = new Set();
+        let hasDuplicates = false;
+
+        for (const [key, value] of s._destroyFuncMap) {
+            if (value !== null && value !== undefined && value.length > 0) {
+                for (let i = 0; i < value.length; ++i) {
+                    if (fnSet.has(value[i])) {
+                        hasDuplicates = true;
+
+                        break;
+                    } else {
+                        fnSet.add(value[i]);
                     }
                 }
             }
@@ -13271,12 +13870,46 @@ export class GlobalTestRunner {
             s.DETACHED_SET_TIMEOUT(() => {
                 const state = getState();
 
-                result.success = state.recycle3 === 1 && state.recycle4 === 2;
+                result.success = state.recycle3 === 1 && state.recycle4 === 2 && state.recycle5 === 2 && state.recycle6 === 1;
 
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
             }, 17);
         }, 17);
+    }
+
+    testFinalize100TryItRecycleDomNodes() {
+        const result = {
+            test: 'test recycling of DOM nodes and verify that lifecycle hooks are called',
+            success: false,
+            message: ''
+        };
+
+        let state = getState();
+        state.showTryItHelp = false;
+        setState(state);
+
+        const comp = new ContentPanelComponent2();
+        mount('tryit-content-test1', comp);
+
+        state = getState();
+        state.showTryItHelp = true;
+        setState(state);
+
+        detectChanges();
+
+        state = getState();
+        state.showTryItHelp = false;
+        setState(state);
+
+        detectChanges();
+
+        state = getState();
+
+        result.success = state.oninit1 === 2 && state.oninit2 === 2 && state.ondestroy1 === 1 && state.ondestroy2 === 1 && state.afterinit1 === 2 && state.afterinit2 === 2;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
     }
 
     testClearSubscriptionForSubjectWorks() {
