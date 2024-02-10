@@ -444,13 +444,11 @@ const callAllDestroyHooks = (node) => {
 
         if (node.slOnDestroyFn) {
             node.slOnDestroyFn();
-            node.slOnDestroyFn = null;
             node.slOnDestroyFn = undefined;
             node.slUnboundOnDestroy = undefined;
         }
     } else if (node.slOnDestroyFn) {
         node.slOnDestroyFn();
-        node.slOnDestroyFn = null;
         node.slOnDestroyFn = undefined;
         node.slUnboundOnDestroy = undefined;
     }
@@ -562,7 +560,7 @@ const diffVChildren = (oldNode, oldVChildren, newVChildren) => {
             if (oldVChildren[i].slUnboundOnDestroy !== newVChildren[i].slOnDestroy) {
                 if (oldVChildren[i].slUnboundOnDestroy !== undefined && oldVChildren[i].slOnDestroyFn !== undefined) oldVChildren[i].slOnDestroyFn();
                 removeFromDestroyList(oldVChildren[i]);
-                oldVChildren[i].slOnDestroyFn = null;
+                oldVChildren[i].slOnDestroyFn = undefined;
                 oldVChildren[i].slOnDestroy = false;
             }
 
@@ -621,11 +619,12 @@ const diffVChildren = (oldNode, oldVChildren, newVChildren) => {
             }
         }
 
+        diffVDom(oldVChildren[i], newVChildren[i], model);
+
         if (newVChildren[i] && newVChildren[i].slOnInit) {
             oldVChildren[i].slOnInit = true;
         }
 
-        diffVDom(oldVChildren[i], newVChildren[i], model);
         childIndex++;
     }
 
@@ -1603,7 +1602,7 @@ function debounce(func, wait) {
     return function (...args) {
         const context = this;
         clearTimeout(timeout);
-        timeout = s.DETACHED_SET_TIMEOUT(() => func.apply(context, args), wait);
+        timeout = setTimeout(() => func.apply(context, args), wait);
     }
 }
 
@@ -1730,59 +1729,3 @@ slContext.fetch = function () {
     _performChangeDetection(); // Change after update
     return result;
 }
-
-// Web APIs wrap
-const origTimeout = slContext.setTimeout;
-slContext.setTimeout = function (runChanges = true) {
-    let result;
-
-    if (arguments.length > 2) {
-        const args = [].slice.call(arguments, 1);
-        result = origTimeout.apply(this, args);
-        if (runChanges) {
-            _performChangeDetection(); // Change after update
-        }
-    } else {
-        const args = [].slice.call(arguments);
-        result = origTimeout.apply(this, args);
-        _performChangeDetection(); // Change after update
-    }
-
-    return result;
-}
-
-const origInterval = slContext.setInterval;
-slContext.setInterval = function (runChanges = true) {
-    let result;
-
-    if (arguments.length > 2) {
-        const args = [].slice.call(arguments, 1);
-        result = origInterval.apply(this, args);
-
-        if (runChanges) {
-            _performChangeDetection(); // Change after update
-        }
-    } else {
-        const args = [].slice.call(arguments);
-        const fn = args[0];
-        args[0] = () => {
-            fn();
-            _performChangeDetection(); // Change after update
-        };
-        result = origInterval.apply(this, args);
-        _performChangeDetection(); // Change after update
-    }
-
-    return result;
-}
-
-const DETACHED_SET_TIMEOUT = slContext.setTimeout;
-const DETACHED_SET_INTERVAL = slContext.setInterval;
-
-Object.defineProperty(s, 'DETACHED_SET_TIMEOUT', {
-    value: DETACHED_SET_TIMEOUT.bind(slContext, false)
-});
-
-Object.defineProperty(s, 'DETACHED_SET_INTERVAL', {
-    value: DETACHED_SET_INTERVAL.bind(slContext, false)
-});

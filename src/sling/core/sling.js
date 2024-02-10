@@ -2304,7 +2304,7 @@ function debounce(func, wait) {
     return function (...args) {
         const context = this;
         clearTimeout(timeout);
-        timeout = s.DETACHED_SET_TIMEOUT(() => func.apply(context, args), wait);
+        timeout = setTimeout(() => func.apply(context, args), wait);
     }
 }
 
@@ -2431,59 +2431,3 @@ slContext.fetch = function () {
     _performChangeDetection(); // Change after update
     return result;
 }
-
-// Web APIs wrap
-const origTimeout = slContext.setTimeout;
-slContext.setTimeout = function (runChanges = true) {
-    let result;
-
-    if (arguments.length > 2) {
-        const args = [].slice.call(arguments, 1);
-        result = origTimeout.apply(this, args);
-        if (runChanges) {
-            _performChangeDetection(); // Change after update
-        }
-    } else {
-        const args = [].slice.call(arguments);
-        result = origTimeout.apply(this, args);
-        _performChangeDetection(); // Change after update
-    }
-
-    return result;
-}
-
-const origInterval = slContext.setInterval;
-slContext.setInterval = function (runChanges = true) {
-    let result;
-
-    if (arguments.length > 2) {
-        const args = [].slice.call(arguments, 1);
-        result = origInterval.apply(this, args);
-
-        if (runChanges) {
-            _performChangeDetection(); // Change after update
-        }
-    } else {
-        const args = [].slice.call(arguments);
-        const fn = args[0];
-        args[0] = () => {
-            fn();
-            _performChangeDetection(); // Change after update
-        };
-        result = origInterval.apply(this, args);
-        _performChangeDetection(); // Change after update
-    }
-
-    return result;
-}
-
-const DETACHED_SET_TIMEOUT = slContext.setTimeout;
-const DETACHED_SET_INTERVAL = slContext.setInterval;
-
-Object.defineProperty(s, 'DETACHED_SET_TIMEOUT', {
-    value: DETACHED_SET_TIMEOUT.bind(slContext, false)
-});
-
-Object.defineProperty(s, 'DETACHED_SET_INTERVAL', {
-    value: DETACHED_SET_INTERVAL.bind(slContext, false)
-});

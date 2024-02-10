@@ -180,7 +180,7 @@ export class TestComponent1 {
 
 mount("divcomp1", new TestComponent1());
 
-s.DETACHED_SET_INTERVAL(() => {
+setInterval(() => {
     detectChanges();
 }, 5000);
 ```

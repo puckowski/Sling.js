@@ -210,7 +210,7 @@ class FileTreeComponent {
         let font = ' font: 400 13.3333px Arial;';
         font += ' font-weight: 900;';
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             this.applyCheckedValuesAfterRender();
         }, 0);
 
@@ -6284,6 +6284,8 @@ export class SetIntervalTestComponent1 {
             this.sub.next(this.sub.getData() + 1);
             this.count++;
 
+            detectChanges();
+
             if (this.count > 2) {
                 clearInterval(this.interval);
             }
@@ -9188,7 +9190,7 @@ export class GlobalTestRunner {
         const buttonEle = document.getElementById('newconsumedbutton1');
         buttonEle.click();
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             const state = getState();
             const count1 = state.newConsumed1 === 1;
             const count2 = state.newConsumed2 === 1;
@@ -9212,10 +9214,10 @@ export class GlobalTestRunner {
         let anchorEle = document.getElementById('preventdefaultanchor1');
         anchorEle.click();
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             detectChanges();
 
-            s.DETACHED_SET_TIMEOUT(() => {
+            setTimeout(() => {
                 anchorEle = document.getElementById('preventdefaultanchor1');
                 const evtListeners = anchorEle['onclick'];
 
@@ -9252,12 +9254,12 @@ export class GlobalTestRunner {
 
         const scrollPosition3 = window.pageYOffset;
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             detectChanges();
 
             const scrollPosition4 = window.pageYOffset;
 
-            s.DETACHED_SET_TIMEOUT(() => {
+            setTimeout(() => {
                 result.success = scrollPosition === scrollPosition2 && scrollPosition === scrollPosition3 && scrollPosition === scrollPosition4;
 
                 window.globalTestResults.push(result);
@@ -9289,12 +9291,12 @@ export class GlobalTestRunner {
 
         const scrollPosition3 = window.pageYOffset;
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             detectChanges();
 
             const scrollPosition4 = window.pageYOffset;
 
-            s.DETACHED_SET_TIMEOUT(() => {
+            setTimeout(() => {
                 result.success = scrollPosition === scrollPosition2 && scrollPosition !== scrollPosition3 && scrollPosition !== scrollPosition4;
 
                 window.globalTestResults.push(result);
@@ -9312,15 +9314,15 @@ export class GlobalTestRunner {
 
         mount('divRouterOutletAnim', new HelloWorldComponentAnimate());
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             const btn1 = document.getElementById('btnanim1');
             btn1.click();
 
-            s.DETACHED_SET_TIMEOUT(() => {
+            setTimeout(() => {
                 const btn2 = document.getElementById('btnanim2');
                 btn2.click();
 
-                s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
                     const ele = document.getElementById('divRouterOutletAnim');
 
                     result.success = ele && ele.children && ele.children.length === 1 && ele.children[0] && ele.children[0].childNodes.length === 2;
@@ -9431,7 +9433,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             const state = getState();
 
             if (window.globalAsyncCount === 0 && window.globalTestCount >= state.testCount && window.runAnimRouteToggle) {
@@ -9452,14 +9454,14 @@ export class GlobalTestRunner {
 
                 route('animroutetoggle1');
 
-                s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
                     let rootEle = document.getElementById('divRouterOutlet2');
                     const rootCorrect = rootEle && rootEle.children && rootEle.children.length === 1 && rootEle.children[0].tagName === 'H1';
                     const h1Correct = rootCorrect && rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
                         && rootEle.children[0].childNodes[0].textContent === 'Hello, world!' && rootEle.children[0].childNodes[1].tagName === 'BUTTON'
                         && rootEle.children[0].childNodes[1].textContent === 'Hide';
 
-                    s.DETACHED_SET_TIMEOUT(() => {
+                    setTimeout(() => {
                         // Animation ended
                         rootEle = document.getElementById('divRouterOutlet2');
                         const rootCorrectFinal = rootEle && rootEle.children && rootEle.children.length === 1 && rootEle.children[0].tagName === 'H1';
@@ -9469,19 +9471,19 @@ export class GlobalTestRunner {
 
                         route('animroutetoggle2');
 
-                        s.DETACHED_SET_TIMEOUT(() => {
+                        setTimeout(() => {
                             const rootCorrectFinal2 = rootEle && rootEle.children && rootEle.children.length === 1 && rootEle.children[0].tagName === 'H1';
                             const h1CorrectFinal2 = rootCorrect && rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
                                 && rootEle.children[0].childNodes[0].textContent === 'Hello, world!' && rootEle.children[0].childNodes[1].tagName === 'BUTTON'
                                 && rootEle.children[0].childNodes[1].textContent === 'Hide';
 
-                            s.DETACHED_SET_TIMEOUT(() => {
+                            setTimeout(() => {
                                 const rootCorrectFinal3 = rootEle && rootEle.children && rootEle.children.length === 1 && rootEle.children[0].tagName === 'H1';
                                 const h1CorrectFinal3 = rootCorrect && rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
                                     && rootEle.children[0].childNodes[0].textContent === 'Hello, world!' && rootEle.children[0].childNodes[1].tagName === 'BUTTON'
                                     && rootEle.children[0].childNodes[1].textContent === 'Hide';
 
-                                s.DETACHED_SET_TIMEOUT(() => {
+                                setTimeout(() => {
                                     const rootCorrectFinal4 = rootEle && rootEle.children && rootEle.children.length === 1 && rootEle.children[0].tagName === 'H1';
                                     const h1CorrectFinal4 = rootCorrect && rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
                                         && rootEle.children[0].childNodes[0].textContent === 'Hello, world 2!' && rootEle.children[0].childNodes[1].tagName === 'BUTTON'
@@ -9489,19 +9491,19 @@ export class GlobalTestRunner {
 
                                     route('animroutetoggle1');
 
-                                    s.DETACHED_SET_TIMEOUT(() => {
+                                    setTimeout(() => {
                                         const rootCorrectFinal5 = rootEle && rootEle.children && rootEle.children.length === 1 && rootEle.children[0].tagName === 'H1';
                                         const h1CorrectFinal5 = rootCorrect && rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
                                             && rootEle.children[0].childNodes[0].textContent === 'Hello, world 2!' && rootEle.children[0].childNodes[1].tagName === 'BUTTON'
                                             && rootEle.children[0].childNodes[1].textContent === 'Hide 2';
 
-                                        s.DETACHED_SET_TIMEOUT(() => {
+                                        setTimeout(() => {
                                             const rootCorrectFinal6 = rootEle && rootEle.children && rootEle.children.length === 1 && rootEle.children[0].tagName === 'H1';
                                             const h1CorrectFinal6 = rootCorrect && rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
                                                 && rootEle.children[0].childNodes[0].textContent === 'Hello, world 2!' && rootEle.children[0].childNodes[1].tagName === 'BUTTON'
                                                 && rootEle.children[0].childNodes[1].textContent === 'Hide 2';
 
-                                            s.DETACHED_SET_TIMEOUT(() => {
+                                            setTimeout(() => {
                                                 const rootCorrectFinal7 = rootEle && rootEle.children && rootEle.children.length === 1 && rootEle.children[0].tagName === 'H1';
                                                 const h1CorrectFinal7 = rootCorrect && rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
                                                     && rootEle.children[0].childNodes[0].textContent === 'Hello, world!' && rootEle.children[0].childNodes[1].tagName === 'BUTTON'
@@ -9544,7 +9546,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             const state = getState();
 
             if (window.globalAsyncCount === 0 && window.globalTestCount >= state.testCount && window.runAnimRouteToggle) {
@@ -9565,10 +9567,10 @@ export class GlobalTestRunner {
 
                 route('animroutetoggle3');
 
-                s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
                     let rootEle = document.getElementById('divRouterOutlet3');
 
-                    s.DETACHED_SET_TIMEOUT(() => {
+                    setTimeout(() => {
                         // Animation ended
                         route('animroutetoggle4');
 
@@ -9583,14 +9585,14 @@ export class GlobalTestRunner {
                         const duringRoot = document.getElementById('divduringanimation');
                         const duringRootCorrect = duringRoot && duringRoot.children && duringRoot.children.length === 1 && duringRoot.children[0].textContent === 'Updated during animation';
 
-                        s.DETACHED_SET_TIMEOUT(() => {
+                        setTimeout(() => {
                             rootEle = document.getElementById('divRouterOutlet3');
                             const rootCorrectFinal2 = rootEle && rootEle.children && rootEle.children.length === 1 && rootEle.children[0].tagName === 'H1';
                             const h1CorrectFinal2 = rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
                                 && rootEle.children[0].childNodes[0].textContent === 'Hello, world!' && rootEle.children[0].childNodes[1].tagName === 'BUTTON'
                                 && rootEle.children[0].childNodes[1].textContent === 'Hide';
 
-                            s.DETACHED_SET_TIMEOUT(() => {
+                            setTimeout(() => {
                                 rootEle = document.getElementById('divRouterOutlet3');
                                 const rootCorrectFinal3 = rootEle && rootEle.children && rootEle.children.length === 1 && rootEle.children[0].tagName === 'H1';
                                 const h1CorrectFinal3 = rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
@@ -9599,7 +9601,7 @@ export class GlobalTestRunner {
 
                                 detectChanges();
 
-                                s.DETACHED_SET_TIMEOUT(() => {
+                                setTimeout(() => {
                                     rootEle = document.getElementById('divRouterOutlet3');
                                     const rootCorrectFinal4 = rootEle && rootEle.children && rootEle.children.length === 1 && rootEle.children[0].tagName === 'H1';
                                     const h1CorrectFinal4 = rootEle.children[0].childNodes && rootEle.children[0].childNodes.length === 2
@@ -9640,7 +9642,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             const state = getState();
 
             if (window.globalAsyncCount === 0 && window.globalTestCount >= state.testCount && window.runAnimFunctionPreserve) {
@@ -9651,8 +9653,8 @@ export class GlobalTestRunner {
                 let btnEle = document.getElementById('animpreservebtn1');
                 btnEle.click();
 
-                s.DETACHED_SET_TIMEOUT(() => {
-                    s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
+                    setTimeout(() => {
                         // Animation ended
                         let state = getState();
                         const startCount = state.animationstartpreserve;
@@ -9696,7 +9698,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             const state = getState();
 
             if (window.globalAsyncCount === 0 && window.globalTestCount >= state.testCount && window.runLastAnimateRoute) {
@@ -9710,11 +9712,11 @@ export class GlobalTestRunner {
 
                 route('animateroute5');
 
-                s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
                     route('animateroute6');
 
-                    s.DETACHED_SET_TIMEOUT(() => {
-                        s.DETACHED_SET_TIMEOUT(() => {
+                    setTimeout(() => {
+                        setTimeout(() => {
                             const isAnimatingKeyed = s._isAnimatingKeyed;
 
                             let rootEle = document.getElementById('divanimateroute');
@@ -9723,7 +9725,7 @@ export class GlobalTestRunner {
                             const rootCorrect2 = rootEle && rootEle.children && rootEle.childNodes.length === 2 && rootEle.childNodes[1].tagName === 'BUTTON'
                                 && rootEle.childNodes[1].textContent === 'Tab' && rootEle.childNodes[0].textContent === 'Test Animate Route 2';
 
-                            s.DETACHED_SET_TIMEOUT(() => {
+                            setTimeout(() => {
                                 const isAnimatingKeyedFinal = s._isAnimatingKeyed;
 
                                 rootEle = document.getElementById('divanimateroute');
@@ -9732,7 +9734,7 @@ export class GlobalTestRunner {
 
                                 result.success = !isAnimatingKeyed && !rootCorrect && rootCorrect2 && !isAnimatingKeyedFinal && rootCorrectFinal;
 
-                                s.DETACHED_SET_TIMEOUT(() => {
+                                setTimeout(() => {
                                     // Animation finished
                                     window.globalTestResults.push(result);
                                     window.globalTestCount++;
@@ -9766,7 +9768,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             const state = getState();
 
             if (window.globalAsyncCount === 0 && window.globalTestCount >= state.testCount) {
@@ -9780,11 +9782,11 @@ export class GlobalTestRunner {
 
                 route('animateroute3');
 
-                s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
                     route('animateroute4');
 
-                    s.DETACHED_SET_TIMEOUT(() => {
-                        s.DETACHED_SET_TIMEOUT(() => {
+                    setTimeout(() => {
+                        setTimeout(() => {
                             const isAnimatingKeyed = s._isAnimatingKeyed;
 
                             let rootEle = document.getElementById('divanimateroute');
@@ -9794,7 +9796,7 @@ export class GlobalTestRunner {
                                 && rootEle.childNodes[1].textContent === 'Tab' && rootEle.childNodes[0].textContent === 'Test Animate Route 2';
 
 
-                            s.DETACHED_SET_TIMEOUT(() => {
+                            setTimeout(() => {
                                 const isAnimatingKeyedFinal = s._isAnimatingKeyed;
 
                                 rootEle = document.getElementById('divanimateroute');
@@ -9803,7 +9805,7 @@ export class GlobalTestRunner {
 
                                 result.success = isAnimatingKeyed && !rootCorrect && rootCorrect2 && !isAnimatingKeyedFinal && rootCorrectFinal;
 
-                                s.DETACHED_SET_TIMEOUT(() => {
+                                setTimeout(() => {
                                     // Animation finished
                                     window.globalTestResults.push(result);
                                     window.globalTestCount++;
@@ -9837,7 +9839,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             const state = getState();
 
             if (window.globalAsyncCount === 0 && window.globalTestCount >= state.testCount) {
@@ -9851,18 +9853,18 @@ export class GlobalTestRunner {
 
                 route('animateroute1');
 
-                s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
                     route('animateroute2');
 
-                    s.DETACHED_SET_TIMEOUT(() => {
-                        s.DETACHED_SET_TIMEOUT(() => {
+                    setTimeout(() => {
+                        setTimeout(() => {
                             const isAnimatingKeyed = s._isAnimatingKeyed;
 
                             let rootEle = document.getElementById('divanimateroute');
                             const rootCorrect = rootEle && rootEle.children && rootEle.childNodes.length === 2 && rootEle.childNodes[0].tagName === 'KBD'
                                 && rootEle.childNodes[0].textContent === 'Tab' && rootEle.childNodes[1].textContent === 'Test Animate Route 1';
 
-                            s.DETACHED_SET_TIMEOUT(() => {
+                            setTimeout(() => {
                                 const isAnimatingKeyedFinal = s._isAnimatingKeyed;
 
                                 rootEle = document.getElementById('divanimateroute');
@@ -9871,7 +9873,7 @@ export class GlobalTestRunner {
 
                                 result.success = isAnimatingKeyed && rootCorrect && !isAnimatingKeyedFinal && rootCorrectFinal;
 
-                                s.DETACHED_SET_TIMEOUT(() => {
+                                setTimeout(() => {
                                     // Animation finished
                                     window.globalTestResults.push(result);
                                     window.globalTestCount++;
@@ -9903,7 +9905,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             if (window.globalAsyncCount === 0) {
                 window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
@@ -9915,7 +9917,7 @@ export class GlobalTestRunner {
                 setRouteStrategy('#');
                 window.history.back();
 
-                s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
                     const pathHref = window.location.pathname;
 
                     result.success = pathHref && pathHref !== '' && pathHref === '/todo.html';
@@ -9950,7 +9952,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             if (window.globalAsyncCount === 0) {
                 window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
@@ -9962,7 +9964,7 @@ export class GlobalTestRunner {
                 setRouteStrategy('#');
                 window.history.back();
 
-                s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
                     const pathHref = window.location.pathname;
 
                     result.success = pathHref && pathHref !== '' && pathHref === '/todo.html';
@@ -9997,7 +9999,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             if (window.globalAsyncCount === 0) {
                 window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
@@ -10048,7 +10050,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             if (window.globalAsyncCount === 0) {
                 window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
@@ -10059,7 +10061,7 @@ export class GlobalTestRunner {
                 addRoute('querystring=:someId&foo=:someId2', { component: new TestQueryStringComponent1(), root: 'divquerystring1' });
                 route('querystring=2&foo=some+text');
 
-                s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
                     const variableList = getRouteQueryVariables();
                     const rootEle = document.getElementById('divquerystring1');
 
@@ -10144,15 +10146,15 @@ export class GlobalTestRunner {
 
         mount('divmutationobserver3', new TestMutationObserver3());
 
-        const firstMutateInterval = s.DETACHED_SET_INTERVAL(() => {
+        const firstMutateInterval = setInterval(() => {
             if (mutateCount === 1) {
                 clearInterval(firstMutateInterval);
 
                 const buttonEle = document.getElementById('mutationobserverbtn3');
                 buttonEle.click();
 
-                s.DETACHED_SET_TIMEOUT(() => {
-                    const secondMutateInterval = s.DETACHED_SET_INTERVAL(() => {
+                setTimeout(() => {
+                    const secondMutateInterval = setInterval(() => {
                         if (mutateCount === 2) {
                             clearInterval(secondMutateInterval);
 
@@ -10219,15 +10221,15 @@ export class GlobalTestRunner {
 
         mount('divmutationobserver2', new TestMutationObserver2());
 
-        const firstMutateInterval = s.DETACHED_SET_INTERVAL(() => {
+        const firstMutateInterval = setInterval(() => {
             if (mutateCount === 1) {
                 clearInterval(firstMutateInterval);
 
                 const buttonEle = document.getElementById('mutationobserverbtn2');
                 buttonEle.click();
 
-                s.DETACHED_SET_TIMEOUT(() => {
-                    const secondMutateInterval = s.DETACHED_SET_INTERVAL(() => {
+                setTimeout(() => {
+                    const secondMutateInterval = setInterval(() => {
                         if (mutateCount === 2) {
                             clearInterval(secondMutateInterval);
 
@@ -10333,15 +10335,15 @@ export class GlobalTestRunner {
 
         mount('divmutationobserver1', new TestMutationObserver1());
 
-        const firstMutateInterval = s.DETACHED_SET_INTERVAL(() => {
+        const firstMutateInterval = setInterval(() => {
             if (mutateCount === 1) {
                 clearInterval(firstMutateInterval);
 
                 const buttonEle = document.getElementById('mutationobserverbtn1');
                 buttonEle.click();
 
-                s.DETACHED_SET_TIMEOUT(() => {
-                    const secondMutateInterval = s.DETACHED_SET_INTERVAL(() => {
+                setTimeout(() => {
+                    const secondMutateInterval = setInterval(() => {
                         if (mutateCount === 2) {
                             clearInterval(secondMutateInterval);
 
@@ -10370,7 +10372,7 @@ export class GlobalTestRunner {
 
         mount('divdetectthen1', new TestThenDetectComponent1());
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             const ele = document.getElementById('divdetectthen1');
 
             result.success = ele && ele.textContent && ele.textContent.length > 0;
@@ -10388,7 +10390,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             if (window.globalAsyncCount === 0) {
                 window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
@@ -10408,10 +10410,10 @@ export class GlobalTestRunner {
                 const buttonEle = document.getElementById('reapplycssbtn1');
                 buttonEle.click();
 
-                s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
                     buttonEle.click();
 
-                    s.DETACHED_SET_TIMEOUT(() => {
+                    setTimeout(() => {
                         head = document.head || document.getElementsByTagName('head')[0];
                         const headChildCountFinal = head.childNodes.length;
 
@@ -10455,7 +10457,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             const state = getState();
 
             if (window.globalAsyncCount === 0 && window.globalTestCount >= state.testCount) {
@@ -10467,7 +10469,7 @@ export class GlobalTestRunner {
                 const hideBtn = document.getElementById('keyedhidebtn1');
                 hideBtn.click();
 
-                s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
                     const isAnimating = s._isAnimatingKeyed;
 
                     let rootEle = document.getElementById('divkeyedanimation1');
@@ -10476,7 +10478,7 @@ export class GlobalTestRunner {
                     const correctData = child.textContent === 'b';
                     const correctCount = rootEle.children.length === 4;
 
-                    s.DETACHED_SET_TIMEOUT(() => {
+                    setTimeout(() => {
                         rootEle = document.getElementById('divkeyedanimation1');
                         child = rootEle.childNodes[1];
 
@@ -10486,7 +10488,7 @@ export class GlobalTestRunner {
                         const correctFinalData3 = rootEle && rootEle.childNodes.length > 2 && rootEle.childNodes[2].textContent === 'Keyed Hide Button';
                         const isAnimatingFinal = s._isAnimatingKeyed;
 
-                        s.DETACHED_SET_TIMEOUT(() => {
+                        setTimeout(() => {
                             const correctFinalCount = rootEle.children.length === 3;
 
                             result.success = isAnimating && correctData && correctCount && correctFinalData && correctFinalCount && !isAnimatingFinal
@@ -10520,7 +10522,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             if (window.globalAsyncCount === 0) {
                 window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
@@ -10533,7 +10535,7 @@ export class GlobalTestRunner {
                 const detachedBtn = document.getElementById('detachedbtn1');
                 detachedBtn.click();
 
-                s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
                     state = getState();
                     const finalCount = state.detachfncount;
 
@@ -10565,7 +10567,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             if (window.globalAsyncCount === 0) {
                 window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
@@ -10578,7 +10580,7 @@ export class GlobalTestRunner {
                 const detachedBtn = document.getElementById('detachedbtn2');
                 detachedBtn.click();
 
-                s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
                     state = getState();
                     const finalCount = state.detachfncount;
 
@@ -10895,10 +10897,10 @@ export class GlobalTestRunner {
 
         route('defaultanim');
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             route('useranim/5');
 
-            s.DETACHED_SET_TIMEOUT(() => {
+            setTimeout(() => {
                 let ele = document.getElementById('divAnimate2');
 
                 result.success = ele.textContent === 'Your user ID: 5';
@@ -10931,7 +10933,7 @@ export class GlobalTestRunner {
 
         route('defaultanim2');
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             route('useranim2/5');
 
             let ele = document.getElementById('divTestAttr1');
@@ -10939,7 +10941,7 @@ export class GlobalTestRunner {
             const hasDirective = ele.hasAttribute('slanimatedestroy');
             const hasClass = ele.hasAttribute('class');
 
-            s.DETACHED_SET_TIMEOUT(() => {
+            setTimeout(() => {
                 ele = document.getElementById('divTestAttr1');
 
                 const hasDirective2 = ele.hasAttribute('slanimatedestroy');
@@ -13030,7 +13032,7 @@ export class GlobalTestRunner {
 
         detectChanges('divchildviewconsume2');
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             state = getState();
             const finalViewCount = state.childviewconsume ? state.childviewconsume : 0;
 
@@ -13058,7 +13060,7 @@ export class GlobalTestRunner {
 
         detectChanges('divchildviewconsume1');
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             state = getState();
             const finalViewCount = state.childviewconsume ? state.childviewconsume : 0;
 
@@ -13103,7 +13105,7 @@ export class GlobalTestRunner {
         if (btnEle) {
             btnEle.click();
 
-            s.DETACHED_SET_TIMEOUT(() => {
+            setTimeout(() => {
                 // If no exceptions thrown
                 result.success = true;
 
@@ -13268,7 +13270,7 @@ export class GlobalTestRunner {
         const hideBtn = document.getElementById('slfornamedcleanupbtn');
         hideBtn.click();
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             const existsAfterHide = s._structureForMap.has('cleanupfornamed');
 
             result.success = originalExists === true && existsAfterHide === false;
@@ -13293,7 +13295,7 @@ export class GlobalTestRunner {
         const hideBtn = document.getElementById('slforcleanupbtn2');
         hideBtn.click();
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             const existsAfterHide = s._structureForMap.has('cleanupfor2');
             const existsAfterHide2 = s._structureForMap.has('cleanupfor3');
 
@@ -13318,7 +13320,7 @@ export class GlobalTestRunner {
         const hideBtn = document.getElementById('slforcleanupbtn');
         hideBtn.click();
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             const existsAfterHide = s._structureForMap.has('cleanupfor');
 
             result.success = originalExists === true && existsAfterHide === false;
@@ -13353,7 +13355,7 @@ export class GlobalTestRunner {
                 if (deleteEle) {
                     deleteEle.click();
 
-                    s.DETACHED_SET_TIMEOUT(() => {
+                    setTimeout(() => {
                         const finalTrCount = tbody.querySelectorAll('tr').length;
 
                         if (finalTrCount === originalTrCount - 1) {
@@ -13404,7 +13406,7 @@ export class GlobalTestRunner {
         const hideBtn = document.getElementById('renderele4btn');
         hideBtn.click();
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             state = getState();
             const correctHookCountAfter = state.rendertoele4 === 8;
 
@@ -13497,7 +13499,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             if (window.globalAsyncCount === 0) {
                 window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
@@ -13525,7 +13527,7 @@ export class GlobalTestRunner {
                             if (deleteEle) {
                                 deleteEle.click();
 
-                                s.DETACHED_SET_TIMEOUT(() => {
+                                setTimeout(() => {
                                     const finalTrCount = rootEle.querySelectorAll('tr');
 
                                     if (originalTrCount.length === finalTrCount.length) {
@@ -13577,7 +13579,7 @@ export class GlobalTestRunner {
             message: ''
         };
 
-        if (s.DETACHED_SET_TIMEOUT !== null && s.DETACHED_SET_TIMEOUT !== undefined) {
+        if (setTimeout !== null && setTimeout !== undefined) {
             result.success = true;
         }
 
@@ -13592,24 +13594,24 @@ export class GlobalTestRunner {
             message: ''
         };
 
-        if (s.DETACHED_SET_TIMEOUT !== null && s.DETACHED_SET_TIMEOUT !== undefined) {
+        if (setTimeout !== null && setTimeout !== undefined) {
             let initiallyExists = null;
 
             window.globalAsyncCount++;
-            setTimeout(() => {
+            wrapWithChangeDetector(() => setTimeout(() => {
                 window.globalAsyncCount--;
                 const fakeEle = document.getElementById('fakeEle1');
                 initiallyExists = fakeEle !== null && fakeEle !== undefined;
-            }, 25);
+            }, 25))();
 
-            s.DETACHED_SET_TIMEOUT(() => {
+            setTimeout(() => {
                 const fakeEle = document.createElement('div');
                 fakeEle.id = 'fakeEle1';
                 document.body.appendChild(fakeEle);
             }, 50);
 
             window.globalAsyncCount++;
-            setTimeout(() => {
+            wrapWithChangeDetector(() => setTimeout(() => {
                 window.globalAsyncCount--;
                 const fakeEle = document.getElementById('fakeEle1');
                 const finallyExists = fakeEle !== null && fakeEle !== undefined;
@@ -13619,7 +13621,7 @@ export class GlobalTestRunner {
                 }
 
                 window.globalTestCount++;
-            }, 100);
+            }, 100))();
         }
 
         window.globalTestResults.push(result);
@@ -13632,7 +13634,7 @@ export class GlobalTestRunner {
             message: ''
         };
 
-        if (s.DETACHED_SET_INTERVAL !== null && s.DETACHED_SET_INTERVAL !== undefined) {
+        if (setInterval !== null && setInterval !== undefined) {
             result.success = true;
         }
 
@@ -13652,11 +13654,11 @@ export class GlobalTestRunner {
         let ele = document.getElementById('setintervaltestdiv1');
         const initialValue = ele.textContent;
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             ele = document.getElementById('setintervaltestdiv1');
             const initialValue2 = ele.textContent;
 
-            s.DETACHED_SET_TIMEOUT(() => {
+            setTimeout(() => {
                 ele = document.getElementById('setintervaltestdiv1');
                 const initialValue3 = ele.textContent;
 
@@ -13677,7 +13679,7 @@ export class GlobalTestRunner {
 
         mount('divtestrefcomp1', new TestRefComponent1());
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             const ref = s._updateMap.get('divtestrefcomp1').ref1;
             const state = getState();
 
@@ -13834,11 +13836,11 @@ export class GlobalTestRunner {
         let btnEle = document.getElementById('btn-recycle-test-1');
         btnEle.click();
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             btnEle = document.getElementById('btn-recycle-test-1');
             btnEle.click();
 
-            s.DETACHED_SET_TIMEOUT(() => {
+            setTimeout(() => {
                 const state = getState();
 
                 result.success = state.recycle1 === 1 && state.recycle2 === 2;
@@ -13863,11 +13865,11 @@ export class GlobalTestRunner {
         let btnEle = document.getElementById('btn-after-recycle-test-1');
         btnEle.click();
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             btnEle = document.getElementById('btn-after-recycle-test-1');
             btnEle.click();
 
-            s.DETACHED_SET_TIMEOUT(() => {
+            setTimeout(() => {
                 const state = getState();
 
                 result.success = state.recycle3 === 1 && state.recycle4 === 2 && state.recycle5 === 2 && state.recycle6 === 1;
@@ -13993,7 +13995,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             const state = getState();
 
             if (window.globalAsyncCount === 0 && window.globalTestCount >= state.testCount - 1) {
@@ -14034,12 +14036,12 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             if (window.globalAsyncCount === 0) {
                 window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
 
-                s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
                     let state = getState();
                     state.wrapDetector = 0;
                     setState(state);
@@ -14047,7 +14049,7 @@ export class GlobalTestRunner {
                     addRoute('wrapdetector', { component: new TestWrapDetectorComponent1(), root: 'testwrapdetector' });
                     route('wrapdetector');
 
-                    s.DETACHED_SET_TIMEOUT(() => {
+                    setTimeout(() => {
                         state = getState();
                         const originalWrapCount = state.wrapDetector;
 
@@ -14056,7 +14058,7 @@ export class GlobalTestRunner {
 
                         wrappedFunc();
 
-                        s.DETACHED_SET_TIMEOUT(() => {
+                        setTimeout(() => {
                             state = getState();
                             const correctCount = state.wrapDetector >= originalWrapCount + 1;
 
@@ -14170,7 +14172,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             if (window.globalAsyncCount === 0) {
                 window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
@@ -14188,7 +14190,7 @@ export class GlobalTestRunner {
                 const buttonEle = document.getElementById('manualincrementbutton');
                 buttonEle.click();
 
-                s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
                     state = getState();
                     const changeCountCorrect2 = state.manualChanges === originalChangeCount;
 
@@ -14196,7 +14198,7 @@ export class GlobalTestRunner {
 
                     buttonEle.click();
 
-                    s.DETACHED_SET_TIMEOUT(() => {
+                    setTimeout(() => {
                         state = getState();
                         const changeCountCorrect3 = state.manualChanges >= originalChangeCount + 1;
 
@@ -14233,7 +14235,7 @@ export class GlobalTestRunner {
         const buttonEle = document.getElementById('ssrTest2');
         buttonEle.click();
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             const ssrDivEle = document.getElementById('ssrTest1');
             const nodeDefined = ssrDivEle && ssrDivEle.childNodes;
             const contentCorrect = nodeDefined && ssrDivEle.childNodes[0].textContent === 'Hydrated function called.';
@@ -14259,7 +14261,7 @@ export class GlobalTestRunner {
         const buttonEle = document.getElementById('ssrTest4');
         buttonEle.click();
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             const ssrDivEle = document.getElementById('ssrTest3');
             const nodeDefined = ssrDivEle && ssrDivEle.childNodes;
             const contentCorrect = nodeDefined && ssrDivEle.childNodes[0].textContent === 'Hydrated function called.';
@@ -14972,7 +14974,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             if (window.globalAsyncCount === 0) {
                 window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
@@ -14987,7 +14989,7 @@ export class GlobalTestRunner {
                 state = getState();
                 const originalCount = state.debounce;
 
-                s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
                     const startTime = new Date();
 
                     buttonEle.click();
@@ -15010,7 +15012,7 @@ export class GlobalTestRunner {
                         changeCycles++;
                     }
 
-                    s.DETACHED_SET_TIMEOUT(() => {
+                    setTimeout(() => {
                         state = getState();
                         // Initial mount, one call for 5 clicks, plus final debounced call
                         result.success = state.debounce === originalCount + changeCycles + 1;
@@ -15066,7 +15068,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             if (window.globalAsyncCount === 0) {
                 window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
@@ -15079,10 +15081,10 @@ export class GlobalTestRunner {
 
                 const ele = document.getElementById('toggleModeButton4');
                 ele.click();
-                s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
                     ele.click();
 
-                    s.DETACHED_SET_TIMEOUT(() => {
+                    setTimeout(() => {
                         stateObj = getState();
 
                         const updateCountCorrect = stateObj.count2 && stateObj.count2 >= 3;
@@ -15090,23 +15092,23 @@ export class GlobalTestRunner {
                         const removeElementsButton = document.getElementById('toggleModeButton3');
                         removeElementsButton.click();
 
-                        s.DETACHED_SET_TIMEOUT(() => {
+                        setTimeout(() => {
                             const rowEle = document.getElementById('testTagRow3');
                             const rowsReducedCorrect = rowEle && rowEle.children.length === 1 && rowEle.children[0].childNodes.length === 1;
 
                             removeElementsButton.click();
 
-                            s.DETACHED_SET_TIMEOUT(() => {
+                            setTimeout(() => {
                                 const rowsRestoredCorrect = rowEle && rowEle.children.length === 3;
 
                                 ele.click();
 
-                                s.DETACHED_SET_TIMEOUT(() => {
+                                setTimeout(() => {
                                     const correctDiv1 = rowEle && rowEle.children.length === 3 && rowEle.children[0].textContent === 'Mode: 0';
                                     const correctDiv2 = rowEle && rowEle.children.length === 3 && rowEle.children[1].textContent === 'Mode: 0';
                                     const correctDiv3 = rowEle && rowEle.children.length === 3 && rowEle.children[2].textContent === 'Mode: 0';
 
-                                    s.DETACHED_SET_TIMEOUT(() => {
+                                    setTimeout(() => {
                                         const changeDetectionCalled = stateObj.count2 && stateObj.count2 >= 6;
 
                                         result.success = updateCountCorrect && rowsReducedCorrect && rowsRestoredCorrect && changeDetectionCalled
@@ -15143,7 +15145,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             if (window.globalAsyncCount === 0) {
                 window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
@@ -15164,7 +15166,7 @@ export class GlobalTestRunner {
                 const domStrButton = document.getElementById('domStringButton');
                 domStrButton.click();
 
-                s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
                     const correctChildCount = domStrRoot && domStrRoot.children && domStrRoot.children.length === 2;
                     const correctDivCount = domStrRoot && domStrRoot.children && domStrRoot.children.length === 2
                         && domStrRoot.children[1].childNodes && domStrRoot.children[1].childNodes.length === 1;
@@ -15237,7 +15239,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             if (window.globalAsyncCount === 0) {
                 window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
@@ -15249,11 +15251,11 @@ export class GlobalTestRunner {
                 const startAnimateButton = document.getElementById('startanimatedestroy');
                 startAnimateButton.click();
 
-                s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
                     const delayedEle = document.getElementById('h1toanimate');
                     const delayedExists = delayedEle !== null && delayedEle !== undefined && delayedEle.tagName === 'H1';
 
-                    s.DETACHED_SET_TIMEOUT(() => {
+                    setTimeout(() => {
                         const deletedEle = document.getElementById('h1toanimate');
                         const deletedSuccess = deletedEle == undefined || deletedEle === null;
 
@@ -15319,7 +15321,7 @@ export class GlobalTestRunner {
         xhr1.send(null);
         console.log('testFinalize960XhrReuse after send');
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             if (!addedResult) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
@@ -15329,21 +15331,21 @@ export class GlobalTestRunner {
 
     testFinalize960TimeoutFunctionTriggersChanges() {
         const result = {
-            test: 'test setTimeout function argument triggers change detection',
+            test: 'test setTimeout function argument does not trigger change detection',
             success: false,
             message: ''
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             if (window.globalAsyncCount === 0) {
                 window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
 
                 mount('divtimeoutcdr', new TimeoutTestComponent1());
 
-                setTimeout(() => {
-                    const state = getState();
+                wrapWithChangeDetector(() => setTimeout(() => {
+                    let state = getState();
                     const cdrcount = state.timeoutcdr;
 
                     result.success = cdrcount === 2;
@@ -15351,7 +15353,7 @@ export class GlobalTestRunner {
                     window.globalTestResults.push(result);
                     window.globalTestCount++;
                     window.globalAsyncCount--;
-                }, 250);
+                }, 250))();
             }
 
             attempts++;
@@ -15389,7 +15391,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             if (window.globalAsyncCount === 0) {
                 window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
@@ -15399,7 +15401,7 @@ export class GlobalTestRunner {
                 const addBtn = document.getElementById('add');
                 addBtn.click();
 
-                s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
                     let tableEle = document.getElementById('idcontrollertable');
                     let tbodyEle = tableEle.children[0];
 
@@ -15408,7 +15410,7 @@ export class GlobalTestRunner {
                     const deleteBtn = document.getElementById('id-row-delete-2');
                     deleteBtn.click();
 
-                    s.DETACHED_SET_TIMEOUT(() => {
+                    setTimeout(() => {
                         tableEle = document.getElementById('idcontrollertable');
                         tbodyEle = tableEle.children[0];
 
@@ -15443,7 +15445,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             if (window.globalAsyncCount === 0) {
                 window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
@@ -15456,10 +15458,10 @@ export class GlobalTestRunner {
 
                 const ele = document.getElementById('toggleModeButton8');
                 ele.click();
-                s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
                     ele.click();
 
-                    s.DETACHED_SET_TIMEOUT(() => {
+                    setTimeout(() => {
                         stateObj = getState();
 
                         const updateCountCorrect = stateObj.count4 && stateObj.count4 === 3;
@@ -15467,18 +15469,18 @@ export class GlobalTestRunner {
                         const removeElementsButton = document.getElementById('toggleModeButton7');
                         removeElementsButton.click();
 
-                        s.DETACHED_SET_TIMEOUT(() => {
+                        setTimeout(() => {
                             const rowEle = document.getElementById('testTagRow5');
                             const rowsReducedCorrect = rowEle && rowEle.children.length === 1 && rowEle.children[0].childNodes.length === 1;
 
                             removeElementsButton.click();
 
-                            s.DETACHED_SET_TIMEOUT(() => {
+                            setTimeout(() => {
                                 const rowsRestoredCorrect = rowEle && rowEle.children.length === 5;
 
                                 ele.click();
 
-                                s.DETACHED_SET_TIMEOUT(() => {
+                                setTimeout(() => {
                                     const correctDiv1 = rowEle && rowEle.children.length === 5 && rowEle.children[0].textContent === 'Mode: 0 some markup and a text node';
                                     const correctDiv2 = rowEle && rowEle.children.length === 5 && rowEle.children[1].textContent === 'Toggle';
                                     const correctDiv3 = rowEle && rowEle.children.length === 5 && rowEle.children[2].textContent === 'Mode: 0 some markup and a text node';
@@ -15520,7 +15522,7 @@ export class GlobalTestRunner {
         };
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             if (window.globalAsyncCount === 0) {
                 window.globalAsyncCount++;
                 clearInterval(waitForStableInterval);
@@ -15533,10 +15535,10 @@ export class GlobalTestRunner {
 
                 const ele = document.getElementById('toggleModeButton6');
                 ele.click();
-                s.DETACHED_SET_TIMEOUT(() => {
+                setTimeout(() => {
                     ele.click();
 
-                    s.DETACHED_SET_TIMEOUT(() => {
+                    setTimeout(() => {
                         stateObj = getState();
 
                         const updateCountCorrect = stateObj.count3 && stateObj.count3 === 3;
@@ -15544,13 +15546,13 @@ export class GlobalTestRunner {
                         const removeElementsButton = document.getElementById('toggleModeButton5');
                         removeElementsButton.click();
 
-                        s.DETACHED_SET_TIMEOUT(() => {
+                        setTimeout(() => {
                             const rowEle = document.getElementById('testTagRow4');
                             const rowsReducedCorrect = rowEle && rowEle.children.length === 1 && rowEle.children[0].childNodes.length === 1;
 
                             removeElementsButton.click();
 
-                            s.DETACHED_SET_TIMEOUT(() => {
+                            setTimeout(() => {
                                 const rowsRestoredCorrect = rowEle && rowEle.children.length === 3;
                                 const correctTd1 = rowEle && rowEle.children.length === 3 && rowEle.children[0].textContent === 'Mode: 0 <span>';
                                 const correctTd3 = rowEle && rowEle.children.length === 3 && rowEle.children[2].textContent === 'Mode: 0 <span>';
@@ -15561,7 +15563,7 @@ export class GlobalTestRunner {
                                     && rowEle.children[1].children[1].value === '1';
                                 ele.click();
 
-                                s.DETACHED_SET_TIMEOUT(() => {
+                                setTimeout(() => {
                                     const changeDetectionCalled = stateObj.count3 && stateObj.count3 >= 6;
 
                                     result.success = updateCountCorrect && rowsReducedCorrect && rowsRestoredCorrect && changeDetectionCalled
@@ -15596,18 +15598,18 @@ export class GlobalTestRunner {
             message: ''
         };
 
-        if (s.DETACHED_SET_INTERVAL !== null && s.DETACHED_SET_INTERVAL !== undefined) {
+        if (setInterval !== null && setInterval !== undefined) {
             let initiallyExists = null;
             let slingIntervalCount = 0;
 
             window.globalAsyncCount++;
-            setTimeout(() => {
+            wrapWithChangeDetector(() => setTimeout(() => {
                 window.globalAsyncCount--;
                 const fakeEles = document.getElementsByClassName('fakeclass1')
                 initiallyExists = fakeEles.length !== 0;
-            }, 25);
+            }, 25))();
 
-            const slingInterval = s.DETACHED_SET_INTERVAL(() => {
+            const slingInterval = setInterval(() => {
                 const fakeEle = document.createElement('div');
                 fakeEle.classList.add('fakeclass1');
                 document.body.appendChild(fakeEle);
@@ -15619,7 +15621,7 @@ export class GlobalTestRunner {
             }, 80);
 
             window.globalAsyncCount++;
-            setTimeout(() => {
+            wrapWithChangeDetector(() => setTimeout(() => {
                 window.globalAsyncCount--;
                 const fakeEles = document.getElementsByClassName('fakeclass1')
                 const correctFinalCount = fakeEles.length === 2;
@@ -15629,7 +15631,7 @@ export class GlobalTestRunner {
                 }
 
                 window.globalTestCount++;
-            }, 2000);
+            }, 2000))();
         }
 
         window.globalTestResults.push(result);
@@ -15801,7 +15803,7 @@ export class GlobalTestRunner {
 
     block(millis = 18) {
         return new Promise(resolve => {
-            s.DETACHED_SET_TIMEOUT(() => {
+            setTimeout(() => {
                 resolve(true);
             }, millis);
         });
@@ -15847,7 +15849,7 @@ export class GlobalTestRunner {
             clearNotesButton.click();
 
             window.globalAsyncCount++;
-            s.DETACHED_SET_TIMEOUT(() => {
+            setTimeout(() => {
                 window.globalAsyncCount--;
                 eles = document.querySelectorAll('.input-group-text input');
 
@@ -15889,7 +15891,7 @@ export class GlobalTestRunner {
         mount('testcomponent2', new TestComponent2());
 
         window.globalAsyncCount++;
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             window.globalAsyncCount--;
             let ele = document.getElementById('testcomponent2');
             const firstPass = ele.textContent === 'Hello, world! Count: 1';
@@ -15926,7 +15928,7 @@ export class GlobalTestRunner {
 
         const buttonEle = document.getElementById('toggleModeButton');
         buttonEle.click();
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             rowEle = document.getElementById('testTagRow1');
             rowChildren = rowEle ? rowEle.children : [];
 
@@ -15973,7 +15975,7 @@ export class GlobalTestRunner {
         setState(originalState);
 
         let attempts = 0;
-        const waitForStableInterval = s.DETACHED_SET_INTERVAL(() => {
+        const waitForStableInterval = setInterval(() => {
             if (window.globalAsyncCount === 0) {
                 clearInterval(waitForStableInterval);
                 window.globalAsyncCount++;
@@ -15987,7 +15989,7 @@ export class GlobalTestRunner {
                     const successfulPromises = results.filter(p => p.status === 'fulfilled');
                     const hadSuccess = successfulPromises && successfulPromises.length === 1;
 
-                    s.DETACHED_SET_TIMEOUT(() => {
+                    setTimeout(() => {
                         const ele = document.getElementById('testfetchcomponent');
 
                         const stateObj = getState();
@@ -16165,7 +16167,7 @@ export class GlobalTestRunner {
         const buttonEle = document.getElementById('toggleModeButton2');
         buttonEle.click();
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             rowEle = document.getElementById('testTagRow2');
             rowChildren = rowEle ? rowEle.children : [];
 
@@ -16290,7 +16292,7 @@ export class GlobalTestRunner {
         xhr2.send(null);
         console.log('testXhrMultipleRequests after send');
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             if (!addedResult) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
@@ -16331,7 +16333,7 @@ export class GlobalTestRunner {
             console.log('testXhrMultipleRequestsAutomated after send');
         }
 
-        s.DETACHED_SET_TIMEOUT(() => {
+        setTimeout(() => {
             if (!addedResult) {
                 window.globalTestResults.push(result);
                 window.globalTestCount++;
@@ -16369,7 +16371,7 @@ export class GlobalTestRunner {
 
             result.success = true;
 
-            s.DETACHED_SET_TIMEOUT(() => {
+            setTimeout(() => {
                 if (!addedResult) {
                     window.globalTestResults.push(result);
                     window.globalTestCount++;
@@ -16812,7 +16814,7 @@ export class GlobalTestRunner {
     }
 
     sleep(milliseconds) {
-        return new Promise(resolve => s.DETACHED_SET_TIMEOUT(resolve, milliseconds));
+        return new Promise(resolve => setTimeout(resolve, milliseconds));
     }
 
     run() {
@@ -16870,7 +16872,7 @@ export class GlobalTestRunner {
         let checkCount = 0;
         let startTime = new Date();
 
-        const checkInterval = s.DETACHED_SET_INTERVAL(async () => {
+        const checkInterval = setInterval(async () => {
             if (window.globalTestCount === testCount) {
                 this.manualTestCheckSpanStyling();
                 testCount++;
