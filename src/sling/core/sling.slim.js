@@ -882,6 +882,7 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
 
         if (buildObj.onInit && vOldNode && !vOldNode.slOnInit) {
             buildObj.onInit.bind(buildObj.model)();
+            vOldNode.slOnInit = true;
         }
         if (buildObj.afterInit && vOldNode && !vOldNode.slAfterInit) {
             vOldNode.slAfterInit = true;
