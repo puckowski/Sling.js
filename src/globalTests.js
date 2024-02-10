@@ -13491,7 +13491,7 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
-    testFinalize998ManualChangeDetection() {
+    testFinalize999ManualChangeDetection() {
         const result = {
             test: 'test delete with manual change detection mode',
             success: false,
@@ -14164,7 +14164,7 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
-    testFinalize998ManualChangeDetection() {
+    testFinalize999ManualChangeDetection() {
         const result = {
             test: 'test manual change detection strategy',
             success: false,
