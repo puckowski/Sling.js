@@ -9399,6 +9399,7 @@ export class GlobalTestRunner {
         };
 
         const fnSet = new Set();
+        const nodeSet = new Set();
         let hasDuplicates = false;
         let count = 0;
 
@@ -9410,6 +9411,13 @@ export class GlobalTestRunner {
 
         while (stack.length > 0) {
             const node = stack.pop();
+
+            if (node.id !== undefined && node.id !== null && nodeSet.has(node.id)) {
+                continue;
+            } else {
+                nodeSet.add(node.id);
+            }
+
             count++;
             const fn = node.slOnDestroyFn;
 
@@ -9433,6 +9441,180 @@ export class GlobalTestRunner {
         }
 
         console.log('Evaluated ' + count + ' nodes in body for duplicate destroy functions');
+
+        result.success = !hasDuplicates;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testRunLastUnboundDestroyFunctionReferenceNoDuplicates() {
+        const result = {
+            test: 'test there are no duplicate unbound destroy function references',
+            success: false,
+            message: ''
+        };
+
+        const fnSet = new Set();
+        const nodeSet = new Set();
+        let hasDuplicates = false;
+        let count = 0;
+
+        const stack = [];
+
+        for (const bodyChild of document.body.children) {
+            stack.push(bodyChild);
+        }
+
+        while (stack.length > 0) {
+            const node = stack.pop();
+
+            if (node.id !== undefined && node.id !== null && nodeSet.has(node.id)) {
+                continue;
+            } else {
+                nodeSet.add(node.id);
+            }
+
+            count++;
+            const fn = node.slUnboundOnDestroy;
+
+            if (fn !== undefined && fn !== null) {
+                console.log(fn);
+                console.log(node);
+                
+                if (fnSet.has(fn)) {
+                    hasDuplicates = true;
+
+                    break;
+                } else {
+                    fnSet.add(fn);
+                }
+            }
+
+            if (hasDuplicates) {
+                break;
+            }
+
+            for (const child of node.children) {
+                stack.push(child);
+            }
+        }
+
+        console.log('Evaluated ' + count + ' nodes in body for duplicate unbound destroy functions');
+
+        result.success = !hasDuplicates;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testRunLastAfterInitFunctionReferenceNoDuplicates() {
+        const result = {
+            test: 'test there are no duplicate unbound after init function references',
+            success: false,
+            message: ''
+        };
+
+        const fnSet = new Set();
+        const nodeSet = new Set();
+        let hasDuplicates = false;
+        let count = 0;
+
+        const stack = [];
+
+        for (const bodyChild of document.body.children) {
+            stack.push(bodyChild);
+        }
+
+        while (stack.length > 0) {
+            const node = stack.pop();
+
+            if (node.id !== undefined && node.id !== null && nodeSet.has(node.id)) {
+                continue;
+            } else {
+                nodeSet.add(node.id);
+            }
+
+            count++;
+            const fn = node.slUnboundAfterInit;
+
+            if (fn !== undefined && fn !== null) {
+                if (fnSet.has(fn)) {
+                    hasDuplicates = true;
+
+                    break;
+                } else {
+                    fnSet.add(fn);
+                }
+            }
+
+            if (hasDuplicates) {
+                break;
+            }
+
+            for (const child of node.children) {
+                stack.push(child);
+            }
+        }
+
+        console.log('Evaluated ' + count + ' nodes in body for duplicate unbound after init functions');
+
+        result.success = !hasDuplicates;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testRunLastOnInitFunctionReferenceNoDuplicates() {
+        const result = {
+            test: 'test there are no duplicate unbound on init function references',
+            success: false,
+            message: ''
+        };
+
+        const fnSet = new Set();
+        const nodeSet = new Set();
+        let hasDuplicates = false;
+        let count = 0;
+
+        const stack = [];
+
+        for (const bodyChild of document.body.children) {
+            stack.push(bodyChild);
+        }
+
+        while (stack.length > 0) {
+            const node = stack.pop();
+
+            if (node.id !== undefined && node.id !== null && nodeSet.has(node.id)) {
+                continue;
+            } else {
+                nodeSet.add(node.id);
+            }
+            
+            count++;
+            const fn = node.slUnboundOnInit;
+
+            if (fn !== undefined && fn !== null) {
+                if (fnSet.has(fn)) {
+                    hasDuplicates = true;
+
+                    break;
+                } else {
+                    fnSet.add(fn);
+                }
+            }
+
+            if (hasDuplicates) {
+                break;
+            }
+
+            for (const child of node.children) {
+                stack.push(child);
+            }
+        }
+
+        console.log('Evaluated ' + count + ' nodes in body for duplicate unbound on init functions');
 
         result.success = !hasDuplicates;
 
