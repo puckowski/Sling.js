@@ -9391,6 +9391,55 @@ export class GlobalTestRunner {
         window.globalTestCount++;
     }
 
+    testRunLastDestroyFunctionReferenceNoDuplicates() {
+        const result = {
+            test: 'test there are no duplicate destroy function references',
+            success: false,
+            message: ''
+        };
+
+        const fnSet = new Set();
+        let hasDuplicates = false;
+        let count = 0;
+
+        const stack = [];
+
+        for (const bodyChild of document.body.children) {
+            stack.push(bodyChild);
+        }
+
+        while (stack.length > 0) {
+            const node = stack.pop();
+            count++;
+            const fn = node.slOnDestroyFn;
+
+            if (fn !== undefined && fn !== null) {
+                if (fnSet.has(fn)) {
+                    hasDuplicates = true;
+
+                    break;
+                } else {
+                    fnSet.add(fn);
+                }
+            }
+
+            if (hasDuplicates) {
+                break;
+            }
+
+            for (const child of node.children) {
+                stack.push(child);
+            }
+        }
+
+        console.log('Evaluated ' + count + ' nodes in body for duplicate destroy functions');
+
+        result.success = !hasDuplicates;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
     testRunLastFunctionMapNoDuplicates() {
         const result = {
             test: 'test destroy function map contains no duplicates',
