@@ -203,8 +203,8 @@ export function renderElementWithoutClass(tagName, attrs, children) {
                     value.value
                 );
             }
-        }
-        el.setAttribute(k, v);
+        } 
+        else el.setAttribute(k, v);
     }
 
     for (let child of children) {
@@ -1184,7 +1184,7 @@ const _mountInternal = (target, component, attachDetector) => {
 }
 
 export function version() {
-    return '21.0.0';
+    return '21.0.1';
 }
 
 function xmur3(str) {

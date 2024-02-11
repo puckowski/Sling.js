@@ -129,8 +129,7 @@ function renderElementWithoutClass(t, e, n) {
           _n4 = _Object$entries2$_i[1];
         r.setAttributeNS(_n4.namespace, _e4, _n4.value);
       }
-    }
-    r.setAttribute(_t7, l);
+    } else r.setAttribute(_t7, l);
   }
   var _iterator3 = _createForOfIteratorHelper(n),
     _step3;
@@ -634,7 +633,7 @@ var l = function l(_ref3) {
     }), t;
   };
 function version() {
-  return "21.0.0";
+  return "21.0.1";
 }
 var x = function x(t, e) {
     return t.split(e).length - 1;
