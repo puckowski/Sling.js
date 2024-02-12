@@ -6841,6 +6841,62 @@ export class TestSlForMapComponent1 {
     }
 }
 
+export class TestSlForRenderWithoutClass1 {
+    constructor() {
+        this.data = ['a', 'b', 'c'];
+        this.count = 0;
+    }
+
+    slOnInit() {
+        this.getData.slfor = 'data';
+        this.makeRow.slfor = 'make';
+        this.updateRow.slfor = 'update';
+    }
+
+    simpleClick() {
+        this.count++;
+    }
+
+    getData() {
+        return this.data;
+    }
+
+    makeRow(data) {
+        const rootNode = renderElementWithoutClass('tr', {
+            onclick: this.simpleClick.bind(this),
+            id: 'trwithoutclass1'
+        }, [
+            renderElementWithoutClass('td', {
+                'class': 'col-md-1'
+            }, [
+                data
+            ]
+            )
+        ]
+        );
+
+        return rootNode;
+    }
+
+    updateRow(context, data) {
+    }
+
+    view() {
+        return markup('div', {
+            attrs: {
+                id: 'divslforrenderwithoutclass'
+            },
+            children: [
+                markup('div', {
+                    attrs: {
+                        'slfornamed': 'slforwithoutclass:data:make:update'
+                    }
+                })
+            ]
+        })
+    }
+}
+
 export class TestEleDestroyMapComponent1 {
     constructor() {
 
@@ -9481,7 +9537,7 @@ export class GlobalTestRunner {
             if (fn !== undefined && fn !== null) {
                 console.log(fn);
                 console.log(node);
-                
+
                 if (fnSet.has(fn)) {
                     hasDuplicates = true;
 
@@ -9591,7 +9647,7 @@ export class GlobalTestRunner {
             } else {
                 nodeSet.add(node.id);
             }
-            
+
             count++;
             const fn = node.slUnboundOnInit;
 
@@ -14143,6 +14199,27 @@ export class GlobalTestRunner {
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
+    }
+
+    testRunLastRenderWithoutClassFunctionBinding() {
+        const result = {
+            test: 'test renderElementWithoutClass correctly binds function to DOM node',
+            success: false,
+            message: ''
+        };
+
+        const comp = new TestSlForRenderWithoutClass1();
+        mount('divslforrenderwithoutclass', comp);
+
+        const trEle = document.getElementById('trwithoutclass1');
+        trEle.click();
+
+        setTimeout(() => {
+            result.success = comp.count === 1;
+
+            window.globalTestResults.push(result);
+            window.globalTestCount++;
+        }, 17);
     }
 
     testClearSubscriptionForSubjectWorks() {
