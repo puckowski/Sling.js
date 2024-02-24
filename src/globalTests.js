@@ -10302,7 +10302,7 @@ export class GlobalTestRunner {
 
                 result.success = segments && segments.length === 4 && segments[0] === 'docs' && segments[1] === '1'
                     && segments[2] === '2' && segments[3] === 'bar' && rootEle && rootEle.childNodes && rootEle.childNodes.length === 1
-                    && rootEle.childNodes[0].textContent === 'Path Name Test' && window.location.href === 'http://localhost:8080/docs/1/2/bar';
+                    && rootEle.childNodes[0].textContent === 'Path Name Test' && /http:\/\/localhost:\d+\/docs\/1\/2\/bar/.test(window.location.href);
 
                 setRouteStrategy('#');
 
@@ -10354,7 +10354,7 @@ export class GlobalTestRunner {
 
                     result.success = variableList && variableList.length === 2 && variableList[0].var === 'querystring' && variableList[0].value === '2'
                         && variableList[1].var === 'foo' && variableList[1].value === 'some+text' && rootEle && rootEle.childNodes && rootEle.childNodes.length === 1
-                        && rootEle.childNodes[0].textContent === 'Query String Test' && window.location.href === 'http://localhost:8080/?/querystring=2&foo=some+text';
+                        && rootEle.childNodes[0].textContent === 'Query String Test' && /http:\/\/localhost:\d+\/\?\/querystring=2&foo=some\+text/.test(window.location.href);
 
                     setRouteStrategy('#');
 
