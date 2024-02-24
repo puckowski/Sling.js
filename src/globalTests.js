@@ -2,6 +2,382 @@ import { getRouteQueryVariables, setRouteStrategy, enableDetectOnThen, renderEle
 import { BehaviorSubject, FormControl, Observable } from '../dist_sling/sling-reactive.min';
 import { slGet } from '../dist_sling/sling-xhr.min';
 
+class SqlHelpComponent {
+
+    constructor() {
+    }
+
+    view() {
+
+        let font = ' font: 400 20px Arial;';
+
+        return markup('div', {
+            attrs: {
+                style: 'padding: 0.25rem; background-color: rgb(21, 24, 30); color: rgb(204, 204, 204); overflow: auto; height: calc(100% - 0.5rem); display: flex; flex-direction: column;'
+            },
+            children: [
+                markup('div', {
+                    attrs: {
+                        style: 'flex: 20; padding: 1rem;'
+                    },
+                    children: [
+                        markup('h4', {
+                            attrs: {
+                                style: 'margin: 0px;'
+                            },
+                            children: [
+                                textNode('Cloud SQLite Help')
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('SQLite databases are temporary and are destroyed on browser tab refresh.')
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('Click Export to export all SQLite database table, views, and table content.')
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('Press Control/Command and J simultaneously to format your code. Press Control/Command and M simultaneously to run your code.')
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('The following page contains SQLite documentation: '),
+                                markup('a', {
+                                    attrs: {
+                                        href: 'https://www.sqlite.org/docs.html'
+                                    },
+                                    children: [
+                                        textNode('https://www.sqlite.org/docs.html')
+                                    ]
+                                })
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('To reset Cloud SQLite to original state, click the following button.'),
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('To switch between normal and low resolution mode, click the following toggle.'),
+                            ]
+                        }),
+                        markup('p', {
+                            children: [
+                                textNode('If you encounter any issues, please log an issue on GitHub: '),
+                                markup('a', {
+                                    attrs: {
+                                        href: 'https://github.com/puckowski/Cloud-SQLite'
+                                    },
+                                    children: [
+                                        textNode('https://github.com/puckowski/Cloud-SQLite')
+                                    ]
+                                })
+                            ]
+                        })
+                    ]
+                })
+            ]
+        });
+    }
+}
+
+class SqlPreviewComponent {
+
+    constructor() {
+        this.injectedList = '';
+        this.isPreviewLoading = false;
+    }
+
+    slAfterInit() {
+        const state = getState();
+        if (state.afterinitsql2 === null || state.afterinitsql2 === undefined) {
+            state.afterinitsql2 = 1;
+        } else {
+            state.afterinitsql2++;
+        }
+        setState(state);
+
+    }
+
+    slOnDestroy() {
+        const state = getState();
+        if (state.ondestroysql2 === null || state.ondestroysql2 === undefined) {
+            state.ondestroysql2 = 1;
+        } else {
+            state.ondestroysql2++;
+        }
+        setState(state);
+    }
+
+    view() {
+        const state = getState();
+
+        let font = ' font: 400 20px Arial;';
+
+        return markup('div', {
+            attrs: {
+                style: 'padding: 0.25rem; color: rgb(204, 204, 204); max-height: inherit; overflow: auto; display: flex; flex-direction: column; height: calc(100% - 0.5rem);'
+            },
+            children: [
+                markup('h4', {
+                    attrs: {
+                        style: 'margin: 0px; flex-shrink: 1;'
+                    },
+                    children: [
+                        ...(!this.isPreviewLoading ? textNode('Results') : []),
+                        ...(this.isPreviewLoading ? textNode('Loading...') : [])
+                    ]
+                }),
+                markup('iframe', {
+                    attrs: {
+                        frameborder: '0',
+                        id: 'tryit-sling-iframe',
+                        sldirective: 'onlyself',
+                        style: 'background-color: #ffffff; width: 100%; flex: 15;'
+                    }
+                })
+            ]
+        });
+    }
+}
+
+class SqlContentPanelComponent {
+
+    constructor() {
+        this.previewComp = new SqlPreviewComponent();
+        this.sourceComp = new SqlSourcePanelComponent();
+        this.helpComp = new SqlHelpComponent();
+        this.showHelp = true;
+        this.showPreview = false;
+        this.collapsed = false;
+        this.portrait = true;
+    }
+
+    view() {
+        const heightStr = 'max-height: 480px; height: 480px;';
+        const collapsedMode = this.collapsed;
+        const showPreview = this.showPreview;
+        const showHelp = this.showHelp;
+        const portraitMode = this.portrait;
+
+        let rootDisplayStyle = 'display: flex;';
+
+        if (portraitMode) {
+            rootDisplayStyle = 'display: block;'
+        }
+
+        return markup('div', {
+            attrs: {
+                id: 'divsqlcontentpanel'
+            },
+            children: [
+                markup('div', {
+                    attrs: {
+                        style: rootDisplayStyle + ' justify-content: flex-start;' + heightStr
+                    },
+                    children: [
+                        ...(portraitMode === false ? [
+                            ...(showHelp === false ? [
+                                ...(collapsedMode === false ? [
+                                    markup('div', {
+                                        attrs: {
+                                            style: 'width: 50%; max-height: inherit; height: calc(200% - 1rem);'
+                                        },
+                                        children: [
+                                            this.sourceComp
+                                        ]
+                                    }),
+                                    markup('div', {
+                                        attrs: {
+                                            style: 'width: 50%; max-height: inherit;  height: calc(200% - 1rem);'
+                                        },
+                                        children: [
+                                            this.previewComp
+                                        ]
+                                    })
+                                ] : []),
+                                ...(collapsedMode === true ? [
+                                    ...(showPreview === true ? [
+                                        markup('div', {
+                                            attrs: {
+                                                style: 'width: 100%; max-height: inherit;  height: calc(200% - 1rem);'
+                                            },
+                                            children: [
+                                                this.previewComp
+                                            ]
+                                        })
+                                    ] : []),
+                                    ...(showPreview === false ? [
+                                        markup('div', {
+                                            attrs: {
+                                                style: 'width: calc(100% - 0.5rem); max-height: inherit;  height: calc(200% - 1rem);'
+                                            },
+                                            children: [
+                                                this.sourceComp
+                                            ]
+                                        })
+                                    ] : []),
+                                ] : [])
+                            ] : [
+                                markup('div', {
+                                    attrs: {
+                                        style: 'width: 100%; max-height: inherit;  height: calc(200% - 1rem);'
+                                    },
+                                    children: [
+                                        this.helpComp
+                                    ]
+                                })
+                            ]),
+                        ] : [
+                            ...(showHelp === false ? [
+                                ...(collapsedMode === false ? [
+                                    markup('div', {
+                                        attrs: {
+                                            style: 'width: 100%; max-height: inherit;  height: calc(200% - 1rem);'
+                                        },
+                                        children: [
+                                            this.sourceComp
+                                        ]
+                                    }),
+                                    markup('div', {
+                                        attrs: {
+                                            style: 'width: 100%; max-height: inherit;  height: calc(200% - 1rem);'
+                                        },
+                                        children: [
+                                            this.previewComp
+                                        ]
+                                    })
+                                ] : []),
+                                ...(collapsedMode === true ? [
+                                    ...(showPreview === true ? [
+                                        markup('div', {
+                                            attrs: {
+                                                style: 'width: 100%; max-height: inherit;  height: calc(200% - 1rem);'
+                                            },
+                                            children: [
+                                                this.previewComp
+                                            ]
+                                        })
+                                    ] : []),
+                                    ...(showPreview === false ? [
+                                        markup('div', {
+                                            attrs: {
+                                                style: 'width: calc(100% - 0.5rem); max-height: inherit;  height: calc(200% - 1rem);'
+                                            },
+                                            children: [
+                                                this.sourceComp
+                                            ]
+                                        })
+                                    ] : []),
+                                ] : [])
+                            ] : [
+                                ...(collapsedMode === false && portraitMode === true ? [
+                                    markup('div', {
+                                        attrs: {
+                                            style: 'width: 100%; max-height: inherit;  height: calc(200% - 1rem);'
+                                        },
+                                        children: [
+                                            this.helpComp
+                                        ]
+                                    })
+                                ] : []),
+                                ...(collapsedMode === true ? [
+                                    markup('div', {
+                                        attrs: {
+                                            style: 'width: 100%; max-height: inherit;  height: calc(200% - 1rem);'
+                                        },
+                                        children: [
+                                            this.helpComp
+                                        ]
+                                    })
+                                ] : []),
+                                ...(collapsedMode === false && portraitMode === false ? [
+                                    markup('div', {
+                                        attrs: {
+                                            style: 'width: 100%; max-height: inherit;  height: calc(200% - 1rem);'
+                                        },
+                                        children: [
+                                            this.helpComp
+                                        ]
+                                    })
+                                ] : []),
+                            ]),
+                        ])
+                    ]
+                })
+            ]
+        });
+    }
+}
+
+class SqlSourcePanelComponent {
+
+    constructor() {
+
+    }
+
+    slAfterInit() {
+        const state = getState();
+        if (state.afterinitsql1 === null || state.afterinitsql1 === undefined) {
+            state.afterinitsql1 = 1;
+        } else {
+            state.afterinitsql1++;
+        }
+        setState(state);
+    }
+
+    slOnDestroy() {
+        const state = getState();
+        if (state.ondestroysql1 === null || state.ondestroysql1 === undefined) {
+            state.ondestroysql1 = 1;
+        } else {
+            state.ondestroysql1++;
+        }
+        setState(state);
+    }
+
+    view() {
+        let font = ' font: 400 20px Arial;';
+
+        font += ' filter: brightness(190%);'
+
+        return markup('div', {
+            attrs: {
+                style: 'padding: 0.25rem; background-color: rgb(21, 24, 30); color: rgb(204, 204, 204); height: calc(100% - 0.5rem); display: flex; flex-direction: column;'
+            },
+            children: [
+                markup('h4', {
+                    attrs: {
+                        style: 'margin: 0px; flex-shrink: 1;'
+                    },
+                    children: [
+                        textNode('Queries')
+                    ]
+                }),
+                markup('div', {
+                    attrs: {
+                        style: 'width: 100%; background-color: rgb(0, 0, 0); border: none; color: rgb(204, 204, 204); flex: 19; white-space: pre; overflow: auto; padding: 0.25rem;' + font,
+                        autocorrect: 'off',
+                        autocomplete: 'off',
+                        spellcheck: 'false',
+                        id: 'tryit-sling-div',
+                        sldirective: 'onlyself',
+                        class: 'sql',
+                        contenteditable: 'true'
+                    }
+                })
+            ]
+        });
+    }
+}
+
+
 class HelpComponent {
 
     constructor() {
@@ -14196,6 +14572,53 @@ export class GlobalTestRunner {
         state = getState();
 
         result.success = state.oninit1 === 2 && state.oninit2 === 2 && state.ondestroy1 === 1 && state.ondestroy2 === 1 && state.afterinit1 === 2 && state.afterinit2 === 2;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testFinalize100TryItRecycleDomNodesForSql() {
+        const result = {
+            test: 'test recycling of DOM nodes and verify that lifecycle hooks are called when node tagName and child count unchanged',
+            success: false,
+            message: ''
+        };
+
+        const comp = new SqlContentPanelComponent();
+        mount('divsqlcontentpanel', comp);
+
+        comp.collapsed = false;
+        comp.portrait = false;
+
+        detectChanges('divsqlcontentpanel');
+
+        comp.collapsed = true;
+
+        detectChanges('divsqlcontentpanel');
+
+        comp.showHelp = false;
+
+        detectChanges('divsqlcontentpanel');
+
+        comp.showPreview = true;
+
+        detectChanges('divsqlcontentpanel');
+
+        comp.showPreview = false;
+
+        detectChanges('divsqlcontentpanel');
+
+        comp.showPreview = true;
+
+        detectChanges('divsqlcontentpanel');
+
+        comp.showPreview = false;
+
+        detectChanges('divsqlcontentpanel');
+
+        const state = getState();
+
+        result.success = state.afterinitsql1 === 3 && state.ondestroysql1 === 2 && state.afterinitsql2 === 2 && state.ondestroysql2 === 2;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
