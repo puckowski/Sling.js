@@ -9385,9 +9385,9 @@ export class GlobalTestRunner {
 
                     window.globalTestResults.push(result);
                     window.globalTestCount++;
-                }, 1100);
-            }, 1100);
-        }, 1000);
+                }, 550);
+            }, 550);
+        }, 500);
     }
 
     testFinalize300TerserMarkupFunctionOverload() {
@@ -9804,12 +9804,12 @@ export class GlobalTestRunner {
                                                 window.globalTestCount++;
                                                 window.globalAsyncCount--;
                                             }, 600);
-                                        }, 1500);
+                                        }, 750);
                                     }, 25);
-                                }, 2600);
-                            }, 1500);
+                                }, 1300);
+                            }, 750);
                         }, 25);
-                    }, 2100);
+                    }, 1050);
                 }, 25);
             }
 
@@ -9902,10 +9902,10 @@ export class GlobalTestRunner {
                                     window.globalTestResults.push(result);
                                     window.globalTestCount++;
                                     window.globalAsyncCount--;
-                                }, 2600);
-                            }, 1500);
+                                }, 1300);
+                            }, 750);
                         }, 25);
-                    }, 2100);
+                    }, 1050);
                 }, 25);
             }
 
@@ -9960,7 +9960,7 @@ export class GlobalTestRunner {
                         window.globalTestCount++;
                         window.globalAsyncCount--;
                         window.runAnimRouteToggle = true;
-                    }, 2100);
+                    }, 1050);
                 }, 25);
             }
 
@@ -10027,9 +10027,9 @@ export class GlobalTestRunner {
                                     window.globalTestCount++;
                                     window.globalAsyncCount--;
                                     window.runAnimFunctionPreserve = true;
-                                }, 2001);
-                            }, 1000);
-                        }, 1500);
+                                }, 1001);
+                            }, 500);
+                        }, 750);
                     }, 25);
                 }, 25);
             }
@@ -10098,9 +10098,9 @@ export class GlobalTestRunner {
                                     window.globalTestCount++;
                                     window.globalAsyncCount--;
                                     window.runLastAnimateRoute = true;
-                                }, 2001);
-                            }, 1000);
-                        }, 1500);
+                                }, 1001);
+                            }, 500);
+                        }, 750);
                     }, 25);
                 }, 25);
             }
@@ -10165,9 +10165,9 @@ export class GlobalTestRunner {
                                     window.globalTestResults.push(result);
                                     window.globalTestCount++;
                                     window.globalAsyncCount--;
-                                }, 2001);
-                            }, 1000);
-                        }, 1500);
+                                }, 1001);
+                            }, 500);
+                        }, 750);
                     }, 25);
                 }, 25);
             }
@@ -15572,8 +15572,8 @@ export class GlobalTestRunner {
                         window.globalTestResults.push(result);
                         window.globalTestCount++;
                         window.globalAsyncCount--;
-                    }, 1200);
-                }, 1000);
+                    }, 600);
+                }, 500);
             }
 
             attempts++;

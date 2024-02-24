@@ -33,11 +33,11 @@
 }
 
 .visible {
-    animation: fadein 2s;
+    animation: fadein 1s;
 }
 
 .hide {
-    animation: fadeout 2s;
+    animation: fadeout 1s;
 }
 
 @keyframes fadein {
