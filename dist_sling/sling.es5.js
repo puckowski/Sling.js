@@ -647,7 +647,7 @@ var l = function l(_ref3) {
     }), t;
   };
 function version() {
-  return "21.1.0";
+  return "21.2.0";
 }
 var x = function x(t, e) {
     return t.split(e).length - 1;

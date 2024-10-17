@@ -1,14 +1,10 @@
 const origWindow = typeof (window) !== 'undefined';
-var slContext = origWindow ? window : global;
+var slContext = origWindow ? window : self;
 if (!origWindow) {
     slContext.setTimeout = () => { };
     slContext.setInterval = () => { };
     slContext.location = {};
     slContext.location.href = '';
-    slContext.fetch = () => { };
-    slContext.XMLHttpRequest = {};
-    slContext.XMLHttpRequest.prototype = {};
-    slContext.XMLHttpRequest.prototype.send = () => { };
 }
 
 slContext.s = function () { };
@@ -20,6 +16,7 @@ s._afterInitArr = [];
 s._destroyNodeMap = new Map();
 s._structureForMap = new Map();
 s._isAnimatingKeyed = null;
+s._scopedCssSet = new Set();
 
 const renderAsString = ({ tagName, attrs, children, model }, destroyCompList) => {
     tagName = tagName.toLowerCase();
@@ -345,6 +342,11 @@ const consumeClassViewAndAppend = (child, el, diffDom = false) => {
     child = buildObj.view;
     if (buildObj.afterInit) s._afterInitArr.push(buildObj.afterInit);
     const ele = renderElementInternal(child);
+    if (buildObj.scopedCss) {
+        const identifier = applyScopedCss(buildObj.model, buildObj.model.slStyle());
+        applyScopedCssIdentifier(ele, identifier);
+        ele.slScopedCss = true;
+    }
     if (buildObj.onInit) {
         ele.slOnInit = true;
     }
@@ -402,6 +404,7 @@ const getViewFromClass = (child, appendDestroy, callOnInit, returnDestroyFn = fa
         onInit: !callOnInit && child.slOnInit ? child.slOnInit : null,
         destroyIndex: delFnIndex,
         model: child,
+        scopedCss: child.slStyle ? child.slStyle.bind(child) : null,
         slUnboundOnDestroy: child.slOnDestroy,
         slUnboundAfterInit: child.slAfterInit,
         slUnboundOnInit: child.slOnInit
@@ -458,6 +461,16 @@ const callAllDestroyHooks = (node) => {
     }
 }
 
+const applyScopedCssIdentifier = (node, identifier) => {
+    node.setAttribute(identifier, '');
+
+    if (node.children && node.children.length > 0) {
+        for (const child of node.children) {
+            applyScopedCssIdentifier(child, identifier);
+        }
+    }
+}
+
 const prepareNodeForDestroyHook = (node, fn, unboundDestroyFn) => {
     node.slOnDestroy = true;
 
@@ -480,7 +493,9 @@ const diffVAttrs = (node, oldAttrs, newAttrs) => {
     for (let attrib of oldAttrs) {
         let newValue = newAttrs[attrib.name];
         if (!newValue) {
-            toRemove.push(attrib.nodeName);
+            if (!attrib.name.startsWith('slcss-')) {
+                toRemove.push(attrib.nodeName);
+            }
         } else if (newValue.length === attrib.nodeValue.length && newValue === attrib.nodeValue) {
             delete newAttrs[attrib.name];
         }
@@ -539,7 +554,8 @@ const diffVAttrs = (node, oldAttrs, newAttrs) => {
                     value.value
                 );
             }
-        } else {
+        }
+        else {
             node.setAttribute(k, v);
         }
     }
@@ -560,6 +576,7 @@ const diffVChildren = (oldNode, oldVChildren, newVChildren) => {
 
     for (let i = oldVChildren.length - 1; i >= 0; --i) {
         let model = null;
+        let identifier = null;
 
         if (newVChildren[i]) {
             if (oldVChildren[i].slUnboundOnDestroy !== newVChildren[i].slOnDestroy) {
@@ -583,6 +600,9 @@ const diffVChildren = (oldNode, oldVChildren, newVChildren) => {
                     }
                     if (buildObj.afterInit && oldVChildren[i].slAfterInit) {
                         oldVChildren[i].slAfterInit = false;
+                    }
+                    if (buildObj.scopedCss && oldVChildren[i].slScopedCss) {
+                        oldVChildren[i].slScopedCss = false;
                     }
                     if (buildObj.onDestroy && oldVChildren[i].slOnDestroy) {
                         oldVChildren[i].slOnDestroy = false;
@@ -618,6 +638,9 @@ const diffVChildren = (oldNode, oldVChildren, newVChildren) => {
                     oldVChildren[i].slUnboundAfterInit = buildObj.slUnboundAfterInit;
                 }
 
+                if (buildObj.scopedCss && oldVChildren[i] && !oldVChildren[i].slScopedCss) {
+                    identifier = applyScopedCss(buildObj.model, buildObj.model.slStyle());
+                }
                 if (buildObj.onDestroy && oldVChildren[i] && !oldVChildren[i].slOnDestroy) {
                     prepareNodeForDestroyHook(oldVChildren[i], buildObj.onDestroy, buildObj.slUnboundOnDestroy);
                 }
@@ -642,6 +665,10 @@ const diffVChildren = (oldNode, oldVChildren, newVChildren) => {
             }
         }
 
+        if (identifier) {
+            applyScopedCssIdentifier(oldVChildren[i], identifier);
+            oldVChildren[i].slScopedCss = true;
+        }
         childIndex++;
     }
 
@@ -833,6 +860,15 @@ const deepFunctions = x =>
 const distinctDeepFunctions = x => Array.from(new Set(deepFunctions(x)));
 const userFunctions = x => distinctDeepFunctions(x).filter(name => name !== "constructor" && !~name.indexOf("__"));
 
+const checkForScopedCss = (target, component, oldDisplayValue = '') => {
+    if (component.slStyle && !target.slScopedCss) {
+        const identifier = applyScopedCss(component, component.slStyle());
+        applyScopedCssIdentifier(target, identifier);
+        target.slScopedCss = true;
+        target.style.display = oldDisplayValue;
+    }
+}
+
 const applyPreventDefault = (children) => {
     for (let i = 0; i < children.length; i++) {
         const child = children[i];
@@ -871,6 +907,13 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
         }
     }
 
+    let oldDisplay;
+
+    if (vNewNode && vNewNode.slStyle) {
+        oldDisplay = vOldNode.style.display;
+        vOldNode.style.display = 'none';
+    }
+
     if (vNewNode && vNewNode.view) {
         if (vOldNode.slUnboundOnDestroy !== vNewNode.slOnDestroy) {
             if (vOldNode.slUnboundOnDestroy !== undefined && vOldNode.slOnDestroyFn !== undefined) vOldNode.slOnDestroyFn();
@@ -892,6 +935,9 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
             if (buildObj.afterInit && vOldNode.slAfterInit) {
                 vOldNode.slAfterInit = false;
             }
+            if (buildObj.scopedCss && vOldNode.slScopedCss) {
+                vOldNode.slScopedCss = false;
+            }
             if (buildObj.onDestroy && vOldNode.slOnDestroy) {
                 vOldNode.slOnDestroy = false;
             }
@@ -904,8 +950,12 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
         }
         if (buildObj.afterInit && vOldNode && !vOldNode.slAfterInit) {
             vOldNode.slAfterInit = true;
-            vOldNode.slUnboundAfterInit = buildObj.slUnboundAfterInit;
             s._afterInitArr.push(buildObj.afterInit);
+        }
+        if (buildObj.scopedCss && vOldNode && !vOldNode.slScopedCss) {
+            const identifier = applyScopedCss(buildObj.model, buildObj.model.slStyle());
+            applyScopedCssIdentifier(vOldNode, identifier);
+            vOldNode.slScopedCss = true;
         }
         if (buildObj.onDestroy && vOldNode && !vOldNode.slOnDestroy) {
             prepareNodeForDestroyHook(vOldNode, buildObj.onDestroy, buildObj.slUnboundOnDestroy);
@@ -935,6 +985,7 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
                 el = document.createElement(vNewNode.tagName);
             }
 
+            checkForScopedCss(el, vNewNode, oldDisplay);
             vOldNode.parentNode.insertBefore(el, vOldNode);
             removeFromDestroyList(vOldNode);
             callAllDestroyHooks(vOldNode);
@@ -962,6 +1013,8 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
 
     switch (vNewNode.attrs.sldirective) {
         case 'useexisting': {
+            checkForScopedCss(vOldNode, vNewNode, oldDisplay);
+
             return vOldNode;
         }
         case 'onlychildren': {
@@ -971,11 +1024,13 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
         }
         case 'onlyself': {
             diffVAttrs(vOldNode, vOldNode.attributes, vNewNode.attrs);
+            checkForScopedCss(vOldNode, vNewNode, oldDisplay);
 
             return vOldNode;
         }
         case 'trustchildren': {
             diffVAttrs(vOldNode, vOldNode.attributes, vNewNode.attrs);
+            checkForScopedCss(vOldNode, vNewNode, oldDisplay);
 
             let newHtml = '';
             vNewNode.children.forEach(childHtml => {
@@ -1019,6 +1074,7 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
         }
 
         diffVAttrs(vOldNode, vOldNode.attributes, vNewNode.attrs);
+        checkForScopedCss(vOldNode, vNewNode, oldDisplay);
 
         return vOldNode;
     } else if (vNewNode.attrs.slfornamed) {
@@ -1070,12 +1126,14 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
         }
 
         diffVAttrs(vOldNode, vOldNode.attributes, vNewNode.attrs);
+        checkForScopedCss(vOldNode, vNewNode, oldDisplay);
 
         return vOldNode;
     }
 
     diffVAttrs(vOldNode, vOldNode.attributes, vNewNode.attrs);
     diffVChildren(vOldNode, vOldNode.childNodes, vNewNode.children);
+    checkForScopedCss(vOldNode, vNewNode, oldDisplay);
 
     return vOldNode;
 };
@@ -1102,6 +1160,12 @@ const _mountInternal = (target, component, attachDetector) => {
     if (component.slOnInit) {
         target.slOnInit = true;
         target.slUnboundOnInit = component.slOnInit;
+    }
+
+    if (component.slStyle && !target.slScopedCss) {
+        const identifier = applyScopedCss(component, component.slStyle());
+        applyScopedCssIdentifier(target, identifier);
+        target.slScopedCss = true;
     }
 
     if (attachDetector)
@@ -1136,6 +1200,596 @@ const _mountInternal = (target, component, attachDetector) => {
 
 export function version() {
     return '21.2.0';
+}
+
+function xmur3(str) {
+    for (var i = 0, h = 1779033703 ^ str.length; i < str.length; i++) {
+        h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+        h = h << 13 | h >>> 19;
+    } return function () {
+        h = Math.imul(h ^ (h >>> 16), 2246822507);
+        h = Math.imul(h ^ (h >>> 13), 3266489909);
+        return (h ^= h >>> 16) >>> 0;
+    }
+}
+
+const countSubstr = (string, word) => {
+    return string.split(word).length - 1;
+}
+
+const seekToFirstUnquotedChar = (string, charToSeek, startIndex = 0) => {
+    let data = '';
+    let openedDouble = false;
+    let opened = false;
+    let previousEscape = false;
+
+    for (let i = startIndex; i < string.length; ++i) {
+        if (string[i] === '"' && !opened && !openedDouble) {
+            openedDouble = true;
+        } else if (string[i] === '\'' && !opened && !openedDouble) {
+            opened = true;
+        } else if (string[i] === '"' && openedDouble && !previousEscape) {
+            opened = false;
+            openedDouble = false;
+        } else if (string[i] === '\'' && opened && !previousEscape) {
+            opened = false;
+            openedDouble = false;
+        } else if (string[i] === '"' && openedDouble && previousEscape) {
+            previousEscape = false;
+        } else if (string[i] === '\'' && opened && previousEscape) {
+            previousEscape = false;
+        } else {
+            if (string[i] === '\\') {
+                previousEscape = true;
+            } else {
+                previousEscape = false;
+            }
+        }
+
+        data += string[i];
+
+        if (charToSeek.length === 1) {
+            if (string[i] === charToSeek && !openedDouble && !opened) {
+                break;
+            }
+        } else if (string.length > i + charToSeek.length && string.substring(i, i + charToSeek.length) === charToSeek && !openedDouble && !opened) {
+            data += string.substring(i, i + charToSeek.length - 1);
+            break;
+        }
+    }
+
+    return data;
+}
+
+const applyScopedCss = (model, cssText) => {
+    const seedFn = xmur3(model.constructor.name);
+    const identifier = 'slcss-' + String(seedFn());
+
+    if (cssText === '' || s._scopedCssSet.has(identifier)) {
+        return identifier;
+    }
+
+    cssText = cssText.replace(/\t+/g, ' ');
+
+    s._scopedCssSet.add(identifier);
+
+    const cssRegex = new RegExp('([^{]+)\s*\{\s*([^}]+)\s*}', 'g');
+    const matches = cssText.match(cssRegex);
+    const unquotedCssRegex = /[^\s"]+|"([^"]*)"/gi;
+
+    let unquotedStr = '';
+    let match = null;
+
+    do {
+        match = unquotedCssRegex.exec(cssText);
+        if (match != null) {
+            if (!match[1]) {
+                unquotedStr += match[0];
+            }
+        }
+    } while (match != null);
+
+    let finalCss = '';
+    let startOpenBraceIndex;
+    let appendedIndex;
+    let layerCount = 0;
+    let unclosedBraceCount = 0;
+    let customPropertyBraceCount = 0;
+    let customPropertyToken;
+    let isLayer;
+    let isNestedCount = 0;
+    let nestedAdditionalBraces;
+    let isKeyframes = false;
+    let isMedia = false;
+    let nestedInsertionCount = 0;
+    let firstTokenIsAt = false;
+    let checkAtStr;
+    let firstTokenColonEnd;
+    let unclosedAdjustment;
+    let nestedCloseCount = 0;
+    const keyframeNameMap = new Map();
+
+    if (unquotedStr.includes('{') && unquotedStr.includes('}') && unquotedStr.split('{').length === unquotedStr.split('}').length) {
+        for (let i = 0; i < matches.length; ++i) {
+            nestedAdditionalBraces = 0;
+            startOpenBraceIndex = 0;
+            appendedIndex = 0;
+            customPropertyToken = null;
+            isLayer = false;
+            isMedia = false;
+            firstTokenIsAt = false;
+
+            let unquotedTemp = '';
+
+            do {
+                match = unquotedCssRegex.exec(matches[i]);
+                if (match != null) {
+                    if (!match[1]) {
+                        unquotedTemp += match[0];
+                    }
+                }
+            } while (match != null);
+
+            let openBraceCount = countSubstr(unquotedTemp, '{');
+            checkAtStr = matches[i].substring(startOpenBraceIndex);
+
+            while (checkAtStr.replace(/}/g, '').trim().startsWith('@') && (checkAtStr.includes('@layer')
+                || checkAtStr.includes('@scope')
+                || checkAtStr.includes('@container')
+                || checkAtStr.includes('@keyframes')
+                || checkAtStr.replace(/}/g, '').trim().startsWith('@media'))) {
+                layerCount++;
+                isLayer = true;
+
+                if (matches[i].substring(startOpenBraceIndex).includes('@keyframes')) {
+                    isKeyframes = true;
+                } else if (matches[i].substring(startOpenBraceIndex).includes('@media')) {
+                    isMedia = true;
+                }
+
+                if (openBraceCount == 1) {
+                    startOpenBraceIndex = startOpenBraceIndex + seekToFirstUnquotedChar(matches[i], ';', startOpenBraceIndex).length;
+
+                    finalCss += matches[i].substring(appendedIndex, startOpenBraceIndex);
+                    appendedIndex = startOpenBraceIndex;
+                    layerCount--;
+                } else {
+                    unclosedBraceCount++;
+                    layerCount--;
+                    startOpenBraceIndex = startOpenBraceIndex + seekToFirstUnquotedChar(matches[i], '{', startOpenBraceIndex).length;
+
+                    const seekToSemicolonStr = seekToFirstUnquotedChar(matches[i], ';', 0);
+
+                    if (isKeyframes) {
+                        let animNameStr = matches[i].substring(appendedIndex, startOpenBraceIndex);
+                        animNameStr = animNameStr.replace('@keyframes', '');
+                        animNameStr = animNameStr.trim();
+
+                        if (animNameStr.endsWith('{')) {
+                            animNameStr = animNameStr.substring(0, animNameStr.length - 2);
+                            animNameStr = animNameStr.trim();
+                        }
+
+                        const keyframeName = ' ' + animNameStr + identifier;
+                        keyframeNameMap.set(animNameStr, keyframeName);
+
+                        finalCss += ' @keyframes ' + keyframeName + ' { ';
+                    } else {
+                        const proposedCss = matches[i].substring(appendedIndex, startOpenBraceIndex);
+
+                        if (seekToSemicolonStr.length < proposedCss.length) {
+                            finalCss += seekToSemicolonStr;
+                            startOpenBraceIndex -= proposedCss.length - seekToSemicolonStr.length;
+                            openBraceCount--;
+                        } else {
+                            if (isNestedCount > 0) {
+                                let formattedCss = proposedCss.trim();
+                                while (formattedCss.startsWith('}') && isNestedCount > 0) {
+                                    if (layerCount !== 0 || isNestedCount !== 1 || openBraceCount <= isNestedCount || !(unclosedBraceCount - openBraceCount >= 1)) {
+
+                                        isNestedCount--;
+                                    }
+
+                                    openBraceCount--;
+                                    unclosedBraceCount--;
+                                    formattedCss = formattedCss.replace('}', '').trim();
+                                }
+                            }
+
+                            let unquotedProposedStr = '';
+                            match = null;
+
+                            do {
+                                match = unquotedCssRegex.exec(proposedCss);
+                                if (match != null) {
+                                    if (!match[1]) {
+                                        unquotedProposedStr += match[0];
+                                    }
+                                }
+                            } while (match != null);
+
+                            finalCss += proposedCss;
+
+                            if (isNestedCount === 0 && countSubstr(unquotedProposedStr, '}') > 0) {
+                                const len = unquotedProposedStr.length;
+                                const evalStr = unquotedProposedStr.replace(/^}+/, '');
+                                unclosedBraceCount -= countSubstr(evalStr, '}');
+                                if (unclosedBraceCount >= len - evalStr.length) {
+                                    if (unclosedBraceCount !== 1 || openBraceCount !== 1) {
+                                        nestedCloseCount += len - evalStr.length;
+                                    }
+                                }
+                            }
+
+                            let countOpen = countSubstr(unquotedProposedStr, '{') - countSubstr(unquotedProposedStr, '}');
+                            let regex = /(@layer|@container|@media|@scope)[^{]*\{/g;
+                            let matches = unquotedProposedStr.replace(/\s/g, '').match(regex);
+                            const openLayerCount = matches ? matches.length : 0;
+                            countOpen -= isNestedCount > 0 ? 0 : openLayerCount;
+                            if (countOpen < 0) {
+                                countOpen = 0;
+                            }
+                            isNestedCount += countOpen;
+                        }
+                    }
+
+                    appendedIndex = startOpenBraceIndex;
+                }
+
+                checkAtStr = matches[i].substring(startOpenBraceIndex);
+            }
+
+            let indexOpenBrace = startOpenBraceIndex + seekToFirstUnquotedChar(matches[i], '{', startOpenBraceIndex).length - 1;
+
+            if (indexOpenBrace === -1) {
+                indexOpenBrace = startOpenBraceIndex;
+            }
+
+            let selectors = matches[i].substring(startOpenBraceIndex, indexOpenBrace);
+
+            while ((selectors.split('"').length - 1) % 2 !== 0) {
+                indexOpenBrace = indexOpenBrace + 1 + seekToFirstUnquotedChar(matches[i], '{', indexOpenBrace + 1).length;
+                selectors = matches[i].substring(startOpenBraceIndex, indexOpenBrace);
+            }
+
+            if (selectors !== '' && !/^\s*$/.test(selectors)) {
+                const tokens = selectors.split(',');
+                let token;
+
+                if (customPropertyBraceCount > 0 && selectors.startsWith(',')) {
+                    tokens.shift();
+                    tokens[0] = ', ' + tokens[0];
+                }
+
+                for (let n = 0; n < tokens.length; ++n) {
+                    token = tokens[n].trim();
+
+                    while (customPropertyBraceCount > 0 && token.includes('}')) {
+                        let prefix = '';
+                        let openIndex;
+                        let closeIndex;
+                        while (token.includes('}')) {
+                            openIndex = token.indexOf('{');
+                            closeIndex = token.indexOf('}');
+
+                            if (closeIndex < openIndex || openIndex === -1) {
+                                prefix += token.substring(0, closeIndex + 1);
+                                token = token.substring(closeIndex + 1);
+                                customPropertyBraceCount--;
+                            }
+                        }
+                        finalCss += prefix + '\n';
+                        token = token.trim();
+                        customPropertyToken = token;
+                    }
+
+                    if (customPropertyBraceCount === 0) {
+                        while (token.startsWith('}')) {
+                            token = token.substring(1).trim();
+                            finalCss += '}';
+                            unclosedBraceCount--;
+                            firstTokenIsAt = false;
+
+                            if (isNestedCount > 0) {
+                                isNestedCount--;
+                            }
+
+                            if (isNestedCount === 0) {
+                                isKeyframes = false;
+                            }
+                        }
+
+                        if (token.includes(' ')) {
+                            let firstToken = token.substring(0, token.indexOf(' '));
+                            let afterFirstToken = token.substring(token.indexOf(' '));
+
+                            if (n > 0) {
+                                finalCss += ', ';
+                            }
+
+                            const firstTokenIsNest = firstToken.trim() === '@nest';
+
+                            if (firstTokenIsNest && afterFirstToken.replace(/^\s+/g, '').includes(' ')) {
+                                let afterLeftTrimmed = afterFirstToken.replace(/^\s+/g, '');
+                                let before = afterLeftTrimmed.substring(0, afterLeftTrimmed.indexOf(' '));
+                                afterLeftTrimmed = afterLeftTrimmed.substring(before.length, afterLeftTrimmed.length);
+
+                                firstToken += ' ' + before;
+                                afterFirstToken = afterLeftTrimmed;
+                            }
+
+                            firstTokenIsAt = firstToken.trim().startsWith('@');
+                            firstTokenColonEnd = firstToken.trim().endsWith(':');
+
+                            if (firstTokenColonEnd) {
+                                let toSemi = seekToFirstUnquotedChar(afterFirstToken, ';');
+
+                                while (seekToFirstUnquotedChar(afterFirstToken, ';', toSemi.length).trim().endsWith(';')) {
+                                    toSemi = toSemi + seekToFirstUnquotedChar(afterFirstToken, ';', toSemi.length);
+                                }
+
+                                const after = afterFirstToken.substring(toSemi.length, afterFirstToken.length);
+                                afterFirstToken = toSemi;
+                                let proposedCss = matches[i].substring(indexOpenBrace);
+                                indexOpenBrace = matches[i].length;
+
+                                let insertCss = after + ' ';
+                                const multipleTokens = tokens.length > 1;
+
+                                for (let addIndex = n + 1; addIndex < tokens.length; ++addIndex) {
+                                    insertCss += ', ' + tokens[addIndex] + ' ';
+                                    tokens.splice(addIndex, 1);
+                                    addIndex--;
+                                }
+                                insertCss += proposedCss;
+                                matches.splice(i + 1, 0, insertCss);
+
+                                if (firstToken.trim().endsWith(':') && isNestedCount > 0 && openBraceCount > 0 && multipleTokens) {
+                                    unclosedBraceCount++;
+                                    nestedCloseCount++;
+                                }
+
+                                let unquotedProposedStr = '';
+                                match = null;
+
+                                do {
+                                    match = unquotedCssRegex.exec(matches[i + 1]);
+                                    if (match != null) {
+                                        if (!match[1]) {
+                                            unquotedProposedStr += match[0];
+                                        }
+                                    }
+                                } while (match != null);
+
+                                let openCount = countSubstr(unquotedProposedStr, '{');
+                                const closeCount = countSubstr(unquotedProposedStr, '}');
+
+                                openCount -= closeCount;
+
+                                if (openCount < 0) {
+                                    openCount = 0;
+                                }
+
+                                unclosedBraceCount += openCount;
+                                nestedInsertionCount += openCount;
+                            }
+
+                            if (!isNestedCount > 0 && !isKeyframes && (!isMedia || isNestedCount === 0) && (!firstTokenIsAt || firstToken.trim().startsWith('@nest')) && !firstTokenColonEnd) {
+                                finalCss += firstToken + (isNestedCount === 0 ? '[' + identifier + ']' : '') + afterFirstToken;
+                            } else {
+                                finalCss += firstToken + afterFirstToken;
+                            }
+                        } else {
+                            if (n > 0) {
+                                finalCss += ', ';
+                            }
+
+                            if (!isNestedCount > 0 && !isKeyframes && (!isMedia || isNestedCount === 0) && !token.trim().startsWith('@') && !firstTokenIsAt && !token.trim().endsWith(':')) {
+                                finalCss += token + (isNestedCount === 0 ? '[' + identifier + ']' : '');
+                            } else {
+                                finalCss += token;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (customPropertyBraceCount > 0) {
+                if (customPropertyToken !== null) {
+                    indexOpenBrace = matches[i].indexOf(customPropertyToken);
+                } else {
+                    indexOpenBrace = 0;
+                }
+            }
+
+            if (matches[i].includes('--') && openBraceCount > 1) {
+                let indexCustom = seekToFirstUnquotedChar(matches[i], '--', 0).length;
+                const beginMatch = matches[i].substring(0, indexCustom);
+                let unquotedBegin = '';
+
+                do {
+                    match = unquotedCssRegex.exec(beginMatch);
+                    if (match != null) {
+                        if (!match[1]) {
+                            unquotedBegin += match[0];
+                        }
+                    }
+                } while (match != null);
+
+                const beginBraceCount = countSubstr(unquotedBegin, '{');
+                const beginDiff = beginBraceCount - 1;
+                nestedAdditionalBraces = openBraceCount - 1;
+                if (beginDiff > 0) {
+                    nestedAdditionalBraces -= beginDiff;
+                }
+                if (nestedAdditionalBraces > 0) {
+                    customPropertyBraceCount += nestedAdditionalBraces;
+                }
+            }
+
+            if (openBraceCount - customPropertyBraceCount > 1 && !isLayer) {
+                const newMatch = matches[i].substring(indexOpenBrace + 1);
+                matches[i] = matches[i].substring(0, matches[i].length - newMatch.length);
+                matches.splice(i + 1, 0, newMatch);
+
+                let unquotedProposedStr = '';
+                match = null;
+
+                do {
+                    match = unquotedCssRegex.exec(newMatch);
+                    if (match != null) {
+                        if (!match[1]) {
+                            unquotedProposedStr += match[0];
+                        }
+                    }
+                } while (match != null);
+
+                unclosedAdjustment = (countSubstr(unquotedProposedStr, '{') - countSubstr(unquotedProposedStr, '}'));
+
+                customPropertyBraceCount -= nestedAdditionalBraces;
+            }
+
+            let proposedCss = matches[i].substring(indexOpenBrace);
+            const withoutLeadingStructure = proposedCss.replace('{', '').replace(';', '');
+
+            if (proposedCss.includes('{') && countSubstr(proposedCss, '{') > 1 && !withoutLeadingStructure.trim().startsWith('--')) {
+                let before = seekToFirstUnquotedChar(proposedCss, '{', 0);
+                before = before + ' ' + seekToFirstUnquotedChar(proposedCss, '{', before.length);
+                let after = proposedCss.substring(before.length + 1, proposedCss.length);
+                after = before.substring(before.lastIndexOf(';') + 1, before.length) + ' ' + after;
+                before = before.substring(0, before.lastIndexOf(';') + 1);
+                proposedCss = before;
+                matches.splice(i + 1, 0, after);
+                isNestedCount++;
+                nestedInsertionCount++;
+            }
+
+            finalCss += proposedCss;
+
+            let unquotedProposedStr = '';
+            match = null;
+
+            do {
+                match = unquotedCssRegex.exec(proposedCss);
+                if (match != null) {
+                    if (!match[1]) {
+                        unquotedProposedStr += match[0];
+                    }
+                }
+            } while (match != null);
+
+            unclosedAdjustment = (countSubstr(unquotedProposedStr, '{') - countSubstr(unquotedProposedStr, '}'));
+            unclosedBraceCount += (unclosedAdjustment - nestedAdditionalBraces) >= 0 ? unclosedAdjustment - nestedAdditionalBraces : unclosedAdjustment;
+
+            unclosedAdjustment -= customPropertyBraceCount;
+            if (unclosedAdjustment < 0) {
+                unclosedAdjustment = 0;
+            }
+
+            if (isNestedCount !== 0 || !isMedia) {
+                nestedInsertionCount += unclosedAdjustment;
+                isNestedCount += unclosedAdjustment;
+
+                if (isNestedCount > 0) {
+                    isNestedCount -= (1 - unclosedBraceCount - countSubstr(unquotedProposedStr, '{') + countSubstr(unquotedProposedStr, '}')) >= 0 ? 1 - unclosedBraceCount - countSubstr(unquotedProposedStr, '{') + countSubstr(unquotedProposedStr, '}') : 0;
+                }
+            }
+
+            while (layerCount > 0) {
+                finalCss += '}';
+                layerCount--;
+            }
+
+            if (customPropertyBraceCount === 0) {
+                finalCss += '\n';
+            }
+        }
+    }
+
+    isNestedCount -= nestedInsertionCount;
+    while (isNestedCount > 0) {
+        finalCss += '}';
+        isNestedCount--;
+    }
+    unclosedBraceCount -= nestedCloseCount;
+    while (unclosedBraceCount > 0) {
+        finalCss += '}';
+        unclosedBraceCount--;
+    }
+    finalCss += '\n';
+
+    if (keyframeNameMap.size > 0) {
+        let startIndex = 0;
+        let scopedResult;
+
+        scopedResult = updateScopedAnimationNames(finalCss, startIndex, keyframeNameMap, 'animation');
+        finalCss = scopedResult.finalCss;
+        startIndex = scopedResult.startIndex;
+
+        startIndex = 0;
+
+        scopedResult = updateScopedAnimationNames(finalCss, startIndex, keyframeNameMap, 'animation-name');
+        finalCss = scopedResult.finalCss;
+        startIndex = scopedResult.startIndex;
+    }
+
+    if (finalCss.trim() !== '') {
+        const head = document.head || document.getElementsByTagName('head')[0];
+        const style = document.createElement('style');
+        head.appendChild(style);
+        style.appendChild(document.createTextNode(finalCss));
+    }
+
+    return identifier;
+}
+
+const updateScopedAnimationNames = (finalCss, startIndex, keyframeNameMap, propertyName) => {
+    while ((startIndex = finalCss.indexOf(propertyName, startIndex)) !== -1) {
+        const before = finalCss.substring(0, startIndex);
+        let middle = finalCss.substring(startIndex, finalCss.indexOf(';', startIndex));
+        const after = finalCss.substring(startIndex + middle.length, finalCss.length);
+
+        if (middle.includes(':')) {
+            const prefix = middle.substring(0, middle.indexOf(':') + 1).replace(propertyName, '').trim();
+
+            if (prefix === ':') {
+                for (const [key, value] of keyframeNameMap) {
+                    let middleFormatted = middle.replace(propertyName, '');
+                    middleFormatted = middleFormatted.trim();
+
+                    if (middleFormatted.startsWith(':')) {
+                        middleFormatted = middleFormatted.substring(1, middleFormatted.length);
+                        middleFormatted = middleFormatted.trim();
+                    }
+
+                    const testRegex = new RegExp(key + '(\\s|;|$)');
+
+                    if (testRegex.test(middleFormatted) && key.length > 0) {
+                        middle = middle.replaceAll(key, value);
+                        startIndex += middle.length;
+                    } else {
+                        startIndex += propertyName.length;
+                    }
+                }
+                finalCss = before + middle + after;
+            } else {
+                startIndex += middle.length;
+            }
+        }
+    }
+
+    return { finalCss, startIndex };
+}
+
+export function hydrate(eleId, attachDetector = true) {
+    const ele = document.getElementById(eleId);
+    const ssrClass = ele.getAttribute('slssrclass');
+    let viewClass = slContext[ssrClass];
+    if (!viewClass && this) {
+        viewClass = this[ssrClass];
+    }
+    const viewObj = new viewClass();
+    return mount(eleId, viewObj, attachDetector);
 }
 
 export function resolveAll(promiseArr) {
@@ -1186,11 +1840,49 @@ export function mount(eleId, component, attachDetector = true) {
     }
 }
 
+export function renderToString(component) {
+    const destroyCompList = [];
+    const originalForKeys = new Set();
+    for (let key of s._structureForMap.keys()) {
+        originalForKeys.add(key);
+    }
+
+    if (component.slOnInit) {
+        component.slOnInit();
+        destroyCompList.push(component);
+    }
+    let vNewApp = component.view.bind(component)();
+    let lastComponent = component;
+    while (vNewApp.view) {
+        if (vNewApp.slOnInit) {
+            vNewApp.slOnInit();
+            destroyCompList.push(vNewApp);
+        }
+        lastComponent = vNewApp;
+        vNewApp = vNewApp.view.bind(vNewApp)();
+    }
+    applyModelForStructuralDirectives(vNewApp, lastComponent);
+    const compStr = renderAsString(vNewApp, destroyCompList);
+    destroyCompList.forEach(comp => {
+        if (comp.slOnDestroy) {
+            comp.slOnDestroy.bind(comp)();
+        }
+    });
+
+    for (let finalKey of s._structureForMap.keys()) {
+        if (!originalForKeys.has(finalKey)) {
+            s._structureForMap.delete(finalKey);
+        }
+    }
+
+    return compStr;
+}
+
 export function update(rootEl, component) {
     const origId = rootEl;
     rootEl = document.getElementById(rootEl);
 
-    //clear after init arr?
+    // clear after init arr?
     s._afterInitArr = [];
 
     if (!rootEl) {
@@ -1214,6 +1906,12 @@ export function update(rootEl, component) {
     s._afterInitArr.forEach((afterInitFn) => {
         afterInitFn();
     });
+
+    if (component.slStyle && !rootEl.slScopedCss) {
+        const identifier = applyScopedCss(component, component.slStyle());
+        applyScopedCssIdentifier(rootEl, identifier);
+        rootEl.slScopedCss = true;
+    }
 }
 
 let origPopState = slContext.onpopstate;
@@ -1700,53 +2398,3 @@ export function wrapWithChangeDetector(func, config) {
 }
 
 s._debouncedPerformUpdates = debounce(performChangeUpdates, 17);
-
-// XHR Proxy
-let xhrSendProxy = slContext.XMLHttpRequest.prototype.send;
-let onReadyMap = new Map();
-
-function xhrSend(data) {
-    if (this.onreadystatechange) {
-        this._onreadystatechange = this.onreadystatechange;
-
-        if (this._onreadystatechangecount === undefined) this._onreadystatechangecount = 0;
-        else this._onreadystatechangecount += 4;
-    } else {
-        this._onreadystatechangecount = 0;
-    }
-
-    this.onreadystatechange = xhrOnReadyStateChangeProxy;
-    return xhrSendProxy.apply(this, arguments);
-}
-
-function xhrOnReadyStateChangeProxy() {
-    if (this._onreadystatechange) {
-        let lastCount = onReadyMap.get(this);
-
-        if (lastCount !== undefined && lastCount === this._onreadystatechangecount) {
-            onReadyMap.delete(this);
-            return undefined;
-        } else if (lastCount !== undefined) {
-            onReadyMap.set(this, lastCount + 1);
-        } else {
-            onReadyMap.set(this, 0);
-        }
-
-        let result = this._onreadystatechange.apply(this, arguments);
-        _performChangeDetection(); // Change after update
-        onReadyMap.delete(this);
-
-        return result;
-    }
-}
-
-slContext.XMLHttpRequest.prototype.send = xhrSend;
-
-// Fetch
-let fetchProxy = slContext.fetch;
-
-slContext.fetch = function () {
-    let result = fetchProxy.apply(this, arguments);
-    _performChangeDetection(); // Change after update
-    return result;
-}

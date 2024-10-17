@@ -1,6 +1,6 @@
 {
   "name": "sling.js",
-  "version": "21.0.1",
+  "version": "21.2.0",
   "description": "Client-side JavaScript framework for building Single Page Applications.",
   "main": "index.js",
   "scripts": {
@@ -9,11 +9,12 @@
     "build": "webpack --mode development",
     "buildProd": "webpack",
     "devServer": "webpack-dev-server --config webpack.config.js",
-    "buildAll": "npm run buildSlingCore && npm run buildSlingXhr && npm run buildSlingReactive && npm run buildEs5 && npm run buildEs5Min && npm run buildBrowser && npm run buildSlingCoreSlim && npm run buildProd",
+    "buildAll": "npm run buildSlingCore && npm run buildSlingXhr && npm run buildSlingReactive && npm run buildEs5 && npm run buildEs5Min && npm run buildBrowser && npm run buildSlingCoreSlim && npm run buildSlingCoreWorker && npm run buildProd",
     "buildEs5": "babel .\\dist_sling\\sling.min.js --out-file .\\dist_sling\\sling.es5.js --presets=@babel/preset-env",
     "buildEs5Min": "terser --compress --mangle toplevel,reserved=['m'] --output .\\dist_sling\\sling.min.es5.js -- .\\dist_sling\\sling.es5.js",
     "buildSlingCore": "terser --toplevel --compress --mangle toplevel,reserved=['m'] --output .\\dist_sling\\sling.min.js -- .\\src\\sling\\core\\sling.js",
     "buildSlingCoreSlim": "terser --toplevel --compress --mangle toplevel,reserved=['m'] --output .\\dist_sling\\sling.slim.min.js -- .\\src\\sling\\core\\sling.slim.js",
+    "buildSlingCoreWorker": "terser --toplevel --compress --mangle toplevel,reserved=['m'] --output .\\dist_sling\\sling.worker.min.js -- .\\src\\sling\\core\\sling.worker.js",
     "buildSlingXhr": "terser --compress --mangle toplevel --output .\\dist_sling\\sling-xhr.min.js -- .\\src\\sling\\xhr\\sling-xhr.js",
     "buildSlingReactive": "terser --compress --mangle toplevel --output .\\dist_sling\\sling-reactive.min.js -- .\\src\\sling\\reactive\\sling-reactive.js"
   },
