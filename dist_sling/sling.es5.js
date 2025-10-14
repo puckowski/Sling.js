@@ -30,7 +30,7 @@ exports.textNode = textNode;
 exports.update = update;
 exports.version = version;
 exports.wrapWithChangeDetector = wrapWithChangeDetector;
-function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e42) { throw _e42; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e43) { didErr = true; err = _e43; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e39) { throw _e39; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e40) { didErr = true; err = _e40; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -56,7 +56,7 @@ var n = function n(_ref, l) {
       if (i = _typeof(_n2), a += "function" === i ? " " + _t + '=""' : " " + _t + '="' + _n2 + '"', "slfor" === _t) {
         var _t2 = _n2.split(":");
         if (_t2.length >= 4) {
-          s._structureForMap.has(_t2[0]) || s._structureForMap.set(_t2[0], U(null, o[_t2[2]]));
+          s._structureForMap.has(_t2[0]) || s._structureForMap.set(_t2[0], w(null, o[_t2[2]]));
           var _e2 = s._structureForMap.get(_t2[0]);
           u = T.bind(o, _e2, o[_t2[1]], o[_t2[3]])();
         }
@@ -83,7 +83,7 @@ var n = function n(_ref, l) {
           } finally {
             _iterator.f();
           }
-          _r2 = _r2.bind(o), s._structureForMap.has(_t3[0]) || s._structureForMap.set(_t3[0], U(null, _e3));
+          _r2 = _r2.bind(o), s._structureForMap.has(_t3[0]) || s._structureForMap.set(_t3[0], w(null, _e3));
           var _i3 = s._structureForMap.get(_t3[0]);
           u = T.bind(o, _i3, _r2, _n3)();
         }
@@ -231,7 +231,7 @@ var l = function l(_ref3) {
     t = o.view, o.afterInit && s._afterInitArr.push(o.afterInit);
     var a = l(t);
     if (o.scopedCss) {
-      var _t16 = M(o.model, o.model.slStyle());
+      var _t16 = N(o.model, o.model.slStyle());
       g(a, _t16), a.slScopedCss = !0;
     }
     o.onInit && (a.slOnInit = !0), c(a, o.destroyIndex, o.onDestroy, o.slUnboundOnDestroy), f(a), e.appendChild(a), i(a, r), n && S(a, t, o.model);
@@ -389,7 +389,7 @@ var l = function l(_ref3) {
     }
     i || (void 0 !== l || e.slpreventdefault) && v([t]);
   },
-  b = function b(t, e, n) {
+  A = function A(t, e, n) {
     var r = e.length,
       a = new Set();
     var c = 0;
@@ -400,7 +400,7 @@ var l = function l(_ref3) {
         var _l2 = d(n[_t18], !1, !1, !1, e[_t18]);
         n[_t18] = _l2.view;
         var _a = Object.getPrototypeOf(_l2.model);
-        !0 !== _a.slDirty && (_l2.onInit && e[_t18].slOnInit && (e[_t18].slOnInit = !1), _l2.afterInit && e[_t18].slAfterInit && (e[_t18].slAfterInit = !1), _l2.scopedCss && e[_t18].slScopedCss && (e[_t18].slScopedCss = !1), _l2.onDestroy && e[_t18].slOnDestroy && (e[_t18].slOnDestroy = !1), _a.slDirty = !0), _l2.onInit && !e[_t18].slOnInit && e[_t18].slUnboundOnInit !== _l2.slUnboundOnInit ? (e[_t18].slUnboundOnInit = _l2.slUnboundOnInit, _l2.onInit.bind(_l2.model)(), n[_t18].slOnInit = !0) : void 0 === e[_t18].slUnboundOnInit || _l2.onInit ? _l2.onInit && e[_t18] && !e[_t18].slOnInit ? (e[_t18].slUnboundOnInit === _l2.slUnboundOnInit && _l2.onInit.bind(_l2.model)(), e[_t18].slUnboundOnInit = _l2.slUnboundOnInit, n[_t18].slOnInit = !0) : _l2.onInit && e[_t18].slOnInit && void 0 === e[_t18].slUnboundOnInit && (e[_t18].slUnboundOnInit = _l2.slUnboundOnInit) : e[_t18].slOnInit = !1, _l2.afterInit && !e[_t18].slAfterInit && e[_t18].slUnboundAfterInit !== _l2.slUnboundAfterInit ? (e[_t18].slAfterInit = !0, e[_t18].slUnboundAfterInit = _l2.slUnboundAfterInit, s._afterInitArr.push(_l2.afterInit)) : void 0 === e[_t18].slUnboundAfterInit || _l2.afterInit ? _l2.afterInit && e[_t18] && !e[_t18].slAfterInit ? (e[_t18].slAfterInit = !0, e[_t18].slUnboundAfterInit === _l2.slUnboundAfterInit && s._afterInitArr.push(_l2.afterInit), e[_t18].slUnboundAfterInit = _l2.slUnboundAfterInit) : _l2.afterInit && e[_t18].slAfterInit && void 0 === e[_t18].slUnboundAfterInit && (e[_t18].slUnboundAfterInit = _l2.slUnboundAfterInit) : e[_t18].slAfterInit = !1, _l2.scopedCss && e[_t18] && !e[_t18].slScopedCss && (_o = M(_l2.model, _l2.model.slStyle())), _l2.onDestroy && e[_t18] && !e[_t18].slOnDestroy && y(e[_t18], _l2.onDestroy, _l2.slUnboundOnDestroy), i(e[_t18], _l2.model), _r3 = _l2.model;
+        !0 !== _a.slDirty && (_l2.onInit && e[_t18].slOnInit && (e[_t18].slOnInit = !1), _l2.afterInit && e[_t18].slAfterInit && (e[_t18].slAfterInit = !1), _l2.scopedCss && e[_t18].slScopedCss && (e[_t18].slScopedCss = !1), _l2.onDestroy && e[_t18].slOnDestroy && (e[_t18].slOnDestroy = !1), _a.slDirty = !0), _l2.onInit && !e[_t18].slOnInit && e[_t18].slUnboundOnInit !== _l2.slUnboundOnInit ? (e[_t18].slUnboundOnInit = _l2.slUnboundOnInit, _l2.onInit.bind(_l2.model)(), n[_t18].slOnInit = !0) : void 0 === e[_t18].slUnboundOnInit || _l2.onInit ? _l2.onInit && e[_t18] && !e[_t18].slOnInit ? (e[_t18].slUnboundOnInit === _l2.slUnboundOnInit && _l2.onInit.bind(_l2.model)(), e[_t18].slUnboundOnInit = _l2.slUnboundOnInit, n[_t18].slOnInit = !0) : _l2.onInit && e[_t18].slOnInit && void 0 === e[_t18].slUnboundOnInit && (e[_t18].slUnboundOnInit = _l2.slUnboundOnInit) : e[_t18].slOnInit = !1, _l2.afterInit && !e[_t18].slAfterInit && e[_t18].slUnboundAfterInit !== _l2.slUnboundAfterInit ? (e[_t18].slAfterInit = !0, e[_t18].slUnboundAfterInit = _l2.slUnboundAfterInit, s._afterInitArr.push(_l2.afterInit)) : void 0 === e[_t18].slUnboundAfterInit || _l2.afterInit ? _l2.afterInit && e[_t18] && !e[_t18].slAfterInit ? (e[_t18].slAfterInit = !0, e[_t18].slUnboundAfterInit === _l2.slUnboundAfterInit && s._afterInitArr.push(_l2.afterInit), e[_t18].slUnboundAfterInit = _l2.slUnboundAfterInit) : _l2.afterInit && e[_t18].slAfterInit && void 0 === e[_t18].slUnboundAfterInit && (e[_t18].slUnboundAfterInit = _l2.slUnboundAfterInit) : e[_t18].slAfterInit = !1, _l2.scopedCss && e[_t18] && !e[_t18].slScopedCss && (_o = N(_l2.model, _l2.model.slStyle())), _l2.onDestroy && e[_t18] && !e[_t18].slOnDestroy && y(e[_t18], _l2.onDestroy, _l2.slUnboundOnDestroy), i(e[_t18], _l2.model), _r3 = _l2.model;
       }
       S(e[_t18], n[_t18], _r3), n[_t18] && n[_t18].slOnInit && (e[_t18].slOnInit = !0);
       var _iterator10 = _createForOfIteratorHelper(a),
@@ -418,7 +418,7 @@ var l = function l(_ref3) {
       _o && (g(e[_t18], _o), e[_t18].slScopedCss = !0), c++;
     }
     var f = e.length;
-    for (; f > r;) p(e[f - 1]), h(e[f - 1]), o(e[e.length - 1]), O(e[f - 1]), f--;
+    for (; f > r;) p(e[f - 1]), h(e[f - 1]), o(e[e.length - 1]), b(e[f - 1]), f--;
     var _iterator11 = _createForOfIteratorHelper(n.slice(r)),
       _step11;
     try {
@@ -435,9 +435,9 @@ var l = function l(_ref3) {
     } finally {
       _iterator11.f();
     }
-    for (f = e.length; f > n.length;) p(e[f - 1]), h(e[f - 1]), o(e[f - 1]), O(e[f - 1]), f--;
+    for (f = e.length; f > n.length;) p(e[f - 1]), h(e[f - 1]), o(e[f - 1]), b(e[f - 1]), f--;
   },
-  O = function O(t) {
+  b = function b(t) {
     var e = s._router.count;
     if (void 0 === t.slanimatedestroytarget || "" === t.slanimatedestroytarget || t.slAnimateDestroy || void 0 === t.attributes.slanimatedestroy || "" === t.getAttribute("slanimatedestroy")) {
       if (3 === t.nodeType || void 0 === t.attributes.slanimatedestroy || "" === t.getAttribute("slanimatedestroy") || t.slAnimateDestroy) t.slAnimateDestroy || (s._router.currentRoute && t.id !== s._router.currentRoute.root || e === s._router.count) && (t.remove(), s._updateMap["delete"](t.id));else {
@@ -471,18 +471,18 @@ var l = function l(_ref3) {
       } else (s._router.currentRoute && t.id !== s._router.currentRoute.root || e === s._router.count) && (t.remove(), s._updateMap["delete"](t.id));
     }
   },
-  A = function A(t) {
+  O = function O(t) {
     return t && t !== Object.prototype && Object.getOwnPropertyNames(t).filter(function (e) {
       return function (t, e) {
         return (Object.getOwnPropertyDescriptor(t, e) || {}).get;
       }(t, e) || function (t, e) {
         return "function" == typeof t[e];
       }(t, e);
-    }).concat(A(Object.getPrototypeOf(t)) || []);
+    }).concat(O(Object.getPrototypeOf(t)) || []);
   },
   I = function I(t) {
     return function (t) {
-      return Array.from(new Set(A(t)));
+      return Array.from(new Set(O(t)));
     }(t).filter(function (t) {
       return "constructor" !== t && !~t.indexOf("__");
     });
@@ -490,7 +490,7 @@ var l = function l(_ref3) {
   D = function D(t, e) {
     var n = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "";
     if (e.slStyle && !t.slScopedCss) {
-      var _s6 = M(e, e.slStyle());
+      var _s6 = N(e, e.slStyle());
       g(t, _s6), t.slScopedCss = !0, t.style.display = n;
     }
   },
@@ -542,17 +542,17 @@ var l = function l(_ref3) {
       e = _n20.view;
       var _r6 = Object.getPrototypeOf(_n20.model);
       if (!0 !== _r6.slDirty && (_n20.onInit && t.slOnInit && (t.slOnInit = !1), _n20.afterInit && t.slAfterInit && (t.slAfterInit = !1), _n20.scopedCss && t.slScopedCss && (t.slScopedCss = !1), _n20.onDestroy && t.slOnDestroy && (t.slOnDestroy = !1), _r6.slDirty = !0), _n20.onInit && t && !t.slOnInit && (_n20.onInit.bind(_n20.model)(), t.slOnInit = !0), _n20.afterInit && t && !t.slAfterInit && (t.slAfterInit = !0, s._afterInitArr.push(_n20.afterInit)), _n20.scopedCss && t && !t.slScopedCss) {
-        var _e18 = M(_n20.model, _n20.model.slStyle());
+        var _e18 = N(_n20.model, _n20.model.slStyle());
         g(t, _e18), t.slScopedCss = !0;
       }
       _n20.onDestroy && t && !t.slOnDestroy && y(t, _n20.onDestroy, _n20.slUnboundOnDestroy);
     }
-    if (!e) return t && (p(t), h(t), o(t), O(t)), t;
+    if (!e) return t && (p(t), h(t), o(t), b(t)), t;
     if (t && (t.tagName || "").toLowerCase() !== ((e ? e.tagName : void 0) || "").toLowerCase()) {
       if (!e.tagName) return p(t), h(t), t.replaceWith(e), t = e;
       {
         var _n21;
-        _n21 = e.attrs && e.attrs.slns ? document.createElementNS(e.attrs.slns, e.tagName.toLowerCase()) : document.createElement(e.tagName), D(_n21, e, r), t.parentNode.insertBefore(_n21, t), p(t), h(t), o(t), O(t), _n21.slUnboundAfterInit = t.slUnboundAfterInit, void 0 !== _n21.slUnboundAfterInit && (_n21.slAfterInit = !0), t.slOnInit && (_n21.slOnInit = !1), t = _n21;
+        _n21 = e.attrs && e.attrs.slns ? document.createElementNS(e.attrs.slns, e.tagName.toLowerCase()) : document.createElement(e.tagName), D(_n21, e, r), t.parentNode.insertBefore(_n21, t), p(t), h(t), o(t), b(t), _n21.slUnboundAfterInit = t.slUnboundAfterInit, void 0 !== _n21.slUnboundAfterInit && (_n21.slAfterInit = !0), t.slOnInit && (_n21.slOnInit = !1), t = _n21;
       }
     }
     if ("string" == typeof e) return t.textContent !== e && (t.textContent = e), t;
@@ -560,7 +560,7 @@ var l = function l(_ref3) {
       case "useexisting":
         return D(t, e, r), t;
       case "onlychildren":
-        return b(t, t.childNodes, e.children), t;
+        return A(t, t.childNodes, e.children), t;
       case "onlyself":
         return _(t, t.attributes, e.attrs), D(t, e, r), t;
       case "trustchildren":
@@ -578,7 +578,7 @@ var l = function l(_ref3) {
       var _n23 = e.attrs.slfor.split(":");
       if (_n23.length >= 4) {
         if (!s._structureForMap.has(_n23[0])) {
-          var _r7 = U(t, e.model[_n23[2]]);
+          var _r7 = w(t, e.model[_n23[2]]);
           if (s._structureForMap.set(_n23[0], _r7), t.children.length > 0) {
             var _e19 = Object.create(null);
             for (var _n24 = 0; _n24 < t.children.length; ++_n24) _e19[_n24] = t.children[_n24];
@@ -611,7 +611,7 @@ var l = function l(_ref3) {
           _iterator13.f();
         }
         if (_l4 = _l4.bind(e.model), !s._structureForMap.has(_n25[0])) {
-          var _e20 = U(t, _r9);
+          var _e20 = w(t, _r9);
           if (s._structureForMap.set(_n25[0], _e20), t.children.length > 0) {
             var _n26 = Object.create(null);
             for (var _e21 = 0; _e21 < t.children.length; ++_e21) _n26[_e21] = t.children[_e21];
@@ -623,7 +623,7 @@ var l = function l(_ref3) {
       }
       return _(t, t.attributes, e.attrs), D(t, e, r), t;
     }
-    return _(t, t.attributes, e.attrs), b(t, t.childNodes, e.children), D(t, e, r), t;
+    return _(t, t.attributes, e.attrs), A(t, t.childNodes, e.children), D(t, e, r), t;
   },
   C = function C(t, e, n) {
     s._afterInitArr = [], e.slOnInit && e.slOnInit();
@@ -633,7 +633,7 @@ var l = function l(_ref3) {
       console.error("Mounted component root element changed from " + t.id + " to " + _e22);
     }
     if (t = S(t, o, e), e.slOnInit && (t.slOnInit = !0, t.slUnboundOnInit = e.slOnInit), e.slStyle && !t.slScopedCss) {
-      var _n27 = M(e, e.slStyle());
+      var _n27 = N(e, e.slStyle());
       g(t, _n27), t.slScopedCss = !0;
     }
     n && s._updateMap.set(t.id, e), e.slOnDestroy && y(t, e.slOnDestroy.bind(e), e.slOnDestroy);
@@ -649,24 +649,38 @@ var l = function l(_ref3) {
 function version() {
   return "21.2.1";
 }
-var x = function x(t, e) {
-    return t.split(e).length - 1;
-  },
-  R = function R(t, e) {
-    var n = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-    var s = "",
+var R = function R(t, e) {
+    var n = 0,
+      s = !1,
       r = !1,
-      o = !1,
-      l = !1;
-    for (var _i14 = n; _i14 < t.length; ++_i14) if ('"' !== t[_i14] || o || r ? "'" !== t[_i14] || o || r ? '"' === t[_i14] && r && !l || "'" === t[_i14] && o && !l ? (o = !1, r = !1) : l = ('"' !== t[_i14] || !r || !l) && ("'" !== t[_i14] || !o || !l) && "\\" === t[_i14] : o = !0 : r = !0, s += t[_i14], 1 === e.length) {
-      if (t[_i14] === e && !r && !o) break;
-    } else if (t.length > _i14 + e.length && t.substring(_i14, _i14 + e.length) === e && !r && !o) {
-      s += t.substring(_i14, _i14 + e.length - 1);
-      break;
+      o = 0;
+    for (; o < t.length;) {
+      var _l5 = t[o];
+      "'" !== _l5 || r ? '"' !== _l5 || s ? s || r || !t.startsWith(e, o) ? o++ : (n++, o += e.length) : (r = !r, o++) : (s = !s, o++);
     }
-    return s;
+    return n;
   },
   M = function M(t, e) {
+    if (!e) return 0;
+    var n = 0,
+      s = 0;
+    for (;;) {
+      var _r10 = t.indexOf(e, s);
+      if (-1 === _r10) break;
+      n++, s = _r10 + e.length;
+    }
+    return n;
+  },
+  E = function E(t, e) {
+    var n = !1,
+      s = !1;
+    for (var _r11 = 0; _r11 <= t.length - e.length; _r11++) {
+      var _o5 = t[_r11];
+      if ("'" !== _o5 || s || "\\" === t[_r11 - 1] ? '"' !== _o5 || n || "\\" === t[_r11 - 1] || (s = !s) : n = !n, !n && !s && t.startsWith(e, _r11)) return _r11;
+    }
+    return -1;
+  },
+  N = function N(t, e) {
     var n = function (t) {
         for (var e = 0, n = 1779033703 ^ t.length; e < t.length; e++) n = (n = Math.imul(n ^ t.charCodeAt(e), 3432918353)) << 13 | n >>> 19;
         return function () {
@@ -676,210 +690,124 @@ var x = function x(t, e) {
       r = "slcss-" + String(n());
     if ("" === e || s._scopedCssSet.has(r)) return r;
     e = e.replace(/\t+/g, " "), s._scopedCssSet.add(r);
-    var o = new RegExp("([^{]+)s*{s*([^}]+)s*}", "g"),
-      l = e.match(o),
-      i = /[^\s"]+|"([^"]*)"/gi;
-    var a = "",
-      u = null;
-    do {
-      u = i.exec(e), null != u && (u[1] || (a += u[0]));
-    } while (null != u);
-    var c,
-      d,
-      f,
-      p,
-      h,
-      g,
-      y,
-      _,
-      b = "",
-      O = 0,
-      A = 0,
-      I = 0,
-      D = 0,
-      v = !1,
-      S = !1,
-      C = 0,
-      M = !1,
-      N = 0;
-    var w = new Map();
-    if (a.includes("{") && a.includes("}") && a.split("{").length === a.split("}").length) for (var _t24 = 0; _t24 < l.length; ++_t24) {
-      h = 0, c = 0, d = 0, f = null, p = !1, S = !1, M = !1;
-      var _e23 = "";
-      do {
-        u = i.exec(l[_t24]), null != u && (u[1] || (_e23 += u[0]));
-      } while (null != u);
-      var _n28 = x(_e23, "{");
-      for (g = l[_t24].substring(c); g.replace(/}/g, "").trim().startsWith("@") && (g.includes("@layer") || g.includes("@scope") || g.includes("@container") || g.includes("@keyframes") || g.replace(/}/g, "").trim().startsWith("@media"));) {
-        if (O++, p = !0, l[_t24].substring(c).includes("@keyframes") ? v = !0 : l[_t24].substring(c).includes("@media") && (S = !0), 1 == _n28) c += R(l[_t24], ";", c).length, b += l[_t24].substring(d, c), d = c, O--;else {
-          A++, O--, c += R(l[_t24], "{", c).length;
-          var _e24 = R(l[_t24], ";", 0);
-          if (v) {
-            var _e25 = l[_t24].substring(d, c);
-            _e25 = _e25.replace("@keyframes", ""), _e25 = _e25.trim(), _e25.endsWith("{") && (_e25 = _e25.substring(0, _e25.length - 2), _e25 = _e25.trim());
-            var _n29 = " " + _e25 + r;
-            w.set(_e25, _n29), b += " @keyframes " + _n29 + " { ";
-          } else {
-            var _s9 = l[_t24].substring(d, c);
-            if (_e24.length < _s9.length) b += _e24, c -= _s9.length - _e24.length, _n28--;else {
-              if (D > 0) {
-                var _t25 = _s9.trim();
-                for (; _t25.startsWith("}") && D > 0;) !(0 !== O || 1 !== D || _n28 <= D) && A - _n28 >= 1 || D--, _n28--, A--, _t25 = _t25.replace("}", "").trim();
+    var o,
+      l = "",
+      i = [],
+      a = 0;
+    var u = new Map();
+    for (; e.length > 0;) {
+      if (!/[^(\"|')]*?{/.test(e)) {
+        l += e;
+        break;
+      }
+      {
+        var _t24 = /[^(\"|')]*?{/.exec(e);
+        var _n28 = _t24.index + _t24[0].length,
+          _s9 = e.substring(0, _n28).trim();
+        for (; R(_s9, "{") < 1;) {
+          var _t25 = e.substring(_n28);
+          for (; _t25.startsWith('"') || _t25.startsWith("'");) _n28++, _s9 += _t25.charAt(0), _t25 = e.substring(_n28);
+          if (_n28 = E(_t25, "{"), -1 === _n28) {
+            e = "", _s9 = "";
+            break;
+          }
+          var _r12 = _s9.length;
+          _s9 += _t25.substring(0, _n28 + 1).trim(), _n28 += _r12 + 1, e = e.trim();
+        }
+        if ("" === e) break;
+        var _c = e.substring(_n28);
+        var _d2 = E(_s9, "}");
+        if (-1 !== _d2) for (l += _s9.substring(0, _d2 + 1), i.pop(), a--, a < 0 && (a = 0), _s9 = _s9.substring(_d2 + 1).trim(); _s9.length > 0 && (_s9.startsWith("}") || /(,|\w)*}/.test(_s9));) {
+          var _t26 = /.*,.*}/.exec(_s9),
+            _e23 = _t26 ? _t26.index + _t26[0].lastIndexOf("}") : _s9.indexOf("}");
+          _e23 > 0 ? (l += _s9.substring(0, _e23 + 1) + " ", _s9 = _s9.substring(_e23 + 1).trim()) : (l += "} ", _s9 = _s9.substring(1).trim()), i.pop(), a--, a < 0 && (a = 0);
+        }
+        for (o = R(l, "{") - R(l, "}"), 0 === o && (i = []), e = _c; /.*;/.test(_s9);) {
+          var _t27 = E(_s9, ";"),
+            _e24 = E(_s9, "{");
+          if (-1 === _t27 || -1 !== _e24 && _e24 < _t27) break;
+          l += _s9.substring(0, _t27 + 1) + " ", _s9 = _s9.substring(_t27 + 1).trim();
+        }
+        if (_s9.includes(",")) {
+          var _t28 = _s9.split(",");
+          for (var _e25 = 0; _e25 < _t28.length; _e25++) for (; R(_t28[_e25], ",") < M(_t28[_e25], ",") && _e25 + 1 < _t28.length;) _t28[_e25] += _t28[_e25 + 1], _t28[_e25] = _t28[_e25].trim(), _t28.splice(_e25 + 1, 1), _e25--;
+          if (_t28[0].length > 0 && "@" === _t28[0].charAt(0) && !_t28[0].startsWith("@nest")) {
+            if (0 === o ? i.push(!0) : i.push(i && !0), _t28[0].startsWith("@keyframes")) {
+              a++;
+              var _e26 = E(_t28[0], "{");
+              if (-1 !== _e26 && _e26 > 0) {
+                var _n29 = _s9.substring(0, _e26).trim();
+                u.set(_n29.substring(10).trim(), _n29.substring(10).trim() + r), _n29 = _n29 + r + " ", _n29 += _s9.substring(_e26), _t28[0] = _n29;
               }
-              var _t26 = "";
-              u = null;
-              do {
-                u = i.exec(_s9), null != u && (u[1] || (_t26 += u[0]));
-              } while (null != u);
-              if (b += _s9, 0 === D && x(_t26, "}") > 0) {
-                var _e26 = _t26.length,
-                  _s10 = _t26.replace(/^}+/, "");
-                A -= x(_s10, "}"), A >= _e26 - _s10.length && (1 === A && 1 === _n28 || (N += _e26 - _s10.length));
-              }
-              var _e27 = x(_t26, "{") - x(_t26, "}"),
-                _r10 = /(@layer|@container|@media|@scope)[^{]*\{/g,
-                _o5 = _t26.replace(/\s/g, "").match(_r10);
-              var _l5 = _o5 ? _o5.length : 0;
-              _e27 -= D > 0 ? 0 : _l5, _e27 < 0 && (_e27 = 0), D += _e27;
             }
-          }
-          d = c;
-        }
-        g = l[_t24].substring(c);
-      }
-      var _s11 = c + R(l[_t24], "{", c).length - 1;
-      -1 === _s11 && (_s11 = c);
-      var _o6 = l[_t24].substring(c, _s11);
-      for (; (_o6.split('"').length - 1) % 2 != 0;) _s11 = _s11 + 1 + R(l[_t24], "{", _s11 + 1).length, _o6 = l[_t24].substring(c, _s11);
-      if ("" !== _o6 && !/^\s*$/.test(_o6)) {
-        var _e28 = _o6.split(",");
-        var _a3 = void 0;
-        I > 0 && _o6.startsWith(",") && (_e28.shift(), _e28[0] = ", " + _e28[0]);
-        for (var _o7 = 0; _o7 < _e28.length; ++_o7) {
-          for (_a3 = _e28[_o7].trim(); I > 0 && _a3.includes("}");) {
-            var _t27 = void 0,
-              _e29 = void 0,
-              _n30 = "";
-            for (; _a3.includes("}");) _t27 = _a3.indexOf("{"), _e29 = _a3.indexOf("}"), (_e29 < _t27 || -1 === _t27) && (_n30 += _a3.substring(0, _e29 + 1), _a3 = _a3.substring(_e29 + 1), I--);
-            b += _n30 + "\n", _a3 = _a3.trim(), f = _a3;
-          }
-          if (0 === I) {
-            for (; _a3.startsWith("}");) _a3 = _a3.substring(1).trim(), b += "}", A--, M = !1, D > 0 && D--, 0 === D && (v = !1);
-            if (_a3.includes(" ")) {
-              var _c = _a3.substring(0, _a3.indexOf(" ")),
-                _d2 = _a3.substring(_a3.indexOf(" "));
-              _o7 > 0 && (b += ", ");
-              if ("@nest" === _c.trim() && _d2.replace(/^\s+/g, "").includes(" ")) {
-                var _t28 = _d2.replace(/^\s+/g, ""),
-                  _e30 = _t28.substring(0, _t28.indexOf(" "));
-                _t28 = _t28.substring(_e30.length, _t28.length), _c += " " + _e30, _d2 = _t28;
+          } else if (0 === a && (0 === o || i.length >= o && i.length > 0 && i.slice(0, o).every(function (t) {
+            return t;
+          }))) {
+            for (var _e27 = 0; _e27 < _t28.length; _e27++) {
+              var _n30 = E(_t28[_e27], "{"),
+                _s10 = -1 !== _n30 ? _t28[_e27].substring(0, _n30) : _t28[_e27];
+              var _o6 = _s10.trim().split(" ");
+              var _l6 = void 0;
+              for (var _t29 = 0; _t29 < _o6.length; _t29++) if (_l6 = _o6[_t29].trim(), ">" !== _l6 && "+" !== _l6 && "~" !== _l6 && "&" !== _l6) {
+                _o6[_t29] = _l6 + "[" + r + "]";
+                break;
               }
-              if (M = _c.trim().startsWith("@"), y = _c.trim().endsWith(":"), y) {
-                var _r11 = R(_d2, ";");
-                for (; R(_d2, ";", _r11.length).trim().endsWith(";");) _r11 += R(_d2, ";", _r11.length);
-                var _a4 = _d2.substring(_r11.length, _d2.length);
-                _d2 = _r11;
-                var _f = l[_t24].substring(_s11);
-                _s11 = l[_t24].length;
-                var _p = _a4 + " ";
-                var _h = _e28.length > 1;
-                for (var _t29 = _o7 + 1; _t29 < _e28.length; ++_t29) _p += ", " + _e28[_t29] + " ", _e28.splice(_t29, 1), _t29--;
-                _p += _f, l.splice(_t24 + 1, 0, _p), _c.trim().endsWith(":") && D > 0 && _n28 > 0 && _h && (A++, N++);
-                var _g = "";
-                u = null;
-                do {
-                  u = i.exec(l[_t24 + 1]), null != u && (u[1] || (_g += u[0]));
-                } while (null != u);
-                var _y = x(_g, "{");
-                _y -= x(_g, "}"), _y < 0 && (_y = 0), A += _y, C += _y;
+              _s10 = _o6.join(" "), _s10 += _t28[_e27].substring(-1 !== _n30 ? _n30 : _t28[_e27].length), _t28[_e27] = _s10;
+            }
+            i.push(!1);
+          } else i.push(!1);
+          for (var _e28 = 0; _e28 < _t28.length; _e28++) _e28 > 0 && (l += ", "), l += _t28[_e28];
+          l += " ";
+        } else {
+          if (_s9.length > 0 && "@" === _s9.charAt(0) && !_s9.startsWith("@nest")) {
+            if (0 === o ? i.push(!0) : i.push(i && !0), _s9.startsWith("@keyframes")) {
+              var _t30 = E(_s9, "{");
+              if (-1 !== _t30 && _t30 > 0) {
+                var _e29 = _s9.substring(0, _t30).trim();
+                u.set(_e29.substring(10).trim(), _e29.substring(10).trim() + r), _e29 = _e29 + r + " ", _e29 += _s9.substring(_t30), _s9 = _e29;
               }
-              !(!D > 0) || v || S && 0 !== D || M && !_c.trim().startsWith("@nest") || y ? b += _c + _d2 : b += _c + (0 === D ? "[" + r + "]" : "") + _d2;
-            } else _o7 > 0 && (b += ", "), !(!D > 0) || v || S && 0 !== D || _a3.trim().startsWith("@") || M || _a3.trim().endsWith(":") ? b += _a3 : b += _a3 + (0 === D ? "[" + r + "]" : "");
-          }
+              a++;
+            }
+          } else if (0 === a && (0 === o || i.length >= o && i.length > 0 && i.slice(0, o).every(function (t) {
+            return t;
+          }))) {
+            var _t31 = E(_s9, "{"),
+              _e30 = -1 !== _t31 ? _s9.substring(0, _t31) : _s9;
+            var _n31 = _e30.trim().split(" ");
+            var _o7 = void 0;
+            for (var _t32 = 0; _t32 < _n31.length; _t32++) if (_o7 = _n31[_t32].trim(), ">" !== _o7 && "+" !== _o7 && "~" !== _o7 && "&" !== _o7) {
+              _n31[_t32] = _o7 + "[" + r + "]";
+              break;
+            }
+            _e30 = _n31.join(" "), _e30 += _s9.substring(-1 !== _t31 ? _t31 : _s9.length), _s9 = _e30, i.push(!1);
+          } else i.push(!1);
+          l += _s9 + " ", "@" !== _s9.charAt(0) && a && -1 === E(_s9, "}") && a++;
         }
       }
-      if (I > 0 && (_s11 = null !== f ? l[_t24].indexOf(f) : 0), l[_t24].includes("--") && _n28 > 1) {
-        var _e31 = R(l[_t24], "--", 0).length;
-        var _s12 = l[_t24].substring(0, _e31);
-        var _r12 = "";
-        do {
-          u = i.exec(_s12), null != u && (u[1] || (_r12 += u[0]));
-        } while (null != u);
-        var _o8 = x(_r12, "{") - 1;
-        h = _n28 - 1, _o8 > 0 && (h -= _o8), h > 0 && (I += h);
-      }
-      if (_n28 - I > 1 && !p) {
-        var _e32 = l[_t24].substring(_s11 + 1);
-        l[_t24] = l[_t24].substring(0, l[_t24].length - _e32.length), l.splice(_t24 + 1, 0, _e32);
-        var _n31 = "";
-        u = null;
-        do {
-          u = i.exec(_e32), null != u && (u[1] || (_n31 += u[0]));
-        } while (null != u);
-        _ = x(_n31, "{") - x(_n31, "}"), I -= h;
-      }
-      var _a5 = l[_t24].substring(_s11);
-      var _E = _a5.replace("{", "").replace(";", "");
-      if (_a5.includes("{") && x(_a5, "{") > 1 && !_E.trim().startsWith("--")) {
-        var _e33 = R(_a5, "{", 0);
-        _e33 = _e33 + " " + R(_a5, "{", _e33.length);
-        var _n32 = _a5.substring(_e33.length + 1, _a5.length);
-        _n32 = _e33.substring(_e33.lastIndexOf(";") + 1, _e33.length) + " " + _n32, _e33 = _e33.substring(0, _e33.lastIndexOf(";") + 1), _a5 = _e33, l.splice(_t24 + 1, 0, _n32), D++, C++;
-      }
-      b += _a5;
-      var _U = "";
-      u = null;
-      do {
-        u = i.exec(_a5), null != u && (u[1] || (_U += u[0]));
-      } while (null != u);
-      for (_ = x(_U, "{") - x(_U, "}"), A += _ - h >= 0 ? _ - h : _, _ -= I, _ < 0 && (_ = 0), 0 === D && S || (C += _, D += _, D > 0 && (D -= 1 - A - x(_U, "{") + x(_U, "}") >= 0 ? 1 - A - x(_U, "{") + x(_U, "}") : 0)); O > 0;) b += "}", O--;
-      0 === I && (b += "\n");
     }
-    for (D -= C; D > 0;) b += "}", D--;
-    for (A -= N; A > 0;) b += "}", A--;
-    if (b += "\n", w.size > 0) {
-      var _t30,
-        _e34 = 0;
-      _t30 = E(b, _e34, w, "animation"), b = _t30.finalCss, _e34 = _t30.startIndex, _e34 = 0, _t30 = E(b, _e34, w, "animation-name"), b = _t30.finalCss, _e34 = _t30.startIndex;
-    }
-    if ("" !== b.trim()) {
-      var _t31 = document.head || document.getElementsByTagName("head")[0],
-        _e35 = document.createElement("style");
-      _t31.appendChild(_e35), _e35.appendChild(document.createTextNode(b));
+    if (l = function (t, e) {
+      var _iterator14 = _createForOfIteratorHelper(e.entries()),
+        _step14;
+      try {
+        for (_iterator14.s(); !(_step14 = _iterator14.n()).done;) {
+          var _step14$value = _slicedToArray(_step14.value, 2),
+            _n32 = _step14$value[0],
+            _s11 = _step14$value[1];
+          var _e31 = new RegExp("animation\\s*:\\s*".concat(_n32, "\\s*"), "g");
+          t = t.replace(_e31, "animation: ".concat(_s11, " ")), _e31 = new RegExp("animation-name\\s*:\\s*".concat(_n32, "\\s*"), "g"), t = t.replace(_e31, "animation-name: ".concat(_s11, " "));
+        }
+      } catch (err) {
+        _iterator14.e(err);
+      } finally {
+        _iterator14.f();
+      }
+      return t;
+    }(l, u), "" !== l.trim()) {
+      var _t33 = document.head || document.getElementsByTagName("head")[0],
+        _e32 = document.createElement("style");
+      _t33.appendChild(_e32), _e32.appendChild(document.createTextNode(l));
     }
     return r;
-  },
-  E = function E(t, e, n, s) {
-    for (; -1 !== (e = t.indexOf(s, e));) {
-      var _r13 = t.substring(0, e);
-      var _o9 = t.substring(e, t.indexOf(";", e));
-      var _l6 = t.substring(e + _o9.length, t.length);
-      if (_o9.includes(":")) {
-        if (":" === _o9.substring(0, _o9.indexOf(":") + 1).replace(s, "").trim()) {
-          var _iterator14 = _createForOfIteratorHelper(n),
-            _step14;
-          try {
-            for (_iterator14.s(); !(_step14 = _iterator14.n()).done;) {
-              var _step14$value = _slicedToArray(_step14.value, 2),
-                _t32 = _step14$value[0],
-                _r14 = _step14$value[1];
-              var _n33 = _o9.replace(s, "");
-              _n33 = _n33.trim(), _n33.startsWith(":") && (_n33 = _n33.substring(1, _n33.length), _n33 = _n33.trim());
-              new RegExp(_t32 + "(\\s|;|$)").test(_n33) && _t32.length > 0 ? (_o9 = _o9.replaceAll(_t32, _r14), e += _o9.length) : e += s.length;
-            }
-          } catch (err) {
-            _iterator14.e(err);
-          } finally {
-            _iterator14.f();
-          }
-          t = _r13 + _o9 + _l6;
-        } else e += _o9.length;
-      }
-    }
-    return {
-      finalCss: t,
-      startIndex: e
-    };
   };
 function hydrate(t) {
   var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : !0;
@@ -946,8 +874,8 @@ function renderToString(t) {
     _step15;
   try {
     for (_iterator15.s(); !(_step15 = _iterator15.n()).done;) {
-      var _t33 = _step15.value;
-      o.add(_t33);
+      var _t34 = _step15.value;
+      o.add(_t34);
     }
   } catch (err) {
     _iterator15.e(err);
@@ -967,8 +895,8 @@ function renderToString(t) {
     _step16;
   try {
     for (_iterator16.s(); !(_step16 = _iterator16.n()).done;) {
-      var _t34 = _step16.value;
-      o.has(_t34) || s._structureForMap["delete"](_t34);
+      var _t35 = _step16.value;
+      o.has(_t35) || s._structureForMap["delete"](_t35);
     }
   } catch (err) {
     _iterator16.e(err);
@@ -980,32 +908,32 @@ function renderToString(t) {
 function update(t, e) {
   var n = t;
   if (t = document.getElementById(t), s._afterInitArr = [], t) {
-    var _n34 = e.view.bind(e)();
-    r(_n34, e), t = S(t, _n34, e);
+    var _n33 = e.view.bind(e)();
+    r(_n33, e), t = S(t, _n33, e);
   } else console.error("ID " + n + " not mounted in DOM; attachDetector likely needs to be called.");
   var o = t.querySelectorAll("[slref]");
   void 0 !== t.slref && (o = Array.from(o), o.push(t));
-  for (var _t35 = 0; _t35 < o.length; ++_t35) {
-    e[o[_t35].getAttribute("slref")] = o[_t35].slref;
+  for (var _t36 = 0; _t36 < o.length; ++_t36) {
+    e[o[_t36].getAttribute("slref")] = o[_t36].slref;
   }
   if (s._afterInitArr.forEach(function (t) {
     t();
   }), e.slStyle && !t.slScopedCss) {
-    var _n35 = M(e, e.slStyle());
-    g(t, _n35), t.slScopedCss = !0;
+    var _n34 = N(e, e.slStyle());
+    g(t, _n34), t.slScopedCss = !0;
   }
 }
-var N = e.onpopstate;
+var x = e.onpopstate;
 e.onpopstate = function (t) {
   switch (s._router.strategy) {
     case "#":
-      e.location.hash && s._router.lastHash !== e.location.hash.substring(2) && (N && N(t), route(getRoute()));
+      e.location.hash && s._router.lastHash !== e.location.hash.substring(2) && (x && x(t), route(getRoute()));
       break;
     case "?":
-      e.location.search && s._router.lastHash !== e.location.search.substring(2) && (N && N(t), route(getRoute()));
+      e.location.search && s._router.lastHash !== e.location.search.substring(2) && (x && x(t), route(getRoute()));
       break;
     case "":
-      e.location.pathname && s._router.lastHash !== e.location.pathname.substring(1) && (N && N(t), route(getRoute()));
+      e.location.pathname && s._router.lastHash !== e.location.pathname.substring(1) && (x && x(t), route(getRoute()));
   }
 }, s._router = {
   segmentArr: [],
@@ -1017,39 +945,39 @@ e.onpopstate = function (t) {
   strategy: "#",
   count: 0
 }, Object.seal(s._router);
-var w = function w() {
+var U = function U() {
   switch (s._router.strategy) {
     case "#":
       {
-        var _t36 = e.location.href.split("#/")[1];
-        if (_t36) {
-          var _e36 = _t36.split("/");
-          _e36.forEach(function (t, e) {
+        var _t37 = e.location.href.split("#/")[1];
+        if (_t37) {
+          var _e33 = _t37.split("/");
+          _e33.forEach(function (t, e) {
             s._router.segmentArr[e] = t;
-          }), s._router.segmentArr.splice(_e36.length, s._router.segmentArr.length);
+          }), s._router.segmentArr.splice(_e33.length, s._router.segmentArr.length);
         } else s._router.segmentArr.splice(0, s._router.segmentArr.length);
         break;
       }
     case "?":
       {
-        var _t37 = e.location.href.split("?/")[1];
-        if (_t37) {
-          var _e37 = _t37.split("/");
-          _e37.forEach(function (t, e) {
+        var _t38 = e.location.href.split("?/")[1];
+        if (_t38) {
+          var _e34 = _t38.split("/");
+          _e34.forEach(function (t, e) {
             s._router.segmentArr[e] = t;
-          }), s._router.segmentArr.splice(_e37.length, s._router.segmentArr.length);
+          }), s._router.segmentArr.splice(_e34.length, s._router.segmentArr.length);
         } else s._router.segmentArr.splice(0, s._router.segmentArr.length);
         break;
       }
     case "":
       {
-        var _t38 = e.location.pathname;
-        if (_t38) {
-          _t38 = _t38.replace("/", "");
-          var _e38 = _t38.split("/");
-          _e38.forEach(function (t, e) {
+        var _t39 = e.location.pathname;
+        if (_t39) {
+          _t39 = _t39.replace("/", "");
+          var _e35 = _t39.split("/");
+          _e35.forEach(function (t, e) {
             s._router.segmentArr[e] = t;
-          }), s._router.segmentArr.splice(_e38.length, s._router.segmentArr.length);
+          }), s._router.segmentArr.splice(_e35.length, s._router.segmentArr.length);
         } else s._router.segmentArr.splice(0, s._router.segmentArr.length);
         break;
       }
@@ -1062,10 +990,10 @@ function getRouteQueryVariables() {
   var t = e.location.search.substring(2).split("&"),
     n = [];
   for (var s = 0; s < t.length; s++) {
-    var _e39 = t[s].split("=");
+    var _e36 = t[s].split("=");
     n.push({
-      "var": decodeURIComponent(_e39[0]),
-      value: decodeURIComponent(_e39[1])
+      "var": decodeURIComponent(_e36[0]),
+      value: decodeURIComponent(_e36[1])
     });
   }
   return n;
@@ -1084,8 +1012,8 @@ function getRoute() {
       return e.location.href.split("?/")[1];
     case "":
       {
-        var _t39 = e.location.pathname;
-        return _t39 && (_t39 = _t39.replace("/", "")), _t39;
+        var _t40 = e.location.pathname;
+        return _t40 && (_t40 = _t40.replace("/", "")), _t40;
       }
   }
 }
@@ -1095,12 +1023,12 @@ function addRoute(t, e) {
 function removeRoute(t) {
   var e = new RegExp("^" + t.replace(/:[^\/]+/g, "([^\\/]+)") + "$"),
     n = String(e);
-  for (var _t40 = 0; _t40 < s._router.routeList.length; ++_t40) {
-    var _s$_router$routeList$ = _slicedToArray(s._router.routeList[_t40], 2),
-      _e40 = _s$_router$routeList$[0],
-      _r15 = _s$_router$routeList$[1];
-    if (String(_e40) === n) {
-      s._router.routeList.splice(_t40, 1);
+  for (var _t41 = 0; _t41 < s._router.routeList.length; ++_t41) {
+    var _s$_router$routeList$ = _slicedToArray(s._router.routeList[_t41], 2),
+      _e37 = _s$_router$routeList$[0],
+      _r13 = _s$_router$routeList$[1];
+    if (String(_e37) === n) {
+      s._router.routeList.splice(_t41, 1);
       break;
     }
   }
@@ -1122,10 +1050,10 @@ function route(t) {
           v: (i.onActivationFail && (l = route(i.onActivationFail.route, i.onActivationFail.params, "boolean" != typeof i.onActivationFail.attachDetector || i.onActivationFail.attachDetector)), void (t = void 0))
         };
         i.onBeforeRoute && i.onBeforeRoute();
-        var _n36 = document.getElementById(i.root);
-        var _a6 = s._destroyNodeMap.get(getRoute());
-        _a6 && (_a6.forEach(function (t) {
-          t.slOnDestroyFn && _n36.contains(t) && t.slOnDestroyFn(), t.slOnDestroyFn = void 0, t.slUnboundOnDestroy = void 0, t.slAfterInit = !1, t.slOnInit = !1;
+        var _n35 = document.getElementById(i.root);
+        var _a3 = s._destroyNodeMap.get(getRoute());
+        _a3 && (_a3.forEach(function (t) {
+          t.slOnDestroyFn && _n35.contains(t) && t.slOnDestroyFn(), t.slOnDestroyFn = void 0, t.slUnboundOnDestroy = void 0, t.slAfterInit = !1, t.slOnInit = !1;
         }), s._destroyNodeMap.set(getRoute(), []), s._destroyFuncMap.set(getRoute(), [])), s._router.lastHash = t;
         var _u = e.scrollY;
         switch (s._router.strategy) {
@@ -1134,24 +1062,24 @@ function route(t) {
             break;
           case "?":
             {
-              var _n37 = e.location.href;
-              var _s13 = e.location.pathname;
-              _n37 = _n37.substring(0, _n37.indexOf(_s13)), _n37 += "/?/" + t, e.history.pushState(null, document.title, _n37);
+              var _n36 = e.location.href;
+              var _s12 = e.location.pathname;
+              _n36 = _n36.substring(0, _n36.indexOf(_s12)), _n36 += "/?/" + t, e.history.pushState(null, document.title, _n36);
               break;
             }
           case "":
             {
-              var _n38 = e.location.href;
-              var _s14 = e.location.pathname;
-              _n38 = _n38.substring(0, _n38.indexOf(_s14)), _n38 += "/" + t, e.history.pushState(null, document.title, _n38);
+              var _n37 = e.location.href;
+              var _s13 = e.location.pathname;
+              _n37 = _n37.substring(0, _n37.indexOf(_s13)), _n37 += "/" + t, e.history.pushState(null, document.title, _n37);
               break;
             }
         }
         if (e.scrollTo(0, _u), s._router.currentRoute && void 0 !== s._router.currentRoute.animateDestroy && (s._router.currentRoute.animateDestroy = !0), s._router.currentRoute && s._router.currentRoute.animateDestroy) {
-          var _t41 = s._router.currentRoute.root;
-          _t41 = document.getElementById(_t41), s._router.currentRoute = i, p(_t41), h(_t41), o(_t41), O(_t41), w();
-        } else w(), s._router.currentRoute = i;
-        s._router.count++, i.component && (i.component.slOnDestroy && s._destroyFuncMap.set(t, [i.component.slOnDestroy.bind(i.component)]), s._router.mountRoute = t, C(_n36, i.component, r), i.component.slOnDestroy && (_n36.slOnDestroyIndex = 0, s._destroyFuncMap.get(t).pop(), f(_n36)), l = i.component);
+          var _t42 = s._router.currentRoute.root;
+          _t42 = document.getElementById(_t42), s._router.currentRoute = i, p(_t42), h(_t42), o(_t42), b(_t42), U();
+        } else U(), s._router.currentRoute = i;
+        s._router.count++, i.component && (i.component.slOnDestroy && s._destroyFuncMap.set(t, [i.component.slOnDestroy.bind(i.component)]), s._router.mountRoute = t, C(_n35, i.component, r), i.component.slOnDestroy && (_n35.slOnDestroyIndex = 0, s._destroyFuncMap.get(t).pop(), f(_n35)), l = i.component);
         return "break";
       }
     };
@@ -1167,8 +1095,8 @@ function route(t) {
   }
   return s._changeDetector.changeDetectionStrategy === s.CHANGE_STRATEGY_AUTOMATIC && j(), l;
 }
-w();
-var U = function U(t, e, n) {
+U();
+var w = function w(t, e, n) {
   return {
     parent: t,
     factory: e,
@@ -1178,7 +1106,7 @@ var U = function U(t, e, n) {
 function T(t, e) {
   "function" == typeof e && (e = e());
   var n = [];
-  for (var _s15 = 0; _s15 < e.length; ++_s15) n.push(t.factory.bind(this, e[_s15])());
+  for (var _s14 = 0; _s14 < e.length; ++_s14) n.push(t.factory.bind(this, e[_s14])());
   return n;
 }
 function F(t, e, n) {
@@ -1189,8 +1117,8 @@ function F(t, e, n) {
     a,
     u = r.firstChild;
   if (e.length) {
-    for (var _o10 = 0; _o10 < e.length; ++_o10) i = t.map[_o10], i ? n.bind(i, this, e[_o10])() : (i = t.factory.bind(this, e[_o10])(), void 0 !== i.attrs && (i = l(i))), s[_o10] = i, u || r.appendChild(i), u = i.nextSibling;
-    for (; null !== u;) a = u.nextSibling, p(u), h(u), o(u), O(u), u = a;
+    for (var _o8 = 0; _o8 < e.length; ++_o8) i = t.map[_o8], i ? n.bind(i, this, e[_o8])() : (i = t.factory.bind(this, e[_o8])(), void 0 !== i.attrs && (i = l(i))), s[_o8] = i, u || r.appendChild(i), u = i.nextSibling;
+    for (; null !== u;) a = u.nextSibling, p(u), h(u), o(u), b(u), u = a;
   } else r.textContent = "";
   t.map = s;
   var c = t.parent.querySelectorAll("[slpreventdefault]");
@@ -1202,14 +1130,14 @@ s.CHANGE_STRATEGY_AUTOMATIC = 100, s.CHANGE_STRATEGY_MANUAL = 200, s.CHANGE_DETE
 }, Object.seal(s._changeDetector), Object.freeze(s._changeStrategies);
 var L = function L(t, e) {
   if (e[t]) {
-    var _n39 = e[t];
+    var _n38 = e[t];
     e[t] = function () {
-      var t = _n39.apply(this, [].slice.call(arguments));
+      var t = _n38.apply(this, [].slice.call(arguments));
       return j(), t;
     };
   }
 };
-var W = function W() {
+var k = function k() {
     var t = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
     t ? update(t, s._updateMap.get(t)) : s._updateMap.forEach(function (t, e) {
       update(e, t);
@@ -1217,7 +1145,7 @@ var W = function W() {
   },
   j = function j() {
     if (s._changeDetector.changeDetectionStrategy !== s.CHANGE_STRATEGY_AUTOMATIC) return;
-    new Date() - s._changeDetector.lastUpdateDate > 6 ? W() : s._debouncedPerformUpdates(), s._changeDetector.lastUpdateDate = new Date();
+    new Date() - s._changeDetector.lastUpdateDate > 6 ? k() : s._debouncedPerformUpdates(), s._changeDetector.lastUpdateDate = new Date();
   };
 function setDetectionStrategy(t) {
   s._changeStrategies.forEach(function (e) {
@@ -1226,7 +1154,7 @@ function setDetectionStrategy(t) {
 }
 function detectChanges() {
   var t = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-  W(t);
+  k(t);
 }
 function isDetectorAttached(t) {
   return s._updateMap.has(t);
@@ -1234,10 +1162,10 @@ function isDetectorAttached(t) {
 function detachDetector(t) {
   s._updateMap["delete"](t);
 }
-var k = Promise.prototype.then;
+var H = Promise.prototype.then;
 function enableDetectOnThen() {
   Promise.prototype.then = function (t, e) {
-    return k.call(this, function (e) {
+    return H.call(this, function (e) {
       return j(), "function" == typeof t && t instanceof Function ? t(e) : t;
     }, e);
   };
@@ -1260,20 +1188,20 @@ s._debouncedPerformUpdates = function (t, e) {
       return t.apply(r, s);
     }, e);
   };
-}(W, 17);
-var H = e.XMLHttpRequest.prototype.send,
-  G = new Map();
+}(k, 17);
+var G = e.XMLHttpRequest.prototype.send,
+  W = new Map();
 function P() {
   if (this._onreadystatechange) {
-    var _t42 = G.get(this);
-    if (void 0 !== _t42 && _t42 === this._onreadystatechangecount) return void G["delete"](this);
-    void 0 !== _t42 ? G.set(this, _t42 + 1) : G.set(this, 0);
-    var _e41 = this._onreadystatechange.apply(this, arguments);
-    return j(), G["delete"](this), _e41;
+    var _t43 = W.get(this);
+    if (void 0 !== _t43 && _t43 === this._onreadystatechangecount) return void W["delete"](this);
+    void 0 !== _t43 ? W.set(this, _t43 + 1) : W.set(this, 0);
+    var _e38 = this._onreadystatechange.apply(this, arguments);
+    return j(), W["delete"](this), _e38;
   }
 }
 e.XMLHttpRequest.prototype.send = function (t) {
-  return this.onreadystatechange ? (this._onreadystatechange = this.onreadystatechange, void 0 === this._onreadystatechangecount ? this._onreadystatechangecount = 0 : this._onreadystatechangecount += 4) : this._onreadystatechangecount = 0, this.onreadystatechange = P, H.apply(this, arguments);
+  return this.onreadystatechange ? (this._onreadystatechange = this.onreadystatechange, void 0 === this._onreadystatechangecount ? this._onreadystatechangecount = 0 : this._onreadystatechangecount += 4) : this._onreadystatechangecount = 0, this.onreadystatechange = P, G.apply(this, arguments);
 };
 var Y = e.fetch;
 e.fetch = function () {

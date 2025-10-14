@@ -1220,52 +1220,80 @@ function xmur3(str) {
     }
 }
 
-const countSubstr = (string, word) => {
-    return string.split(word).length - 1;
+const replaceAnimationKeys = (css, map) => {
+    for (const [key, value] of map.entries()) {
+        let pattern = new RegExp(`animation\\s*:\\s*${key}\\s*`, 'g');
+        css = css.replace(pattern, `animation: ${value} `);
+        pattern = new RegExp(`animation-name\\s*:\\s*${key}\\s*`, 'g');
+        css = css.replace(pattern, `animation-name: ${value} `);
+    }
+    return css;
 }
 
-const seekToFirstUnquotedChar = (string, charToSeek, startIndex = 0) => {
-    let data = '';
-    let openedDouble = false;
-    let opened = false;
-    let previousEscape = false;
+const countUnquotedOccurrences = (str, sub) => {
+    let count = 0;
+    let inSingle = false;
+    let inDouble = false;
+    let i = 0;
 
-    for (let i = startIndex; i < string.length; ++i) {
-        if (string[i] === '"' && !opened && !openedDouble) {
-            openedDouble = true;
-        } else if (string[i] === '\'' && !opened && !openedDouble) {
-            opened = true;
-        } else if (string[i] === '"' && openedDouble && !previousEscape) {
-            opened = false;
-            openedDouble = false;
-        } else if (string[i] === '\'' && opened && !previousEscape) {
-            opened = false;
-            openedDouble = false;
-        } else if (string[i] === '"' && openedDouble && previousEscape) {
-            previousEscape = false;
-        } else if (string[i] === '\'' && opened && previousEscape) {
-            previousEscape = false;
-        } else {
-            if (string[i] === '\\') {
-                previousEscape = true;
-            } else {
-                previousEscape = false;
-            }
+    while (i < str.length) {
+        const ch = str[i];
+
+        if (ch === "'" && !inDouble) {
+            inSingle = !inSingle;
+            i++;
+            continue;
+        } else if (ch === '"' && !inSingle) {
+            inDouble = !inDouble;
+            i++;
+            continue;
         }
 
-        data += string[i];
+        if (!inSingle && !inDouble && str.startsWith(sub, i)) {
+            count++;
+            i += sub.length;
+            continue;
+        }
 
-        if (charToSeek.length === 1) {
-            if (string[i] === charToSeek && !openedDouble && !opened) {
-                break;
-            }
-        } else if (string.length > i + charToSeek.length && string.substring(i, i + charToSeek.length) === charToSeek && !openedDouble && !opened) {
-            data += string.substring(i, i + charToSeek.length - 1);
-            break;
+        i++;
+    }
+
+    return count;
+}
+const countOccurrences = (str, sub) => {
+    if (!sub) return 0;
+    let count = 0;
+    let pos = 0;
+
+    while (true) {
+        const found = str.indexOf(sub, pos);
+        if (found === -1) break;
+        count++;
+        pos = found + sub.length;
+    }
+
+    return count;
+}
+
+const getFirstUnquotedIndex = (str, sub) => {
+    let inSingle = false;
+    let inDouble = false;
+
+    for (let i = 0; i <= str.length - sub.length; i++) {
+        const ch = str[i];
+
+        if (ch === "'" && !inDouble && str[i - 1] !== "\\") {
+            inSingle = !inSingle;
+        } else if (ch === '"' && !inSingle && str[i - 1] !== "\\") {
+            inDouble = !inDouble;
+        }
+
+        if (!inSingle && !inDouble && str.startsWith(sub, i)) {
+            return i;
         }
     }
 
-    return data;
+    return -1;
 }
 
 const applyScopedCss = (model, cssText) => {
@@ -1280,512 +1308,208 @@ const applyScopedCss = (model, cssText) => {
 
     s._scopedCssSet.add(identifier);
 
-    const cssRegex = new RegExp('([^{]+)\s*\{\s*([^}]+)\s*}', 'g');
-    const matches = cssText.match(cssRegex);
-    const unquotedCssRegex = /[^\s"]+|"([^"]*)"/gi;
+    let result = '';
 
-    let unquotedStr = '';
-    let match = null;
+    let atRule = [];
+    let braceDepth;
+    let isKeyframe = 0;
+    const scopedAnimationMap = new Map();
 
-    do {
-        match = unquotedCssRegex.exec(cssText);
-        if (match != null) {
-            if (!match[1]) {
-                unquotedStr += match[0];
+    while (cssText.length > 0) {
+        if (/[^(\"|')]*?{/.test(cssText)) {
+            const match = /[^(\"|')]*?{/.exec(cssText);
+
+            const start = match.index;
+            let end = start + match[0].length;
+
+            let begin = cssText.substring(0, end).trim();
+
+            while (countUnquotedOccurrences(begin, '{') < 1) {
+                let str = cssText.substring(end);
+                while (str.startsWith('\"') || str.startsWith("'")) {
+                    end++;
+                    begin += str.charAt(0);
+                    str = cssText.substring(end);
+                }
+                end = getFirstUnquotedIndex(str, '{');
+                if (end === -1) {
+                    cssText = '';
+                    begin = '';
+                    break;
+                }
+                const len = begin.length;
+                begin = begin + str.substring(0, end + 1).trim();
+                end += len + 1;
+                cssText = cssText.trim();
             }
-        }
-    } while (match != null);
 
-    let finalCss = '';
-    let startOpenBraceIndex;
-    let appendedIndex;
-    let layerCount = 0;
-    let unclosedBraceCount = 0;
-    let customPropertyBraceCount = 0;
-    let customPropertyToken;
-    let isLayer;
-    let isNestedCount = 0;
-    let nestedAdditionalBraces;
-    let isKeyframes = false;
-    let isMedia = false;
-    let nestedInsertionCount = 0;
-    let firstTokenIsAt = false;
-    let checkAtStr;
-    let firstTokenColonEnd;
-    let unclosedAdjustment;
-    let nestedCloseCount = 0;
-    const keyframeNameMap = new Map();
+            if (cssText === '') {
+                break;
+            }
+            let rest = cssText.substring(end);
 
-    if (unquotedStr.includes('{') && unquotedStr.includes('}') && unquotedStr.split('{').length === unquotedStr.split('}').length) {
-        for (let i = 0; i < matches.length; ++i) {
-            nestedAdditionalBraces = 0;
-            startOpenBraceIndex = 0;
-            appendedIndex = 0;
-            customPropertyToken = null;
-            isLayer = false;
-            isMedia = false;
-            firstTokenIsAt = false;
-
-            let unquotedTemp = '';
-
-            do {
-                match = unquotedCssRegex.exec(matches[i]);
-                if (match != null) {
-                    if (!match[1]) {
-                        unquotedTemp += match[0];
-                    }
-                }
-            } while (match != null);
-
-            let openBraceCount = countSubstr(unquotedTemp, '{');
-            checkAtStr = matches[i].substring(startOpenBraceIndex);
-
-            while (checkAtStr.replace(/}/g, '').trim().startsWith('@') && (checkAtStr.includes('@layer')
-                || checkAtStr.includes('@scope')
-                || checkAtStr.includes('@container')
-                || checkAtStr.includes('@keyframes')
-                || checkAtStr.replace(/}/g, '').trim().startsWith('@media'))) {
-                layerCount++;
-                isLayer = true;
-
-                if (matches[i].substring(startOpenBraceIndex).includes('@keyframes')) {
-                    isKeyframes = true;
-                } else if (matches[i].substring(startOpenBraceIndex).includes('@media')) {
-                    isMedia = true;
-                }
-
-                if (openBraceCount == 1) {
-                    startOpenBraceIndex = startOpenBraceIndex + seekToFirstUnquotedChar(matches[i], ';', startOpenBraceIndex).length;
-
-                    finalCss += matches[i].substring(appendedIndex, startOpenBraceIndex);
-                    appendedIndex = startOpenBraceIndex;
-                    layerCount--;
-                } else {
-                    unclosedBraceCount++;
-                    layerCount--;
-                    startOpenBraceIndex = startOpenBraceIndex + seekToFirstUnquotedChar(matches[i], '{', startOpenBraceIndex).length;
-
-                    const seekToSemicolonStr = seekToFirstUnquotedChar(matches[i], ';', 0);
-
-                    if (isKeyframes) {
-                        let animNameStr = matches[i].substring(appendedIndex, startOpenBraceIndex);
-                        animNameStr = animNameStr.replace('@keyframes', '');
-                        animNameStr = animNameStr.trim();
-
-                        if (animNameStr.endsWith('{')) {
-                            animNameStr = animNameStr.substring(0, animNameStr.length - 2);
-                            animNameStr = animNameStr.trim();
-                        }
-
-                        const keyframeName = ' ' + animNameStr + identifier;
-                        keyframeNameMap.set(animNameStr, keyframeName);
-
-                        finalCss += ' @keyframes ' + keyframeName + ' { ';
+            const close = getFirstUnquotedIndex(begin, '}');
+            if (close !== -1) {
+                result += begin.substring(0, close + 1);
+                atRule.pop();
+                isKeyframe--;
+                if (isKeyframe < 0) isKeyframe = 0;
+                begin = begin.substring(close + 1).trim();
+                while (begin.length > 0 && (begin.startsWith('}') || /(,|\w)*}/.test(begin))) {
+                    const commaMatch = /.*,.*}/.exec(begin);
+                    const closeIndex = commaMatch ? commaMatch.index + commaMatch[0].lastIndexOf('}') : begin.indexOf('}');
+                    if (closeIndex > 0) {
+                        result += begin.substring(0, closeIndex + 1) + ' ';
+                        begin = begin.substring(closeIndex + 1).trim();
                     } else {
-                        const proposedCss = matches[i].substring(appendedIndex, startOpenBraceIndex);
-
-                        if (seekToSemicolonStr.length < proposedCss.length) {
-                            finalCss += seekToSemicolonStr;
-                            startOpenBraceIndex -= proposedCss.length - seekToSemicolonStr.length;
-                            openBraceCount--;
-                        } else {
-                            if (isNestedCount > 0) {
-                                let formattedCss = proposedCss.trim();
-                                while (formattedCss.startsWith('}') && isNestedCount > 0) {
-                                    if (layerCount !== 0 || isNestedCount !== 1 || openBraceCount <= isNestedCount || !(unclosedBraceCount - openBraceCount >= 1)) {
-
-                                        isNestedCount--;
-                                    }
-
-                                    openBraceCount--;
-                                    unclosedBraceCount--;
-                                    formattedCss = formattedCss.replace('}', '').trim();
-                                }
-                            }
-
-                            let unquotedProposedStr = '';
-                            match = null;
-
-                            do {
-                                match = unquotedCssRegex.exec(proposedCss);
-                                if (match != null) {
-                                    if (!match[1]) {
-                                        unquotedProposedStr += match[0];
-                                    }
-                                }
-                            } while (match != null);
-
-                            finalCss += proposedCss;
-
-                            if (isNestedCount === 0 && countSubstr(unquotedProposedStr, '}') > 0) {
-                                const len = unquotedProposedStr.length;
-                                const evalStr = unquotedProposedStr.replace(/^}+/, '');
-                                unclosedBraceCount -= countSubstr(evalStr, '}');
-                                if (unclosedBraceCount >= len - evalStr.length) {
-                                    if (unclosedBraceCount !== 1 || openBraceCount !== 1) {
-                                        nestedCloseCount += len - evalStr.length;
-                                    }
-                                }
-                            }
-
-                            let countOpen = countSubstr(unquotedProposedStr, '{') - countSubstr(unquotedProposedStr, '}');
-                            let regex = /(@layer|@container|@media|@scope)[^{]*\{/g;
-                            let matches = unquotedProposedStr.replace(/\s/g, '').match(regex);
-                            const openLayerCount = matches ? matches.length : 0;
-                            countOpen -= isNestedCount > 0 ? 0 : openLayerCount;
-                            if (countOpen < 0) {
-                                countOpen = 0;
-                            }
-                            isNestedCount += countOpen;
-                        }
+                        result += '} ';
+                        begin = begin.substring(1).trim();
                     }
+                    atRule.pop();
+                    isKeyframe--;
+                    if (isKeyframe < 0) isKeyframe = 0;
+                }
+            }
 
-                    appendedIndex = startOpenBraceIndex;
+            braceDepth = countUnquotedOccurrences(result, '{') - countUnquotedOccurrences(result, '}');
+
+            if (braceDepth === 0) {
+                atRule = [];
+            }
+
+            cssText = rest;
+
+            while (/.*;/.test(begin)) {
+                const semi = getFirstUnquotedIndex(begin, ';');
+                const openBrace = getFirstUnquotedIndex(begin, '{');
+                if (semi === -1 || openBrace !== -1 && openBrace < semi) {
+                    break;
+                }
+                result += begin.substring(0, semi + 1) + ' ';
+                begin = begin.substring(semi + 1).trim();
+            }
+
+            if (begin.includes(',')) {
+                const parts = begin.split(',');
+                for (let i = 0; i < parts.length; i++) {
+                    while (countUnquotedOccurrences(parts[i], ',') < countOccurrences(parts[i], ',') && i + 1 < parts.length) {
+                        parts[i] += parts[i + 1];
+                        parts[i] = parts[i].trim();
+                        parts.splice(i + 1, 1);
+                        i--;
+                    }
                 }
 
-                checkAtStr = matches[i].substring(startOpenBraceIndex);
-            }
-
-            let indexOpenBrace = startOpenBraceIndex + seekToFirstUnquotedChar(matches[i], '{', startOpenBraceIndex).length - 1;
-
-            if (indexOpenBrace === -1) {
-                indexOpenBrace = startOpenBraceIndex;
-            }
-
-            let selectors = matches[i].substring(startOpenBraceIndex, indexOpenBrace);
-
-            while ((selectors.split('"').length - 1) % 2 !== 0) {
-                indexOpenBrace = indexOpenBrace + 1 + seekToFirstUnquotedChar(matches[i], '{', indexOpenBrace + 1).length;
-                selectors = matches[i].substring(startOpenBraceIndex, indexOpenBrace);
-            }
-
-            if (selectors !== '' && !/^\s*$/.test(selectors)) {
-                const tokens = selectors.split(',');
-                let token;
-
-                if (customPropertyBraceCount > 0 && selectors.startsWith(',')) {
-                    tokens.shift();
-                    tokens[0] = ', ' + tokens[0];
-                }
-
-                for (let n = 0; n < tokens.length; ++n) {
-                    token = tokens[n].trim();
-
-                    while (customPropertyBraceCount > 0 && token.includes('}')) {
-                        let prefix = '';
-                        let openIndex;
-                        let closeIndex;
-                        while (token.includes('}')) {
-                            openIndex = token.indexOf('{');
-                            closeIndex = token.indexOf('}');
-
-                            if (closeIndex < openIndex || openIndex === -1) {
-                                prefix += token.substring(0, closeIndex + 1);
-                                token = token.substring(closeIndex + 1);
-                                customPropertyBraceCount--;
-                            }
-                        }
-                        finalCss += prefix + '\n';
-                        token = token.trim();
-                        customPropertyToken = token;
+                if (parts[0].length > 0 && parts[0].charAt(0) === '@' && !parts[0].startsWith('@nest')) {
+                    if (braceDepth === 0) {
+                        atRule.push(true);
+                    } else {
+                        atRule.push(atRule && true);
                     }
-
-                    if (customPropertyBraceCount === 0) {
-                        while (token.startsWith('}')) {
-                            token = token.substring(1).trim();
-                            finalCss += '}';
-                            unclosedBraceCount--;
-                            firstTokenIsAt = false;
-
-                            if (isNestedCount > 0) {
-                                isNestedCount--;
-                            }
-
-                            if (isNestedCount === 0) {
-                                isKeyframes = false;
-                            }
+                    if (parts[0].startsWith('@keyframes')) {
+                        isKeyframe++;
+                        let openBraceIndex = getFirstUnquotedIndex(parts[0], '{');
+                        if (openBraceIndex !== -1 && openBraceIndex > 0) {
+                            let name = begin.substring(0, openBraceIndex).trim();
+                            scopedAnimationMap.set(name.substring(10).trim(), name.substring(10).trim() + identifier);
+                            name = name + identifier + ' ';
+                            name += begin.substring(openBraceIndex);
+                            parts[0] = name;
                         }
-
-                        if (token.includes(' ')) {
-                            let firstToken = token.substring(0, token.indexOf(' '));
-                            let afterFirstToken = token.substring(token.indexOf(' '));
-
-                            if (n > 0) {
-                                finalCss += ', ';
-                            }
-
-                            const firstTokenIsNest = firstToken.trim() === '@nest';
-
-                            if (firstTokenIsNest && afterFirstToken.replace(/^\s+/g, '').includes(' ')) {
-                                let afterLeftTrimmed = afterFirstToken.replace(/^\s+/g, '');
-                                let before = afterLeftTrimmed.substring(0, afterLeftTrimmed.indexOf(' '));
-                                afterLeftTrimmed = afterLeftTrimmed.substring(before.length, afterLeftTrimmed.length);
-
-                                firstToken += ' ' + before;
-                                afterFirstToken = afterLeftTrimmed;
-                            }
-
-                            firstTokenIsAt = firstToken.trim().startsWith('@');
-                            firstTokenColonEnd = firstToken.trim().endsWith(':');
-
-                            if (firstTokenColonEnd) {
-                                let toSemi = seekToFirstUnquotedChar(afterFirstToken, ';');
-
-                                while (seekToFirstUnquotedChar(afterFirstToken, ';', toSemi.length).trim().endsWith(';')) {
-                                    toSemi = toSemi + seekToFirstUnquotedChar(afterFirstToken, ';', toSemi.length);
-                                }
-
-                                const after = afterFirstToken.substring(toSemi.length, afterFirstToken.length);
-                                afterFirstToken = toSemi;
-                                let proposedCss = matches[i].substring(indexOpenBrace);
-                                indexOpenBrace = matches[i].length;
-
-                                let insertCss = after + ' ';
-                                const multipleTokens = tokens.length > 1;
-
-                                for (let addIndex = n + 1; addIndex < tokens.length; ++addIndex) {
-                                    insertCss += ', ' + tokens[addIndex] + ' ';
-                                    tokens.splice(addIndex, 1);
-                                    addIndex--;
-                                }
-                                insertCss += proposedCss;
-                                matches.splice(i + 1, 0, insertCss);
-
-                                if (firstToken.trim().endsWith(':') && isNestedCount > 0 && openBraceCount > 0 && multipleTokens) {
-                                    unclosedBraceCount++;
-                                    nestedCloseCount++;
-                                }
-
-                                let unquotedProposedStr = '';
-                                match = null;
-
-                                do {
-                                    match = unquotedCssRegex.exec(matches[i + 1]);
-                                    if (match != null) {
-                                        if (!match[1]) {
-                                            unquotedProposedStr += match[0];
-                                        }
-                                    }
-                                } while (match != null);
-
-                                let openCount = countSubstr(unquotedProposedStr, '{');
-                                const closeCount = countSubstr(unquotedProposedStr, '}');
-
-                                openCount -= closeCount;
-
-                                if (openCount < 0) {
-                                    openCount = 0;
-                                }
-
-                                unclosedBraceCount += openCount;
-                                nestedInsertionCount += openCount;
-                            }
-
-                            if (!isNestedCount > 0 && !isKeyframes && (!isMedia || isNestedCount === 0) && (!firstTokenIsAt || firstToken.trim().startsWith('@nest')) && !firstTokenColonEnd) {
-                                finalCss += firstToken + (isNestedCount === 0 ? '[' + identifier + ']' : '') + afterFirstToken;
+                    }
+                } else if (isKeyframe === 0 && (braceDepth === 0 || atRule.length >= braceDepth && atRule.length > 0 && atRule.slice(0, braceDepth).every(v => v))) {
+                    for (let i = 0; i < parts.length; i++) {
+                        let indexOpen = getFirstUnquotedIndex(parts[i], '{');
+                        let selector = indexOpen !== -1 ? parts[i].substring(0, indexOpen) : parts[i];
+                        const selectorParts = selector.trim().split(' ');
+                        let part;
+                        for (let j = 0; j < selectorParts.length; j++) {
+                            part = selectorParts[j].trim();
+                            if (part === '>' || part === '+' || part === '~' || part === '&') {
+                                continue;
                             } else {
-                                finalCss += firstToken + afterFirstToken;
-                            }
-                        } else {
-                            if (n > 0) {
-                                finalCss += ', ';
-                            }
-
-                            if (!isNestedCount > 0 && !isKeyframes && (!isMedia || isNestedCount === 0) && !token.trim().startsWith('@') && !firstTokenIsAt && !token.trim().endsWith(':')) {
-                                finalCss += token + (isNestedCount === 0 ? '[' + identifier + ']' : '');
-                            } else {
-                                finalCss += token;
+                                selectorParts[j] = part + '[' + identifier + ']';
+                                break;
                             }
                         }
+                        selector = selectorParts.join(' ');
+                        selector += parts[i].substring(indexOpen !== -1 ? indexOpen : parts[i].length);
+                        parts[i] = selector;
                     }
-                }
-            }
 
-            if (customPropertyBraceCount > 0) {
-                if (customPropertyToken !== null) {
-                    indexOpenBrace = matches[i].indexOf(customPropertyToken);
+                    atRule.push(false);
                 } else {
-                    indexOpenBrace = 0;
+                    atRule.push(false);
                 }
-            }
 
-            if (matches[i].includes('--') && openBraceCount > 1) {
-                let indexCustom = seekToFirstUnquotedChar(matches[i], '--', 0).length;
-                const beginMatch = matches[i].substring(0, indexCustom);
-                let unquotedBegin = '';
-
-                do {
-                    match = unquotedCssRegex.exec(beginMatch);
-                    if (match != null) {
-                        if (!match[1]) {
-                            unquotedBegin += match[0];
+                for (let i = 0; i < parts.length; i++) {
+                    if (i > 0) {
+                        result += ', ';
+                    }
+                    result += parts[i];
+                }
+                result += ' ';
+            } else {
+                if (begin.length > 0 && begin.charAt(0) === '@' && !begin.startsWith('@nest')) {
+                    if (braceDepth === 0) {
+                        atRule.push(true);
+                    } else {
+                        atRule.push(atRule && true);
+                    }
+                    if (begin.startsWith('@keyframes')) {
+                        let openBraceIndex = getFirstUnquotedIndex(begin, '{');
+                        if (openBraceIndex !== -1 && openBraceIndex > 0) {
+                            let name = begin.substring(0, openBraceIndex).trim();
+                            scopedAnimationMap.set(name.substring(10).trim(), name.substring(10).trim() + identifier);
+                            name = name + identifier + ' ';
+                            name += begin.substring(openBraceIndex);
+                            begin = name;
+                        }
+                        isKeyframe++;
+                    }
+                } else if (isKeyframe === 0 && (braceDepth === 0 || atRule.length >= braceDepth && atRule.length > 0 && atRule.slice(0, braceDepth).every(v => v))) {
+                    let indexOpen = getFirstUnquotedIndex(begin, '{');
+                    let selector = indexOpen !== -1 ? begin.substring(0, indexOpen) : begin;
+                    const selectorParts = selector.trim().split(' ');
+                    let part;
+                    for (let j = 0; j < selectorParts.length; j++) {
+                        part = selectorParts[j].trim();
+                        if (part === '>' || part === '+' || part === '~' || part === '&') {
+                            continue;
+                        } else {
+                            selectorParts[j] = part + '[' + identifier + ']';
+                            break;
                         }
                     }
-                } while (match != null);
-
-                const beginBraceCount = countSubstr(unquotedBegin, '{');
-                const beginDiff = beginBraceCount - 1;
-                nestedAdditionalBraces = openBraceCount - 1;
-                if (beginDiff > 0) {
-                    nestedAdditionalBraces -= beginDiff;
+                    selector = selectorParts.join(' ');
+                    selector += begin.substring(indexOpen !== -1 ? indexOpen : begin.length);
+                    begin = selector;
+                    atRule.push(false);
+                } else {
+                    atRule.push(false);
                 }
-                if (nestedAdditionalBraces > 0) {
-                    customPropertyBraceCount += nestedAdditionalBraces;
-                }
-            }
 
-            if (openBraceCount - customPropertyBraceCount > 1 && !isLayer) {
-                const newMatch = matches[i].substring(indexOpenBrace + 1);
-                matches[i] = matches[i].substring(0, matches[i].length - newMatch.length);
-                matches.splice(i + 1, 0, newMatch);
-
-                let unquotedProposedStr = '';
-                match = null;
-
-                do {
-                    match = unquotedCssRegex.exec(newMatch);
-                    if (match != null) {
-                        if (!match[1]) {
-                            unquotedProposedStr += match[0];
-                        }
-                    }
-                } while (match != null);
-
-                unclosedAdjustment = (countSubstr(unquotedProposedStr, '{') - countSubstr(unquotedProposedStr, '}'));
-
-                customPropertyBraceCount -= nestedAdditionalBraces;
-            }
-
-            let proposedCss = matches[i].substring(indexOpenBrace);
-            const withoutLeadingStructure = proposedCss.replace('{', '').replace(';', '');
-
-            if (proposedCss.includes('{') && countSubstr(proposedCss, '{') > 1 && !withoutLeadingStructure.trim().startsWith('--')) {
-                let before = seekToFirstUnquotedChar(proposedCss, '{', 0);
-                before = before + ' ' + seekToFirstUnquotedChar(proposedCss, '{', before.length);
-                let after = proposedCss.substring(before.length + 1, proposedCss.length);
-                after = before.substring(before.lastIndexOf(';') + 1, before.length) + ' ' + after;
-                before = before.substring(0, before.lastIndexOf(';') + 1);
-                proposedCss = before;
-                matches.splice(i + 1, 0, after);
-                isNestedCount++;
-                nestedInsertionCount++;
-            }
-
-            finalCss += proposedCss;
-
-            let unquotedProposedStr = '';
-            match = null;
-
-            do {
-                match = unquotedCssRegex.exec(proposedCss);
-                if (match != null) {
-                    if (!match[1]) {
-                        unquotedProposedStr += match[0];
-                    }
-                }
-            } while (match != null);
-
-            unclosedAdjustment = (countSubstr(unquotedProposedStr, '{') - countSubstr(unquotedProposedStr, '}'));
-            unclosedBraceCount += (unclosedAdjustment - nestedAdditionalBraces) >= 0 ? unclosedAdjustment - nestedAdditionalBraces : unclosedAdjustment;
-
-            unclosedAdjustment -= customPropertyBraceCount;
-            if (unclosedAdjustment < 0) {
-                unclosedAdjustment = 0;
-            }
-
-            if (isNestedCount !== 0 || !isMedia) {
-                nestedInsertionCount += unclosedAdjustment;
-                isNestedCount += unclosedAdjustment;
-
-                if (isNestedCount > 0) {
-                    isNestedCount -= (1 - unclosedBraceCount - countSubstr(unquotedProposedStr, '{') + countSubstr(unquotedProposedStr, '}')) >= 0 ? 1 - unclosedBraceCount - countSubstr(unquotedProposedStr, '{') + countSubstr(unquotedProposedStr, '}') : 0;
+                result += begin + ' ';
+                if (begin.charAt(0) !== '@' && isKeyframe && getFirstUnquotedIndex(begin, '}') === -1) {
+                    isKeyframe++;
                 }
             }
-
-            while (layerCount > 0) {
-                finalCss += '}';
-                layerCount--;
-            }
-
-            if (customPropertyBraceCount === 0) {
-                finalCss += '\n';
-            }
+        } else {
+            result += cssText;
+            break;
         }
     }
 
-    isNestedCount -= nestedInsertionCount;
-    while (isNestedCount > 0) {
-        finalCss += '}';
-        isNestedCount--;
-    }
-    unclosedBraceCount -= nestedCloseCount;
-    while (unclosedBraceCount > 0) {
-        finalCss += '}';
-        unclosedBraceCount--;
-    }
-    finalCss += '\n';
+    result = replaceAnimationKeys(result, scopedAnimationMap);
 
-    if (keyframeNameMap.size > 0) {
-        let startIndex = 0;
-        let scopedResult;
-
-        scopedResult = updateScopedAnimationNames(finalCss, startIndex, keyframeNameMap, 'animation');
-        finalCss = scopedResult.finalCss;
-        startIndex = scopedResult.startIndex;
-
-        startIndex = 0;
-
-        scopedResult = updateScopedAnimationNames(finalCss, startIndex, keyframeNameMap, 'animation-name');
-        finalCss = scopedResult.finalCss;
-        startIndex = scopedResult.startIndex;
-    }
-
-    if (finalCss.trim() !== '') {
+    if (result.trim() !== '') {
         const head = document.head || document.getElementsByTagName('head')[0];
         const style = document.createElement('style');
         head.appendChild(style);
-        style.appendChild(document.createTextNode(finalCss));
+        style.appendChild(document.createTextNode(result));
     }
 
     return identifier;
-}
-
-const updateScopedAnimationNames = (finalCss, startIndex, keyframeNameMap, propertyName) => {
-    while ((startIndex = finalCss.indexOf(propertyName, startIndex)) !== -1) {
-        const before = finalCss.substring(0, startIndex);
-        let middle = finalCss.substring(startIndex, finalCss.indexOf(';', startIndex));
-        const after = finalCss.substring(startIndex + middle.length, finalCss.length);
-
-        if (middle.includes(':')) {
-            const prefix = middle.substring(0, middle.indexOf(':') + 1).replace(propertyName, '').trim();
-
-            if (prefix === ':') {
-                for (const [key, value] of keyframeNameMap) {
-                    let middleFormatted = middle.replace(propertyName, '');
-                    middleFormatted = middleFormatted.trim();
-
-                    if (middleFormatted.startsWith(':')) {
-                        middleFormatted = middleFormatted.substring(1, middleFormatted.length);
-                        middleFormatted = middleFormatted.trim();
-                    }
-
-                    const testRegex = new RegExp(key + '(\\s|;|$)');
-
-                    if (testRegex.test(middleFormatted) && key.length > 0) {
-                        middle = middle.replaceAll(key, value);
-                        startIndex += middle.length;
-                    } else {
-                        startIndex += propertyName.length;
-                    }
-                }
-                finalCss = before + middle + after;
-            } else {
-                startIndex += middle.length;
-            }
-        }
-    }
-
-    return { finalCss, startIndex };
 }
 
 export function hydrate(eleId, attachDetector = true) {

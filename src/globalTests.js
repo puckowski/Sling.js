@@ -8844,7 +8844,7 @@ export class TestThenDetectComponent1 {
     }
 
     slAfterInit() {
-        slGet('https://www.apimock.live').then(xhrResp => {
+        slGet('https://jsonplaceholder.typicode.com/users').then(xhrResp => {
             this.data = xhrResp.response;
 
             if (this.data.length > 50) {
@@ -11901,7 +11901,7 @@ export class GlobalTestRunner {
         const countClose = textContentStyle.split('}').length - 1;
 
         result.success = headChildCountFinal === headChildCountOriginal + 1 && color === 'rgb(0, 0, 255)'
-            && countSlCss === 4 && countOpen === countClose;
+            && countSlCss === 1 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -12331,7 +12331,7 @@ export class GlobalTestRunner {
         const countClose = textContentStyle.split('}').length - 1;
 
         result.success = headChildCountFinal === headChildCountOriginal + 1 && color === 'rgb(0, 0, 255)'
-            && countSlCss === 4 && countOpen === countClose;
+            && countSlCss === 1 && countOpen === countClose;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
@@ -13240,7 +13240,7 @@ export class GlobalTestRunner {
         const countClose = textContentStyle.split('}').length - 1;
 
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(250, 250, 250)'
-            && code === '{ pointerdown(event) { console.log(event.type, event.target); }, async click(event) { console.log( await Promise.resolve(\'CSS can do that.\') ); },  }'
+            && code === '{ pointerdown(event) { console.log(event.type, event.target); },  async click(event) { console.log( await Promise.resolve(\'CSS can do that.\') ); }, }'
             && countSlCss === 3 && countOpen === countClose;
 
         window.globalTestResults.push(result);
@@ -13281,7 +13281,7 @@ export class GlobalTestRunner {
         const countClose = textContentStyle.split('}').length - 1;
 
         result.success = headChildCountFinal === headChildCountOriginal + 1 && bgColor === 'rgb(250, 250, 250)'
-            && code === '{ pointerdown(event) { console.log(event.type, event.target); }, async click(event) { console.log( await Promise.resolve(\'CSS can do that.\') ); },  }'
+            && code === '{ pointerdown(event) { console.log(event.type, event.target); },  async click(event) { console.log( await Promise.resolve(\'CSS can do that.\') ); }, }'
             && countSlCss === 3 && countOpen === countClose;
 
         window.globalTestResults.push(result);
