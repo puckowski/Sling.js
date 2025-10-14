@@ -648,7 +648,7 @@ var i = function i(_ref3) {
     }), e;
   };
 function version() {
-  return "21.2.1";
+  return "22.0.0";
 }
 var M = function M(e, n) {
     var s = 0,
