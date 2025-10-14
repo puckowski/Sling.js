@@ -742,6 +742,9 @@ const removeAfterAnimationIfNeeded = (vNode) => {
                     }
 
                     nodeToAnim.slAnimationName = null;
+                    nodeToAnim.onanimationend = null;
+                    nodeToAnim.onanimationstart = null;
+                    nodeToAnim.style.animation = 'none';
 
                     vNode.slAnimateDestroy = false;
                     delete vNode['slanimatedestroytarget'];
@@ -756,18 +759,30 @@ const removeAfterAnimationIfNeeded = (vNode) => {
                 vNode.slAnimateDestroy = true;
             } else {
                 if (s._router.currentRoute && vNode.id !== s._router.currentRoute.root) {
+                    vNode.onanimationend = null;
+                    vNode.onanimationstart = null;
+                    vNode.style.animation = 'none';
                     vNode.remove();
                     s._updateMap.delete(vNode.id);
                 } else if (routeCount === s._router.count) {
+                    vNode.onanimationend = null;
+                    vNode.onanimationstart = null;
+                    vNode.style.animation = 'none';
                     vNode.remove();
                     s._updateMap.delete(vNode.id);
                 }
             }
         } else {
             if (s._router.currentRoute && vNode.id !== s._router.currentRoute.root) {
+                vNode.onanimationend = null;
+                vNode.onanimationstart = null;
+                vNode.style.animation = 'none';
                 vNode.remove();
                 s._updateMap.delete(vNode.id);
             } else if (routeCount === s._router.count) {
+                vNode.onanimationend = null;
+                vNode.onanimationstart = null;
+                vNode.style.animation = 'none';
                 vNode.remove();
                 s._updateMap.delete(vNode.id);
             }
@@ -805,6 +820,7 @@ const removeAfterAnimationIfNeeded = (vNode) => {
             vNode.slAnimationName = null;
             vNode.onanimationend = animProxy;
             vNode.onanimationstart = animStartProxy;
+            vNode.style.animation = 'none';
             vNode.slAnimateDestroy = false;
 
             return result;
@@ -814,9 +830,13 @@ const removeAfterAnimationIfNeeded = (vNode) => {
         vNode.slAnimateDestroy = true;
     } else if (!vNode.slAnimateDestroy) {
         if (s._router.currentRoute && vNode.id !== s._router.currentRoute.root) {
+            vNode.onanimationend = null;
+            vNode.onanimationstart = null;
             vNode.remove();
             s._updateMap.delete(vNode.id);
         } else if (routeCount === s._router.count) {
+            vNode.onanimationend = null;
+            vNode.onanimationstart = null;
             vNode.remove();
             s._updateMap.delete(vNode.id);
         }
@@ -1135,7 +1155,7 @@ const _mountInternal = (target, component, attachDetector) => {
 }
 
 export function version() {
-    return '21.2.0';
+    return '21.2.1';
 }
 
 export function resolveAll(promiseArr) {
@@ -1432,7 +1452,7 @@ export function route(routeStr, routeParams = {}, attachDetector = true) {
 
             s._router.lastHash = routeStr;
 
-            const scrollPosition = slContext.pageYOffset;
+            const scrollPosition = slContext.scrollY;
 
             switch (s._router.strategy) {
                 case '#': {

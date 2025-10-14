@@ -1199,7 +1199,7 @@ const _mountInternal = (target, component, attachDetector) => {
 }
 
 export function version() {
-    return '21.2.0';
+    return '21.2.1';
 }
 
 function xmur3(str) {
@@ -2130,7 +2130,7 @@ export function route(routeStr, routeParams = {}, attachDetector = true) {
 
             s._router.lastHash = routeStr;
 
-            const scrollPosition = slContext.pageYOffset;
+            const scrollPosition = slContext.scrollY;
 
             switch (s._router.strategy) {
                 case '#': {
