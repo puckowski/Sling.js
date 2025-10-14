@@ -1535,6 +1535,10 @@ export function textNode(text) {
     return String(text);
 }
 
+export function t(text) {
+    return String(text);
+}
+
 export function markup(tagName, { attrs = {}, children = [] } = {}) {
     tagName = tagName.toUpperCase();
 
