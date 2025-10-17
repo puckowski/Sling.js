@@ -624,14 +624,14 @@ markup('div', {
 ```
 
 ## m
-__object markup ( tagString, { attrs: {}, children: [] } )__
+__object m ( tagString, { attrs: {}, children: [] } )__
 or
-__object markup ( tagString, {}, [] )__
+__object m ( tagString, {}, [] )__
 
 Terse alias for markup() function.
 
 ## textNode
-__string textNode( text )__
+__string textNode ( text )__
 
 Append a DOMString to a node.
 
@@ -640,6 +640,11 @@ Example textNode call:
 ```javascript
 textNode('Click me!');
 ```
+
+## t
+__string t ( text )__
+
+Terse alias for textNode() function.
 
 ## mount
 __element mount ( rootElementId, component, attachDetector = true )__
