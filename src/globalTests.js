@@ -1,4 +1,4 @@
-import { getRouteQueryVariables, setRouteStrategy, enableDetectOnThen, renderElementWithoutClass, renderElement, detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll, getRouteSegments, hydrate, renderToString, removeRoute, version, update, setDetectionStrategy, wrapWithChangeDetector, isDetectorAttached, detachDetector, getRoute } from "../dist_sling/sling.min";
+import { getRouteQueryVariables, setRouteStrategy, enableDetectOnThen, renderElementWithoutClass, renderElement, detectChanges, getState, m, markup, mount, route, setState, textNode, addRoute, getRouteParams, resolveAll, getRouteSegments, hydrate, renderToString, removeRoute, version, update, setDetectionStrategy, wrapWithChangeDetector, isDetectorAttached, detachDetector, getRoute, t } from "../dist_sling/sling.min";
 import { BehaviorSubject, FormControl, Observable } from '../dist_sling/sling-reactive.min';
 import { slGet } from '../dist_sling/sling-xhr.min';
 
@@ -17176,6 +17176,46 @@ export class GlobalTestRunner {
         }
 
         result.success = correctTag && hasAttrs && correctStyle && correctId && correctClass && onInputDefined && onInputCorrect;
+
+        window.globalTestResults.push(result);
+        window.globalTestCount++;
+    }
+
+    testTerseTextNodeFunction() {
+        const result = {
+            test: 'test terse textNode function',
+            success: false,
+            message: ''
+        };
+
+        const markupObj = m('div', { attrs: { style: 'width: 100%', id: 'someId', class: 'someclass', oninput: this.someFunctionToBind.bind(this) }, children: [t('text node'),
+            m('span', { attrs: { style: 'height: 20px;' }, children: [t('nested node'), t('sibling node')] })
+        ] });
+
+        const correctTag = markupObj.tagName === 'DIV';
+
+        const hasAttrs = markupObj.attrs !== null && markupObj.attrs !== undefined;
+        if (!hasAttrs) {
+            markupObj.attrs = {};
+        }
+
+        const correctStyle = markupObj.attrs.style && markupObj.attrs.style === 'width: 100%';
+        const correctId = markupObj.attrs.id && markupObj.attrs.id === 'someId';
+        const correctClass = markupObj.attrs.class && markupObj.attrs.class === 'someclass';
+        const onInputDefined = markupObj.attrs.oninput !== null && markupObj.attrs.oninput !== undefined;
+        const textNodeCorrect = markupObj.children && markupObj.children.length > 0 && markupObj.children[0] === 'text node';
+        const spanNode = markupObj.children && markupObj.children.length > 1 ? markupObj.children[1] : null;
+        const spanNodeCorrect = spanNode && spanNode.tagName === 'SPAN' && spanNode.attrs.style === 'height: 20px;';
+        const spanNestedNodeCorrect = spanNode && spanNode.children && spanNode.children.length > 0 && spanNode.children[0] === 'nested node';
+        const spanSiblingNodeCorrect = spanNode && spanNode.children && spanNode.children.length > 1 && spanNode.children[1] === 'sibling node';
+        let onInputCorrect = false;
+
+        if (onInputDefined) {
+            const results = markupObj.attrs.oninput();
+            onInputCorrect = results && results.test && results.test === 'test';
+        }
+
+        result.success = correctTag && hasAttrs && correctStyle && correctId && correctClass && onInputDefined && onInputCorrect && textNodeCorrect && spanNodeCorrect && spanNestedNodeCorrect && spanSiblingNodeCorrect;
 
         window.globalTestResults.push(result);
         window.globalTestCount++;
