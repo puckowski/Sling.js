@@ -817,7 +817,7 @@ const removeAfterAnimationIfNeeded = (vNode) => {
                 s._updateMap.delete(vNode.id);
             }
 
-            vNodef.slAnimationName = null;
+            vNode.slAnimationName = null;
             vNode.onanimationend = animProxy;
             vNode.onanimationstart = animStartProxy;
             vNode.style.animation = 'none';
