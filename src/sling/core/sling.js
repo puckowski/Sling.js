@@ -9,10 +9,10 @@ if (!origWindow) {
     slContext.location = {};
     slContext.location.href = '';
     if (!MODE_WORKER) {
-    slContext.fetch = () => { };
-    slContext.XMLHttpRequest = {};
-    slContext.XMLHttpRequest.prototype = {};
-    slContext.XMLHttpRequest.prototype.send = () => { };
+        slContext.fetch = () => { };
+        slContext.XMLHttpRequest = {};
+        slContext.XMLHttpRequest.prototype = {};
+        slContext.XMLHttpRequest.prototype.send = () => { };
     }
 }
 
@@ -2176,7 +2176,7 @@ s._debouncedPerformUpdates = debounce(performChangeUpdates, 17);
 let xhrSendProxy = !MODE_WORKER ? slContext.XMLHttpRequest.prototype.send : null;
 let onReadyMap = !MODE_WORKER ? new Map() : null;
 
-const xhrSend =!MODE_WORKER ? function (data) {
+const xhrSend = !MODE_WORKER ? function (data) {
     if (this.onreadystatechange) {
         this._onreadystatechange = this.onreadystatechange;
 
@@ -2188,7 +2188,7 @@ const xhrSend =!MODE_WORKER ? function (data) {
 
     this.onreadystatechange = xhrOnReadyStateChangeProxy;
     return xhrSendProxy.apply(this, arguments);
-} : () => {};
+} : () => { };
 
 const xhrOnReadyStateChangeProxy = !MODE_WORKER ? function () {
     if (this._onreadystatechange) {
@@ -2209,19 +2209,19 @@ const xhrOnReadyStateChangeProxy = !MODE_WORKER ? function () {
 
         return result;
     }
-} : () => {};
+} : () => { };
 
 if (!MODE_WORKER) {
-slContext.XMLHttpRequest.prototype.send = xhrSend;
+    slContext.XMLHttpRequest.prototype.send = xhrSend;
 }
 
 // Fetch
 if (!MODE_WORKER) {
-let fetchProxy = slContext.fetch;
+    let fetchProxy = slContext.fetch;
 
-slContext.fetch = function () {
-    let result = fetchProxy.apply(this, arguments);
-    _performChangeDetection(); // Change after update
-    return result;
-}
+    slContext.fetch = function () {
+        let result = fetchProxy.apply(this, arguments);
+        _performChangeDetection(); // Change after update
+        return result;
+    }
 }
