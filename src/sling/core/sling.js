@@ -507,9 +507,9 @@ const diffVAttrs = (node, oldAttrs, newAttrs) => {
             if (!MODE_SLIM) {
                 if (!attrib.name.startsWith('slcss-')) {
                     toRemove.push(attrib.nodeName);
-                } else {
-                    toRemove.push(attrib.nodeName);
                 }
+            } else {
+                toRemove.push(attrib.nodeName);
             }
         } else if (newValue.length === attrib.nodeValue.length && newValue === attrib.nodeValue) {
             delete newAttrs[attrib.name];
