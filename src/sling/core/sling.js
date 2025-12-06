@@ -1,3 +1,5 @@
+const MODE_SLIM = false;
+
 const origWindow = typeof (window) !== 'undefined';
 var slContext = origWindow ? window : global;
 if (!origWindow) {
@@ -346,10 +348,12 @@ const consumeClassViewAndAppend = (child, el, diffDom = false) => {
     child = buildObj.view;
     if (buildObj.afterInit) s._afterInitArr.push(buildObj.afterInit);
     const ele = renderElementInternal(child);
-    if (buildObj.scopedCss) {
-        const identifier = applyScopedCss(buildObj.model, buildObj.model.slStyle());
-        applyScopedCssIdentifier(ele, identifier);
-        ele.slScopedCss = true;
+    if (!MODE_SLIM) {
+        if (buildObj.scopedCss) {
+            const identifier = applyScopedCss(buildObj.model, buildObj.model.slStyle());
+            applyScopedCssIdentifier(ele, identifier);
+            ele.slScopedCss = true;
+        }
     }
     if (buildObj.onInit) {
         ele.slOnInit = true;
@@ -408,7 +412,7 @@ const getViewFromClass = (child, appendDestroy, callOnInit, returnDestroyFn = fa
         onInit: !callOnInit && child.slOnInit ? child.slOnInit : null,
         destroyIndex: delFnIndex,
         model: child,
-        scopedCss: child.slStyle ? child.slStyle.bind(child) : null,
+        scopedCss: !MODE_SLIM ? (child.slStyle ? child.slStyle.bind(child) : null) : null,
         slUnboundOnDestroy: child.slOnDestroy,
         slUnboundAfterInit: child.slAfterInit,
         slUnboundOnInit: child.slOnInit
@@ -465,7 +469,7 @@ const callAllDestroyHooks = (node) => {
     }
 }
 
-const applyScopedCssIdentifier = (node, identifier) => {
+const applyScopedCssIdentifier = !MODE_SLIM ? (node, identifier) => {
     node.setAttribute(identifier, '');
 
     if (node.children && node.children.length > 0) {
@@ -473,7 +477,7 @@ const applyScopedCssIdentifier = (node, identifier) => {
             applyScopedCssIdentifier(child, identifier);
         }
     }
-}
+} : () => { };
 
 const prepareNodeForDestroyHook = (node, fn, unboundDestroyFn) => {
     node.slOnDestroy = true;
@@ -497,8 +501,12 @@ const diffVAttrs = (node, oldAttrs, newAttrs) => {
     for (let attrib of oldAttrs) {
         let newValue = newAttrs[attrib.name];
         if (!newValue) {
-            if (!attrib.name.startsWith('slcss-')) {
-                toRemove.push(attrib.nodeName);
+            if (!MODE_SLIM) {
+                if (!attrib.name.startsWith('slcss-')) {
+                    toRemove.push(attrib.nodeName);
+                } else {
+                    toRemove.push(attrib.nodeName);
+                }
             }
         } else if (newValue.length === attrib.nodeValue.length && newValue === attrib.nodeValue) {
             delete newAttrs[attrib.name];
@@ -605,8 +613,10 @@ const diffVChildren = (oldNode, oldVChildren, newVChildren) => {
                     if (buildObj.afterInit && oldVChildren[i].slAfterInit) {
                         oldVChildren[i].slAfterInit = false;
                     }
-                    if (buildObj.scopedCss && oldVChildren[i].slScopedCss) {
-                        oldVChildren[i].slScopedCss = false;
+                    if (!MODE_SLIM) {
+                        if (buildObj.scopedCss && oldVChildren[i].slScopedCss) {
+                            oldVChildren[i].slScopedCss = false;
+                        }
                     }
                     if (buildObj.onDestroy && oldVChildren[i].slOnDestroy) {
                         oldVChildren[i].slOnDestroy = false;
@@ -642,8 +652,11 @@ const diffVChildren = (oldNode, oldVChildren, newVChildren) => {
                     oldVChildren[i].slUnboundAfterInit = buildObj.slUnboundAfterInit;
                 }
 
-                if (buildObj.scopedCss && oldVChildren[i] && !oldVChildren[i].slScopedCss) {
-                    identifier = applyScopedCss(buildObj.model, buildObj.model.slStyle());
+
+                if (!MODE_SLIM) {
+                    if (buildObj.scopedCss && oldVChildren[i] && !oldVChildren[i].slScopedCss) {
+                        identifier = applyScopedCss(buildObj.model, buildObj.model.slStyle());
+                    }
                 }
                 if (buildObj.onDestroy && oldVChildren[i] && !oldVChildren[i].slOnDestroy) {
                     prepareNodeForDestroyHook(oldVChildren[i], buildObj.onDestroy, buildObj.slUnboundOnDestroy);
@@ -669,9 +682,11 @@ const diffVChildren = (oldNode, oldVChildren, newVChildren) => {
             }
         }
 
-        if (identifier) {
-            applyScopedCssIdentifier(oldVChildren[i], identifier);
-            oldVChildren[i].slScopedCss = true;
+        if (!MODE_SLIM) {
+            if (identifier) {
+                applyScopedCssIdentifier(oldVChildren[i], identifier);
+                oldVChildren[i].slScopedCss = true;
+            }
         }
         childIndex++;
     }
@@ -867,14 +882,14 @@ const deepFunctions = x =>
 const distinctDeepFunctions = x => Array.from(new Set(deepFunctions(x)));
 const userFunctions = x => distinctDeepFunctions(x).filter(name => name !== "constructor" && !~name.indexOf("__"));
 
-const checkForScopedCss = (target, component, oldDisplayValue = '') => {
+const checkForScopedCss = !MODE_SLIM ? (target, component, oldDisplayValue = '') => {
     if (component.slStyle && !target.slScopedCss) {
         const identifier = applyScopedCss(component, component.slStyle());
         applyScopedCssIdentifier(target, identifier);
         target.slScopedCss = true;
         target.style.display = oldDisplayValue;
     }
-}
+} : () => { };
 
 const applyPreventDefault = (children) => {
     for (let i = 0; i < children.length; i++) {
@@ -916,9 +931,11 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
 
     let oldDisplay;
 
-    if (vNewNode && vNewNode.slStyle) {
-        oldDisplay = vOldNode.style.display;
-        vOldNode.style.display = 'none';
+    if (!MODE_SLIM) {
+        if (vNewNode && vNewNode.slStyle) {
+            oldDisplay = vOldNode.style.display;
+            vOldNode.style.display = 'none';
+        }
     }
 
     if (vNewNode && vNewNode.view) {
@@ -942,8 +959,10 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
             if (buildObj.afterInit && vOldNode.slAfterInit) {
                 vOldNode.slAfterInit = false;
             }
-            if (buildObj.scopedCss && vOldNode.slScopedCss) {
-                vOldNode.slScopedCss = false;
+            if (!MODE_SLIM) {
+                if (buildObj.scopedCss && vOldNode.slScopedCss) {
+                    vOldNode.slScopedCss = false;
+                }
             }
             if (buildObj.onDestroy && vOldNode.slOnDestroy) {
                 vOldNode.slOnDestroy = false;
@@ -959,10 +978,12 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
             vOldNode.slAfterInit = true;
             s._afterInitArr.push(buildObj.afterInit);
         }
-        if (buildObj.scopedCss && vOldNode && !vOldNode.slScopedCss) {
-            const identifier = applyScopedCss(buildObj.model, buildObj.model.slStyle());
-            applyScopedCssIdentifier(vOldNode, identifier);
-            vOldNode.slScopedCss = true;
+        if (!MODE_SLIM) {
+            if (buildObj.scopedCss && vOldNode && !vOldNode.slScopedCss) {
+                const identifier = applyScopedCss(buildObj.model, buildObj.model.slStyle());
+                applyScopedCssIdentifier(vOldNode, identifier);
+                vOldNode.slScopedCss = true;
+            }
         }
         if (buildObj.onDestroy && vOldNode && !vOldNode.slOnDestroy) {
             prepareNodeForDestroyHook(vOldNode, buildObj.onDestroy, buildObj.slUnboundOnDestroy);
@@ -992,7 +1013,9 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
                 el = document.createElement(vNewNode.tagName);
             }
 
-            checkForScopedCss(el, vNewNode, oldDisplay);
+            if (!MODE_SLIM) {
+                checkForScopedCss(el, vNewNode, oldDisplay);
+            }
             vOldNode.parentNode.insertBefore(el, vOldNode);
             removeFromDestroyList(vOldNode);
             callAllDestroyHooks(vOldNode);
@@ -1020,8 +1043,9 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
 
     switch (vNewNode.attrs.sldirective) {
         case 'useexisting': {
-            checkForScopedCss(vOldNode, vNewNode, oldDisplay);
-
+            if (!MODE_SLIM) {
+                checkForScopedCss(vOldNode, vNewNode, oldDisplay);
+            }
             return vOldNode;
         }
         case 'onlychildren': {
@@ -1031,14 +1055,16 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
         }
         case 'onlyself': {
             diffVAttrs(vOldNode, vOldNode.attributes, vNewNode.attrs);
-            checkForScopedCss(vOldNode, vNewNode, oldDisplay);
-
+            if (!MODE_SLIM) {
+                checkForScopedCss(vOldNode, vNewNode, oldDisplay);
+            }
             return vOldNode;
         }
         case 'trustchildren': {
             diffVAttrs(vOldNode, vOldNode.attributes, vNewNode.attrs);
-            checkForScopedCss(vOldNode, vNewNode, oldDisplay);
-
+            if (!MODE_SLIM) {
+                checkForScopedCss(vOldNode, vNewNode, oldDisplay);
+            }
             let newHtml = '';
             vNewNode.children.forEach(childHtml => {
                 newHtml += childHtml;
@@ -1081,7 +1107,9 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
         }
 
         diffVAttrs(vOldNode, vOldNode.attributes, vNewNode.attrs);
-        checkForScopedCss(vOldNode, vNewNode, oldDisplay);
+        if (!MODE_SLIM) {
+            checkForScopedCss(vOldNode, vNewNode, oldDisplay);
+        }
 
         return vOldNode;
     } else if (vNewNode.attrs.slfornamed) {
@@ -1133,14 +1161,18 @@ const diffVDom = (vOldNode, vNewNode, viewModel = null) => {
         }
 
         diffVAttrs(vOldNode, vOldNode.attributes, vNewNode.attrs);
-        checkForScopedCss(vOldNode, vNewNode, oldDisplay);
+        if (!MODE_SLIM) {
+            checkForScopedCss(vOldNode, vNewNode, oldDisplay);
+        }
 
         return vOldNode;
     }
 
     diffVAttrs(vOldNode, vOldNode.attributes, vNewNode.attrs);
     diffVChildren(vOldNode, vOldNode.childNodes, vNewNode.children);
-    checkForScopedCss(vOldNode, vNewNode, oldDisplay);
+    if (!MODE_SLIM) {
+        checkForScopedCss(vOldNode, vNewNode, oldDisplay);
+    }
 
     return vOldNode;
 };
@@ -1169,10 +1201,12 @@ const _mountInternal = (target, component, attachDetector) => {
         target.slUnboundOnInit = component.slOnInit;
     }
 
-    if (component.slStyle && !target.slScopedCss) {
-        const identifier = applyScopedCss(component, component.slStyle());
-        applyScopedCssIdentifier(target, identifier);
-        target.slScopedCss = true;
+    if (!MODE_SLIM) {
+        if (component.slStyle && !target.slScopedCss) {
+            const identifier = applyScopedCss(component, component.slStyle());
+            applyScopedCssIdentifier(target, identifier);
+            target.slScopedCss = true;
+        }
     }
 
     if (attachDetector)
@@ -1209,7 +1243,7 @@ export function version() {
     return '22.0.0';
 }
 
-function xmur3(str) {
+const xmur3 = !MODE_SLIM ? function xmur3(str) {
     for (var i = 0, h = 1779033703 ^ str.length; i < str.length; i++) {
         h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
         h = h << 13 | h >>> 19;
@@ -1218,9 +1252,9 @@ function xmur3(str) {
         h = Math.imul(h ^ (h >>> 13), 3266489909);
         return (h ^= h >>> 16) >>> 0;
     }
-}
+} : () => { };
 
-const replaceAnimationKeys = (css, map) => {
+const replaceAnimationKeys = !MODE_SLIM ? (css, map) => {
     for (const [key, value] of map.entries()) {
         let pattern = new RegExp(`animation\\s*:\\s*${key}\\s*`, 'g');
         css = css.replace(pattern, `animation: ${value} `);
@@ -1228,9 +1262,9 @@ const replaceAnimationKeys = (css, map) => {
         css = css.replace(pattern, `animation-name: ${value} `);
     }
     return css;
-}
+} : () => { };
 
-const countUnquotedOccurrences = (str, sub) => {
+const countUnquotedOccurrences = !MODE_SLIM ? (str, sub) => {
     let count = 0;
     let inSingle = false;
     let inDouble = false;
@@ -1259,8 +1293,9 @@ const countUnquotedOccurrences = (str, sub) => {
     }
 
     return count;
-}
-const countOccurrences = (str, sub) => {
+} : () => { };
+
+const countOccurrences = !MODE_SLIM ? (str, sub) => {
     if (!sub) return 0;
     let count = 0;
     let pos = 0;
@@ -1273,9 +1308,9 @@ const countOccurrences = (str, sub) => {
     }
 
     return count;
-}
+} : () => { };
 
-const getFirstUnquotedIndex = (str, sub) => {
+const getFirstUnquotedIndex = !MODE_SLIM ? (str, sub) => {
     let inSingle = false;
     let inDouble = false;
 
@@ -1294,9 +1329,9 @@ const getFirstUnquotedIndex = (str, sub) => {
     }
 
     return -1;
-}
+} : () => { };
 
-const applyScopedCss = (model, cssText) => {
+const applyScopedCss = !MODE_SLIM ? (model, cssText) => {
     const seedFn = xmur3(model.constructor.name);
     const identifier = 'slcss-' + String(seedFn());
 
@@ -1510,9 +1545,9 @@ const applyScopedCss = (model, cssText) => {
     }
 
     return identifier;
-}
+} : () => { };
 
-export function hydrate(eleId, attachDetector = true) {
+export const hydrate = !MODE_SLIM ? function (eleId, attachDetector = true) {
     const ele = document.getElementById(eleId);
     const ssrClass = ele.getAttribute('slssrclass');
     let viewClass = slContext[ssrClass];
@@ -1521,7 +1556,7 @@ export function hydrate(eleId, attachDetector = true) {
     }
     const viewObj = new viewClass();
     return mount(eleId, viewObj, attachDetector);
-}
+} : () => { };
 
 export function resolveAll(promiseArr) {
     const reflect = p => p.then(result => ({ result, status: 'fulfilled', error: null }),
@@ -1575,7 +1610,7 @@ export function mount(eleId, component, attachDetector = true) {
     }
 }
 
-export function renderToString(component) {
+export const renderToString = !MODE_SLIM ? function (component) {
     const destroyCompList = [];
     const originalForKeys = new Set();
     for (let key of s._structureForMap.keys()) {
@@ -1611,7 +1646,7 @@ export function renderToString(component) {
     }
 
     return compStr;
-}
+} : () => { };
 
 export function update(rootEl, component) {
     const origId = rootEl;
