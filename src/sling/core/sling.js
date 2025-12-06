@@ -1,4 +1,5 @@
 const MODE_SLIM = false;
+const MODE_WORKER = false;
 
 const origWindow = typeof (window) !== 'undefined';
 var slContext = origWindow ? window : global;
@@ -7,10 +8,12 @@ if (!origWindow) {
     slContext.setInterval = () => { };
     slContext.location = {};
     slContext.location.href = '';
+    if (!MODE_WORKER) {
     slContext.fetch = () => { };
     slContext.XMLHttpRequest = {};
     slContext.XMLHttpRequest.prototype = {};
     slContext.XMLHttpRequest.prototype.send = () => { };
+    }
 }
 
 slContext.s = function () { };
@@ -2170,10 +2173,10 @@ export function wrapWithChangeDetector(func, config) {
 s._debouncedPerformUpdates = debounce(performChangeUpdates, 17);
 
 // XHR Proxy
-let xhrSendProxy = slContext.XMLHttpRequest.prototype.send;
-let onReadyMap = new Map();
+let xhrSendProxy = !MODE_WORKER ? slContext.XMLHttpRequest.prototype.send : null;
+let onReadyMap = !MODE_WORKER ? new Map() : null;
 
-function xhrSend(data) {
+const xhrSend =!MODE_WORKER ? function (data) {
     if (this.onreadystatechange) {
         this._onreadystatechange = this.onreadystatechange;
 
@@ -2185,9 +2188,9 @@ function xhrSend(data) {
 
     this.onreadystatechange = xhrOnReadyStateChangeProxy;
     return xhrSendProxy.apply(this, arguments);
-}
+} : () => {};
 
-function xhrOnReadyStateChangeProxy() {
+const xhrOnReadyStateChangeProxy = !MODE_WORKER ? function () {
     if (this._onreadystatechange) {
         let lastCount = onReadyMap.get(this);
 
@@ -2206,15 +2209,19 @@ function xhrOnReadyStateChangeProxy() {
 
         return result;
     }
+} : () => {};
+
+if (!MODE_WORKER) {
+slContext.XMLHttpRequest.prototype.send = xhrSend;
 }
 
-slContext.XMLHttpRequest.prototype.send = xhrSend;
-
 // Fetch
+if (!MODE_WORKER) {
 let fetchProxy = slContext.fetch;
 
 slContext.fetch = function () {
     let result = fetchProxy.apply(this, arguments);
     _performChangeDetection(); // Change after update
     return result;
+}
 }
