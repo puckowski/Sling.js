@@ -12,7 +12,7 @@ exports.getRouteParams = getRouteParams;
 exports.getRouteQueryVariables = getRouteQueryVariables;
 exports.getRouteSegments = getRouteSegments;
 exports.getState = getState;
-exports.hydrate = hydrate;
+exports.hydrate = void 0;
 exports.isDetectorAttached = isDetectorAttached;
 exports.m = m;
 exports.markup = markup;
@@ -20,7 +20,7 @@ exports.mount = mount;
 exports.removeRoute = removeRoute;
 exports.renderElement = renderElement;
 exports.renderElementWithoutClass = renderElementWithoutClass;
-exports.renderToString = renderToString;
+exports.renderToString = void 0;
 exports.resolveAll = resolveAll;
 exports.route = route;
 exports.setDetectionStrategy = setDetectionStrategy;
@@ -31,7 +31,7 @@ exports.textNode = textNode;
 exports.update = update;
 exports.version = version;
 exports.wrapWithChangeDetector = wrapWithChangeDetector;
-function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e45) { throw _e45; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e46) { didErr = true; err = _e46; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e46) { throw _e46; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e47) { didErr = true; err = _e47; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -57,9 +57,9 @@ var r = function r(_ref, i) {
       if (a = _typeof(_r2), u += "function" === a ? " " + _e2 + '=""' : " " + _e2 + '="' + _r2 + '"', "slfor" === _e2) {
         var _e3 = _r2.split(":");
         if (_e3.length >= 4) {
-          s._structureForMap.has(_e3[0]) || s._structureForMap.set(_e3[0], T(null, l[_e3[2]]));
+          s._structureForMap.has(_e3[0]) || s._structureForMap.set(_e3[0], L(null, l[_e3[2]]));
           var _n2 = s._structureForMap.get(_e3[0]);
-          c = F.bind(l, _n2, l[_e3[1]], l[_e3[3]])();
+          c = k.bind(l, _n2, l[_e3[1]], l[_e3[3]])();
         }
       } else if ("slfornamed" === _e2) {
         var _e4 = _r2.split(":");
@@ -84,9 +84,9 @@ var r = function r(_ref, i) {
           } finally {
             _iterator.f();
           }
-          _o = _o.bind(l), s._structureForMap.has(_e4[0]) || s._structureForMap.set(_e4[0], T(null, _n3));
+          _o = _o.bind(l), s._structureForMap.has(_e4[0]) || s._structureForMap.set(_e4[0], L(null, _n3));
           var _a = s._structureForMap.get(_e4[0]);
-          c = F.bind(l, _a, _o, _r3)();
+          c = k.bind(l, _a, _o, _r3)();
         }
       }
     }
@@ -122,7 +122,7 @@ function renderElementWithoutClass(e, n, r) {
   o = n && n.slns ? document.createElementNS(n.slns, e.toLowerCase()) : document.createElement(e);
   for (var _i4 = 0, _Object$keys2 = Object.keys(n); _i4 < _Object$keys2.length; _i4++) {
     var _e8 = _Object$keys2[_i4];
-    if (i = n[_e8], l = _typeof(i), "function" === l) o[_e8] = i, s._changeDetector.changeDetectionStrategy !== s.CHANGE_STRATEGY_AUTOMATIC || i.name.startsWith("bound slDetached") || i.name.startsWith("slDetached") || k(_e8, o);else if ("slnsfor" === _e8) {
+    if (i = n[_e8], l = _typeof(i), "function" === l) o[_e8] = i, s._changeDetector.changeDetectionStrategy !== s.CHANGE_STRATEGY_AUTOMATIC || i.name.startsWith("bound slDetached") || i.name.startsWith("slDetached") || H(_e8, o);else if ("slnsfor" === _e8) {
       var _e9 = JSON.parse(n.slnsfor);
       for (var _i5 = 0, _Object$entries2 = Object.entries(_e9); _i5 < _Object$entries2.length; _i5++) {
         var _Object$entries2$_i = _slicedToArray(_Object$entries2[_i5], 2),
@@ -157,7 +157,7 @@ function renderElement(_ref2) {
     var _Object$entries3$_i = _slicedToArray(_Object$entries3[_i6], 2),
       _e11 = _Object$entries3$_i[0],
       _r4 = _Object$entries3$_i[1];
-    if (i = _typeof(_r4), "function" === i) l[_e11] = _r4, s._changeDetector.changeDetectionStrategy !== s.CHANGE_STRATEGY_AUTOMATIC || _r4.name.startsWith("bound slDetached") || _r4.name.startsWith("slDetached") || k(_e11, l);else if ("slnsfor" === _e11) {
+    if (i = _typeof(_r4), "function" === i) l[_e11] = _r4, s._changeDetector.changeDetectionStrategy !== s.CHANGE_STRATEGY_AUTOMATIC || _r4.name.startsWith("bound slDetached") || _r4.name.startsWith("slDetached") || H(_e11, l);else if ("slnsfor" === _e11) {
       var _e12 = JSON.parse(n.slnsfor);
       for (var _i7 = 0, _Object$entries4 = Object.entries(_e12); _i7 < _Object$entries4.length; _i7++) {
         var _Object$entries4$_i = _slicedToArray(_Object$entries4[_i7], 2),
@@ -191,7 +191,7 @@ var i = function i(_ref3) {
       var _Object$entries5$_i = _slicedToArray(_Object$entries5[_i8], 2),
         _e14 = _Object$entries5$_i[0],
         _r5 = _Object$entries5$_i[1];
-      if (l = _typeof(_r5), "function" === l) o[_e14] = _r5, s._changeDetector.changeDetectionStrategy !== s.CHANGE_STRATEGY_AUTOMATIC || _r5.name.startsWith("bound slDetached") || _r5.name.startsWith("slDetached") || k(_e14, o);else if ("slnsfor" === _e14) {
+      if (l = _typeof(_r5), "function" === l) o[_e14] = _r5, s._changeDetector.changeDetectionStrategy !== s.CHANGE_STRATEGY_AUTOMATIC || _r5.name.startsWith("bound slDetached") || _r5.name.startsWith("slDetached") || H(_e14, o);else if ("slnsfor" === _e14) {
         var _e15 = JSON.parse(n.slnsfor);
         for (var _i9 = 0, _Object$entries6 = Object.entries(_e15); _i9 < _Object$entries6.length; _i9++) {
           var _Object$entries6$_i = _slicedToArray(_Object$entries6[_i9], 2),
@@ -232,7 +232,7 @@ var i = function i(_ref3) {
     e = l.view, l.afterInit && s._afterInitArr.push(l.afterInit);
     var u = i(e);
     if (l.scopedCss) {
-      var _e17 = x(l.model, l.model.slStyle());
+      var _e17 = w(l.model, l.model.slStyle());
       y(u, _e17), u.slScopedCss = !0;
     }
     l.onInit && (u.slOnInit = !0), d(u, l.destroyIndex, l.onDestroy, l.slUnboundOnDestroy), p(u), n.appendChild(u), a(u, o), r && C(u, e, l.model);
@@ -374,7 +374,7 @@ var i = function i(_ref3) {
             e.preventDefault();
           }), a = !0;
         }
-        e[n] = l, s._changeDetector.changeDetectionStrategy !== s.CHANGE_STRATEGY_AUTOMATIC || l.name.startsWith("bound slDetached") || l.name.startsWith("slDetached") || k(n, e);
+        e[n] = l, s._changeDetector.changeDetectionStrategy !== s.CHANGE_STRATEGY_AUTOMATIC || l.name.startsWith("bound slDetached") || l.name.startsWith("slDetached") || H(n, e);
       } else if ("slnsfor" === n) {
         var _n12 = JSON.parse(r.slnsfor);
         for (var _i11 = 0, _Object$entries8 = Object.entries(_n12); _i11 < _Object$entries8.length; _i11++) {
@@ -401,7 +401,7 @@ var i = function i(_ref3) {
         var _i12 = f(r[_e19], !1, !1, !1, n[_e19]);
         r[_e19] = _i12.view;
         var _u = Object.getPrototypeOf(_i12.model);
-        !0 !== _u.slDirty && (_i12.onInit && n[_e19].slOnInit && (n[_e19].slOnInit = !1), _i12.afterInit && n[_e19].slAfterInit && (n[_e19].slAfterInit = !1), _i12.scopedCss && n[_e19].slScopedCss && (n[_e19].slScopedCss = !1), _i12.onDestroy && n[_e19].slOnDestroy && (n[_e19].slOnDestroy = !1), _u.slDirty = !0), _i12.onInit && !n[_e19].slOnInit && n[_e19].slUnboundOnInit !== _i12.slUnboundOnInit ? (n[_e19].slUnboundOnInit = _i12.slUnboundOnInit, _i12.onInit.bind(_i12.model)(), r[_e19].slOnInit = !0) : void 0 === n[_e19].slUnboundOnInit || _i12.onInit ? _i12.onInit && n[_e19] && !n[_e19].slOnInit ? (n[_e19].slUnboundOnInit === _i12.slUnboundOnInit && _i12.onInit.bind(_i12.model)(), n[_e19].slUnboundOnInit = _i12.slUnboundOnInit, r[_e19].slOnInit = !0) : _i12.onInit && n[_e19].slOnInit && void 0 === n[_e19].slUnboundOnInit && (n[_e19].slUnboundOnInit = _i12.slUnboundOnInit) : n[_e19].slOnInit = !1, _i12.afterInit && !n[_e19].slAfterInit && n[_e19].slUnboundAfterInit !== _i12.slUnboundAfterInit ? (n[_e19].slAfterInit = !0, n[_e19].slUnboundAfterInit = _i12.slUnboundAfterInit, s._afterInitArr.push(_i12.afterInit)) : void 0 === n[_e19].slUnboundAfterInit || _i12.afterInit ? _i12.afterInit && n[_e19] && !n[_e19].slAfterInit ? (n[_e19].slAfterInit = !0, n[_e19].slUnboundAfterInit === _i12.slUnboundAfterInit && s._afterInitArr.push(_i12.afterInit), n[_e19].slUnboundAfterInit = _i12.slUnboundAfterInit) : _i12.afterInit && n[_e19].slAfterInit && void 0 === n[_e19].slUnboundAfterInit && (n[_e19].slUnboundAfterInit = _i12.slUnboundAfterInit) : n[_e19].slAfterInit = !1, _i12.scopedCss && n[_e19] && !n[_e19].slScopedCss && (_l = x(_i12.model, _i12.model.slStyle())), _i12.onDestroy && n[_e19] && !n[_e19].slOnDestroy && _(n[_e19], _i12.onDestroy, _i12.slUnboundOnDestroy), a(n[_e19], _i12.model), _o2 = _i12.model;
+        !0 !== _u.slDirty && (_i12.onInit && n[_e19].slOnInit && (n[_e19].slOnInit = !1), _i12.afterInit && n[_e19].slAfterInit && (n[_e19].slAfterInit = !1), _i12.scopedCss && n[_e19].slScopedCss && (n[_e19].slScopedCss = !1), _i12.onDestroy && n[_e19].slOnDestroy && (n[_e19].slOnDestroy = !1), _u.slDirty = !0), _i12.onInit && !n[_e19].slOnInit && n[_e19].slUnboundOnInit !== _i12.slUnboundOnInit ? (n[_e19].slUnboundOnInit = _i12.slUnboundOnInit, _i12.onInit.bind(_i12.model)(), r[_e19].slOnInit = !0) : void 0 === n[_e19].slUnboundOnInit || _i12.onInit ? _i12.onInit && n[_e19] && !n[_e19].slOnInit ? (n[_e19].slUnboundOnInit === _i12.slUnboundOnInit && _i12.onInit.bind(_i12.model)(), n[_e19].slUnboundOnInit = _i12.slUnboundOnInit, r[_e19].slOnInit = !0) : _i12.onInit && n[_e19].slOnInit && void 0 === n[_e19].slUnboundOnInit && (n[_e19].slUnboundOnInit = _i12.slUnboundOnInit) : n[_e19].slOnInit = !1, _i12.afterInit && !n[_e19].slAfterInit && n[_e19].slUnboundAfterInit !== _i12.slUnboundAfterInit ? (n[_e19].slAfterInit = !0, n[_e19].slUnboundAfterInit = _i12.slUnboundAfterInit, s._afterInitArr.push(_i12.afterInit)) : void 0 === n[_e19].slUnboundAfterInit || _i12.afterInit ? _i12.afterInit && n[_e19] && !n[_e19].slAfterInit ? (n[_e19].slAfterInit = !0, n[_e19].slUnboundAfterInit === _i12.slUnboundAfterInit && s._afterInitArr.push(_i12.afterInit), n[_e19].slUnboundAfterInit = _i12.slUnboundAfterInit) : _i12.afterInit && n[_e19].slAfterInit && void 0 === n[_e19].slUnboundAfterInit && (n[_e19].slUnboundAfterInit = _i12.slUnboundAfterInit) : n[_e19].slAfterInit = !1, _i12.scopedCss && n[_e19] && !n[_e19].slScopedCss && (_l = w(_i12.model, _i12.model.slStyle())), _i12.onDestroy && n[_e19] && !n[_e19].slOnDestroy && _(n[_e19], _i12.onDestroy, _i12.slUnboundOnDestroy), a(n[_e19], _i12.model), _o2 = _i12.model;
       }
       C(n[_e19], r[_e19], _o2), r[_e19] && r[_e19].slOnInit && (n[_e19].slOnInit = !0);
       var _iterator10 = _createForOfIteratorHelper(u),
@@ -491,7 +491,7 @@ var i = function i(_ref3) {
   v = function v(e, n) {
     var s = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "";
     if (n.slStyle && !e.slScopedCss) {
-      var _r12 = x(n, n.slStyle());
+      var _r12 = w(n, n.slStyle());
       y(e, _r12), e.slScopedCss = !0, e.style.display = s;
     }
   },
@@ -543,7 +543,7 @@ var i = function i(_ref3) {
       n = _r16.view;
       var _o5 = Object.getPrototypeOf(_r16.model);
       if (!0 !== _o5.slDirty && (_r16.onInit && e.slOnInit && (e.slOnInit = !1), _r16.afterInit && e.slAfterInit && (e.slAfterInit = !1), _r16.scopedCss && e.slScopedCss && (e.slScopedCss = !1), _r16.onDestroy && e.slOnDestroy && (e.slOnDestroy = !1), _o5.slDirty = !0), _r16.onInit && e && !e.slOnInit && (_r16.onInit.bind(_r16.model)(), e.slOnInit = !0), _r16.afterInit && e && !e.slAfterInit && (e.slAfterInit = !0, s._afterInitArr.push(_r16.afterInit)), _r16.scopedCss && e && !e.slScopedCss) {
-        var _n18 = x(_r16.model, _r16.model.slStyle());
+        var _n18 = w(_r16.model, _r16.model.slStyle());
         y(e, _n18), e.slScopedCss = !0;
       }
       _r16.onDestroy && e && !e.slOnDestroy && _(e, _r16.onDestroy, _r16.slUnboundOnDestroy);
@@ -579,7 +579,7 @@ var i = function i(_ref3) {
       var _r18 = n.attrs.slfor.split(":");
       if (_r18.length >= 4) {
         if (!s._structureForMap.has(_r18[0])) {
-          var _o6 = T(e, n.model[_r18[2]]);
+          var _o6 = L(e, n.model[_r18[2]]);
           if (s._structureForMap.set(_r18[0], _o6), e.children.length > 0) {
             var _n19 = Object.create(null);
             for (var _s14 = 0; _s14 < e.children.length; ++_s14) _n19[_s14] = e.children[_s14];
@@ -587,7 +587,7 @@ var i = function i(_ref3) {
           }
         }
         var _o7 = s._structureForMap.get(_r18[0]);
-        L.bind(n.model, _o7, n.model[_r18[1]], n.model[_r18[3]])();
+        j.bind(n.model, _o7, n.model[_r18[1]], n.model[_r18[3]])();
       }
       return A(e, e.attributes, n.attrs), v(e, n, o), e;
     }
@@ -612,7 +612,7 @@ var i = function i(_ref3) {
           _iterator13.f();
         }
         if (_i14 = _i14.bind(n.model), !s._structureForMap.has(_r19[0])) {
-          var _n20 = T(e, _o8);
+          var _n20 = L(e, _o8);
           if (s._structureForMap.set(_r19[0], _n20), e.children.length > 0) {
             var _s15 = Object.create(null);
             for (var _n21 = 0; _n21 < e.children.length; ++_n21) _s15[_n21] = e.children[_n21];
@@ -620,7 +620,7 @@ var i = function i(_ref3) {
           }
         }
         var _u2 = s._structureForMap.get(_r19[0]);
-        L.bind(n.model, _u2, _i14, _l4)();
+        j.bind(n.model, _u2, _i14, _l4)();
       }
       return A(e, e.attributes, n.attrs), v(e, n, o), e;
     }
@@ -634,7 +634,7 @@ var i = function i(_ref3) {
       console.error("Mounted component root element changed from " + e.id + " to " + _n22);
     }
     if (e = C(e, l, n), n.slOnInit && (e.slOnInit = !0, e.slUnboundOnInit = n.slOnInit), n.slStyle && !e.slScopedCss) {
-      var _s16 = x(n, n.slStyle());
+      var _s16 = w(n, n.slStyle());
       y(e, _s16), e.slScopedCss = !0;
     }
     r && s._updateMap.set(e.id, n), n.slOnDestroy && _(e, n.slOnDestroy.bind(n), n.slOnDestroy);
@@ -643,14 +643,38 @@ var i = function i(_ref3) {
     for (var _e24 = 0; _e24 < i.length; ++_e24) {
       n[i[_e24].getAttribute("slref")] = i[_e24].slref;
     }
-    return n.slAfterInit && (n.slAfterInit(), e.slUnboundAfterInit = n.slAfterInit, H()), s._afterInitArr.forEach(function (e) {
+    return n.slAfterInit && (n.slAfterInit(), e.slUnboundAfterInit = n.slAfterInit, W()), s._afterInitArr.forEach(function (e) {
       e();
     }), e;
   };
 function version() {
-  return "22.0.0";
+  return "22.1.0";
 }
-var M = function M(e, n) {
+var M = function M(e) {
+    for (var n = 0, s = 1779033703 ^ e.length; n < e.length; n++) s = (s = Math.imul(s ^ e.charCodeAt(n), 3432918353)) << 13 | s >>> 19;
+    return function () {
+      return s = Math.imul(s ^ s >>> 16, 2246822507), s = Math.imul(s ^ s >>> 13, 3266489909), (s ^= s >>> 16) >>> 0;
+    };
+  },
+  E = function E(e, n) {
+    var _iterator14 = _createForOfIteratorHelper(n.entries()),
+      _step14;
+    try {
+      for (_iterator14.s(); !(_step14 = _iterator14.n()).done;) {
+        var _step14$value = _slicedToArray(_step14.value, 2),
+          _s17 = _step14$value[0],
+          _r20 = _step14$value[1];
+        var _n23 = new RegExp("animation\\s*:\\s*".concat(_s17, "\\s*"), "g");
+        e = e.replace(_n23, "animation: ".concat(_r20, " ")), _n23 = new RegExp("animation-name\\s*:\\s*".concat(_s17, "\\s*"), "g"), e = e.replace(_n23, "animation-name: ".concat(_r20, " "));
+      }
+    } catch (err) {
+      _iterator14.e(err);
+    } finally {
+      _iterator14.f();
+    }
+    return e;
+  },
+  N = function N(e, n) {
     var s = 0,
       r = !1,
       o = !1,
@@ -661,7 +685,7 @@ var M = function M(e, n) {
     }
     return s;
   },
-  E = function E(e, n) {
+  x = function x(e, n) {
     if (!n) return 0;
     var s = 0,
       r = 0;
@@ -672,7 +696,7 @@ var M = function M(e, n) {
     }
     return s;
   },
-  N = function N(e, n) {
+  U = function U(e, n) {
     var s = !1,
       r = !1;
     for (var _o10 = 0; _o10 <= e.length - n.length; _o10++) {
@@ -681,13 +705,8 @@ var M = function M(e, n) {
     }
     return -1;
   },
-  x = function x(e, n) {
-    var r = function (e) {
-        for (var n = 0, s = 1779033703 ^ e.length; n < e.length; n++) s = (s = Math.imul(s ^ e.charCodeAt(n), 3432918353)) << 13 | s >>> 19;
-        return function () {
-          return s = Math.imul(s ^ s >>> 16, 2246822507), s = Math.imul(s ^ s >>> 13, 3266489909), (s ^= s >>> 16) >>> 0;
-        };
-      }(e.constructor.name),
+  w = function w(e, n) {
+    var r = M(e.constructor.name),
       o = "slcss-" + String(r());
     if ("" === n || s._scopedCssSet.has(o)) return o;
     n = n.replace(/\t+/g, " "), s._scopedCssSet.add(o);
@@ -703,120 +722,104 @@ var M = function M(e, n) {
       }
       {
         var _e25 = /[^(\"|')]*?{/.exec(n);
-        var _s17 = _e25.index + _e25[0].length,
-          _r20 = n.substring(0, _s17).trim();
-        for (; M(_r20, "{") < 1;) {
-          var _e26 = n.substring(_s17);
-          for (; _e26.startsWith('"') || _e26.startsWith("'");) _s17++, _r20 += _e26.charAt(0), _e26 = n.substring(_s17);
-          if (_s17 = N(_e26, "{"), -1 === _s17) {
-            n = "", _r20 = "";
+        var _s18 = _e25.index + _e25[0].length,
+          _r21 = n.substring(0, _s18).trim();
+        for (; N(_r21, "{") < 1;) {
+          var _e26 = n.substring(_s18);
+          for (; _e26.startsWith('"') || _e26.startsWith("'");) _s18++, _r21 += _e26.charAt(0), _e26 = n.substring(_s18);
+          if (_s18 = U(_e26, "{"), -1 === _s18) {
+            n = "", _r21 = "";
             break;
           }
-          var _o11 = _r20.length;
-          _r20 += _e26.substring(0, _s17 + 1).trim(), _s17 += _o11 + 1, n = n.trim();
+          var _o11 = _r21.length;
+          _r21 += _e26.substring(0, _s18 + 1).trim(), _s18 += _o11 + 1, n = n.trim();
         }
         if ("" === n) break;
-        var _d2 = n.substring(_s17);
-        var _f = N(_r20, "}");
-        if (-1 !== _f) for (i += _r20.substring(0, _f + 1), a.pop(), u--, u < 0 && (u = 0), _r20 = _r20.substring(_f + 1).trim(); _r20.length > 0 && (_r20.startsWith("}") || /(,|\w)*}/.test(_r20));) {
-          var _e27 = /.*,.*}/.exec(_r20),
-            _n23 = _e27 ? _e27.index + _e27[0].lastIndexOf("}") : _r20.indexOf("}");
-          _n23 > 0 ? (i += _r20.substring(0, _n23 + 1) + " ", _r20 = _r20.substring(_n23 + 1).trim()) : (i += "} ", _r20 = _r20.substring(1).trim()), a.pop(), u--, u < 0 && (u = 0);
+        var _d2 = n.substring(_s18);
+        var _f = U(_r21, "}");
+        if (-1 !== _f) for (i += _r21.substring(0, _f + 1), a.pop(), u--, u < 0 && (u = 0), _r21 = _r21.substring(_f + 1).trim(); _r21.length > 0 && (_r21.startsWith("}") || /(,|\w)*}/.test(_r21));) {
+          var _e27 = /.*,.*}/.exec(_r21),
+            _n24 = _e27 ? _e27.index + _e27[0].lastIndexOf("}") : _r21.indexOf("}");
+          _n24 > 0 ? (i += _r21.substring(0, _n24 + 1) + " ", _r21 = _r21.substring(_n24 + 1).trim()) : (i += "} ", _r21 = _r21.substring(1).trim()), a.pop(), u--, u < 0 && (u = 0);
         }
-        for (l = M(i, "{") - M(i, "}"), 0 === l && (a = []), n = _d2; /.*;/.test(_r20);) {
-          var _e28 = N(_r20, ";"),
-            _n24 = N(_r20, "{");
-          if (-1 === _e28 || -1 !== _n24 && _n24 < _e28) break;
-          i += _r20.substring(0, _e28 + 1) + " ", _r20 = _r20.substring(_e28 + 1).trim();
+        for (l = N(i, "{") - N(i, "}"), 0 === l && (a = []), n = _d2; /.*;/.test(_r21);) {
+          var _e28 = U(_r21, ";"),
+            _n25 = U(_r21, "{");
+          if (-1 === _e28 || -1 !== _n25 && _n25 < _e28) break;
+          i += _r21.substring(0, _e28 + 1) + " ", _r21 = _r21.substring(_e28 + 1).trim();
         }
-        if (_r20.includes(",")) {
-          var _e29 = _r20.split(",");
-          for (var _n25 = 0; _n25 < _e29.length; _n25++) for (; M(_e29[_n25], ",") < E(_e29[_n25], ",") && _n25 + 1 < _e29.length;) _e29[_n25] += _e29[_n25 + 1], _e29[_n25] = _e29[_n25].trim(), _e29.splice(_n25 + 1, 1), _n25--;
+        if (_r21.includes(",")) {
+          var _e29 = _r21.split(",");
+          for (var _n26 = 0; _n26 < _e29.length; _n26++) for (; N(_e29[_n26], ",") < x(_e29[_n26], ",") && _n26 + 1 < _e29.length;) _e29[_n26] += _e29[_n26 + 1], _e29[_n26] = _e29[_n26].trim(), _e29.splice(_n26 + 1, 1), _n26--;
           if (_e29[0].length > 0 && "@" === _e29[0].charAt(0) && !_e29[0].startsWith("@nest")) {
             if (0 === l ? a.push(!0) : a.push(a && !0), _e29[0].startsWith("@keyframes")) {
               u++;
-              var _n26 = N(_e29[0], "{");
-              if (-1 !== _n26 && _n26 > 0) {
-                var _s18 = _r20.substring(0, _n26).trim();
-                c.set(_s18.substring(10).trim(), _s18.substring(10).trim() + o), _s18 = _s18 + o + " ", _s18 += _r20.substring(_n26), _e29[0] = _s18;
+              var _n27 = U(_e29[0], "{");
+              if (-1 !== _n27 && _n27 > 0) {
+                var _s19 = _r21.substring(0, _n27).trim();
+                c.set(_s19.substring(10).trim(), _s19.substring(10).trim() + o), _s19 = _s19 + o + " ", _s19 += _r21.substring(_n27), _e29[0] = _s19;
               }
             }
           } else if (0 === u && (0 === l || a.length >= l && a.length > 0 && a.slice(0, l).every(function (e) {
             return e;
           }))) {
-            for (var _n27 = 0; _n27 < _e29.length; _n27++) {
-              var _s19 = N(_e29[_n27], "{"),
-                _r21 = -1 !== _s19 ? _e29[_n27].substring(0, _s19) : _e29[_n27];
-              var _l6 = _r21.trim().split(" ");
+            for (var _n28 = 0; _n28 < _e29.length; _n28++) {
+              var _s20 = U(_e29[_n28], "{"),
+                _r22 = -1 !== _s20 ? _e29[_n28].substring(0, _s20) : _e29[_n28];
+              var _l6 = _r22.trim().split(" ");
               var _i17 = void 0;
               for (var _e30 = 0; _e30 < _l6.length; _e30++) if (_i17 = _l6[_e30].trim(), ">" !== _i17 && "+" !== _i17 && "~" !== _i17 && "&" !== _i17) {
                 _l6[_e30] = _i17 + "[" + o + "]";
                 break;
               }
-              _r21 = _l6.join(" "), _r21 += _e29[_n27].substring(-1 !== _s19 ? _s19 : _e29[_n27].length), _e29[_n27] = _r21;
+              _r22 = _l6.join(" "), _r22 += _e29[_n28].substring(-1 !== _s20 ? _s20 : _e29[_n28].length), _e29[_n28] = _r22;
             }
             a.push(!1);
           } else a.push(!1);
-          for (var _n28 = 0; _n28 < _e29.length; _n28++) _n28 > 0 && (i += ", "), i += _e29[_n28];
+          for (var _n29 = 0; _n29 < _e29.length; _n29++) _n29 > 0 && (i += ", "), i += _e29[_n29];
           i += " ";
         } else {
-          if (_r20.length > 0 && "@" === _r20.charAt(0) && !_r20.startsWith("@nest")) {
-            if (0 === l ? a.push(!0) : a.push(a && !0), _r20.startsWith("@keyframes")) {
-              var _e31 = N(_r20, "{");
+          if (_r21.length > 0 && "@" === _r21.charAt(0) && !_r21.startsWith("@nest")) {
+            if (0 === l ? a.push(!0) : a.push(a && !0), _r21.startsWith("@keyframes")) {
+              var _e31 = U(_r21, "{");
               if (-1 !== _e31 && _e31 > 0) {
-                var _n29 = _r20.substring(0, _e31).trim();
-                c.set(_n29.substring(10).trim(), _n29.substring(10).trim() + o), _n29 = _n29 + o + " ", _n29 += _r20.substring(_e31), _r20 = _n29;
+                var _n30 = _r21.substring(0, _e31).trim();
+                c.set(_n30.substring(10).trim(), _n30.substring(10).trim() + o), _n30 = _n30 + o + " ", _n30 += _r21.substring(_e31), _r21 = _n30;
               }
               u++;
             }
           } else if (0 === u && (0 === l || a.length >= l && a.length > 0 && a.slice(0, l).every(function (e) {
             return e;
           }))) {
-            var _e32 = N(_r20, "{"),
-              _n30 = -1 !== _e32 ? _r20.substring(0, _e32) : _r20;
-            var _s20 = _n30.trim().split(" ");
+            var _e32 = U(_r21, "{"),
+              _n31 = -1 !== _e32 ? _r21.substring(0, _e32) : _r21;
+            var _s21 = _n31.trim().split(" ");
             var _l7 = void 0;
-            for (var _e33 = 0; _e33 < _s20.length; _e33++) if (_l7 = _s20[_e33].trim(), ">" !== _l7 && "+" !== _l7 && "~" !== _l7 && "&" !== _l7) {
-              _s20[_e33] = _l7 + "[" + o + "]";
+            for (var _e33 = 0; _e33 < _s21.length; _e33++) if (_l7 = _s21[_e33].trim(), ">" !== _l7 && "+" !== _l7 && "~" !== _l7 && "&" !== _l7) {
+              _s21[_e33] = _l7 + "[" + o + "]";
               break;
             }
-            _n30 = _s20.join(" "), _n30 += _r20.substring(-1 !== _e32 ? _e32 : _r20.length), _r20 = _n30, a.push(!1);
+            _n31 = _s21.join(" "), _n31 += _r21.substring(-1 !== _e32 ? _e32 : _r21.length), _r21 = _n31, a.push(!1);
           } else a.push(!1);
-          i += _r20 + " ", "@" !== _r20.charAt(0) && u && -1 === N(_r20, "}") && u++;
+          i += _r21 + " ", "@" !== _r21.charAt(0) && u && -1 === U(_r21, "}") && u++;
         }
       }
     }
-    if (i = function (e, n) {
-      var _iterator14 = _createForOfIteratorHelper(n.entries()),
-        _step14;
-      try {
-        for (_iterator14.s(); !(_step14 = _iterator14.n()).done;) {
-          var _step14$value = _slicedToArray(_step14.value, 2),
-            _s21 = _step14$value[0],
-            _r22 = _step14$value[1];
-          var _n31 = new RegExp("animation\\s*:\\s*".concat(_s21, "\\s*"), "g");
-          e = e.replace(_n31, "animation: ".concat(_r22, " ")), _n31 = new RegExp("animation-name\\s*:\\s*".concat(_s21, "\\s*"), "g"), e = e.replace(_n31, "animation-name: ".concat(_r22, " "));
-        }
-      } catch (err) {
-        _iterator14.e(err);
-      } finally {
-        _iterator14.f();
-      }
-      return e;
-    }(i, c), "" !== i.trim()) {
+    if (i = E(i, c), "" !== i.trim()) {
       var _e34 = document.head || document.getElementsByTagName("head")[0],
         _n32 = document.createElement("style");
       _e34.appendChild(_n32), _n32.appendChild(document.createTextNode(i));
     }
     return o;
   };
-function hydrate(e) {
+var hydrate = function hydrate(e) {
   var s = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : !0;
   var r = document.getElementById(e).getAttribute("slssrclass");
   var o = n[r];
   !o && this && (o = this[r]);
   return mount(e, new o(), s);
-}
+};
+exports.hydrate = hydrate;
 function resolveAll(e) {
   return Promise.all(e.map(function (e) {
     return e.then(function (e) {
@@ -871,7 +874,7 @@ function mount(e, n) {
   if (null !== o) return R(o, n, r);
   console.error("ID " + e + " does not exist in DOM.");
 }
-function renderToString(e) {
+var renderToString = function renderToString(e) {
   var n = [],
     l = new Set();
   var _iterator15 = _createForOfIteratorHelper(s._structureForMap.keys()),
@@ -908,7 +911,8 @@ function renderToString(e) {
     _iterator16.f();
   }
   return u;
-}
+};
+exports.renderToString = renderToString;
 function update(e, n) {
   var r = e;
   if (e = document.getElementById(e), s._afterInitArr = [], e) {
@@ -923,21 +927,21 @@ function update(e, n) {
   if (s._afterInitArr.forEach(function (e) {
     e();
   }), n.slStyle && !e.slScopedCss) {
-    var _s23 = x(n, n.slStyle());
+    var _s23 = w(n, n.slStyle());
     y(e, _s23), e.slScopedCss = !0;
   }
 }
-var U = n.onpopstate;
+var T = n.onpopstate;
 n.onpopstate = function (e) {
   switch (s._router.strategy) {
     case "#":
-      n.location.hash && s._router.lastHash !== n.location.hash.substring(2) && (U && U(e), route(getRoute()));
+      n.location.hash && s._router.lastHash !== n.location.hash.substring(2) && (T && T(e), route(getRoute()));
       break;
     case "?":
-      n.location.search && s._router.lastHash !== n.location.search.substring(2) && (U && U(e), route(getRoute()));
+      n.location.search && s._router.lastHash !== n.location.search.substring(2) && (T && T(e), route(getRoute()));
       break;
     case "":
-      n.location.pathname && s._router.lastHash !== n.location.pathname.substring(1) && (U && U(e), route(getRoute()));
+      n.location.pathname && s._router.lastHash !== n.location.pathname.substring(1) && (T && T(e), route(getRoute()));
   }
 }, s._router = {
   segmentArr: [],
@@ -949,7 +953,7 @@ n.onpopstate = function (e) {
   strategy: "#",
   count: 0
 }, Object.seal(s._router);
-var w = function w() {
+var F = function F() {
   switch (s._router.strategy) {
     case "#":
       {
@@ -1081,8 +1085,8 @@ function route(e) {
         }
         if (n.scrollTo(0, _c), s._router.currentRoute && void 0 !== s._router.currentRoute.animateDestroy && (s._router.currentRoute.animateDestroy = !0), s._router.currentRoute && s._router.currentRoute.animateDestroy) {
           var _e43 = s._router.currentRoute.root;
-          _e43 = document.getElementById(_e43), s._router.currentRoute = a, h(_e43), g(_e43), l(_e43), O(_e43), w();
-        } else w(), s._router.currentRoute = a;
+          _e43 = document.getElementById(_e43), s._router.currentRoute = a, h(_e43), g(_e43), l(_e43), O(_e43), F();
+        } else F(), s._router.currentRoute = a;
         s._router.count++, a.component && (a.component.slOnDestroy && s._destroyFuncMap.set(e, [a.component.slOnDestroy.bind(a.component)]), s._router.mountRoute = e, R(_r23, a.component, o), a.component.slOnDestroy && (_r23.slOnDestroyIndex = 0, s._destroyFuncMap.get(e).pop(), p(_r23)), i = a.component);
         return "break";
       }
@@ -1097,23 +1101,23 @@ function route(e) {
   } finally {
     _iterator17.f();
   }
-  return s._changeDetector.changeDetectionStrategy === s.CHANGE_STRATEGY_AUTOMATIC && H(), i;
+  return s._changeDetector.changeDetectionStrategy === s.CHANGE_STRATEGY_AUTOMATIC && W(), i;
 }
-w();
-var T = function T(e, n, s) {
+F();
+var L = function L(e, n, s) {
   return {
     parent: e,
     factory: n,
     map: Object.create(null)
   };
 };
-function F(e, n) {
+function k(e, n) {
   "function" == typeof n && (n = n());
   var s = [];
   for (var _r26 = 0; _r26 < n.length; ++_r26) s.push(e.factory.bind(this, n[_r26])());
   return s;
 }
-function L(e, n, s) {
+function j(e, n, s) {
   "function" == typeof n && (n = n());
   var r = Object.create(null),
     o = e.parent;
@@ -1132,24 +1136,24 @@ s.CHANGE_STRATEGY_AUTOMATIC = 100, s.CHANGE_STRATEGY_MANUAL = 200, s.CHANGE_DETE
   lastUpdateDate: new Date(),
   changeDetectionStrategy: s.CHANGE_STRATEGY_AUTOMATIC
 }, Object.seal(s._changeDetector), Object.freeze(s._changeStrategies);
-var k = function k(e, n) {
+var H = function H(e, n) {
   if (n[e]) {
     var _s26 = n[e];
     n[e] = function () {
       var e = _s26.apply(this, [].slice.call(arguments));
-      return H(), e;
+      return W(), e;
     };
   }
 };
-var j = function j() {
+var G = function G() {
     var e = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
     e ? update(e, s._updateMap.get(e)) : s._updateMap.forEach(function (e, n) {
       update(n, e);
     });
   },
-  H = function H() {
+  W = function W() {
     if (s._changeDetector.changeDetectionStrategy !== s.CHANGE_STRATEGY_AUTOMATIC) return;
-    new Date() - s._changeDetector.lastUpdateDate > 6 ? j() : s._debouncedPerformUpdates(), s._changeDetector.lastUpdateDate = new Date();
+    new Date() - s._changeDetector.lastUpdateDate > 6 ? G() : s._debouncedPerformUpdates(), s._changeDetector.lastUpdateDate = new Date();
   };
 function setDetectionStrategy(e) {
   s._changeStrategies.forEach(function (n) {
@@ -1158,7 +1162,7 @@ function setDetectionStrategy(e) {
 }
 function detectChanges() {
   var e = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-  j(e);
+  G(e);
 }
 function isDetectorAttached(e) {
   return s._updateMap.has(e);
@@ -1166,11 +1170,11 @@ function isDetectorAttached(e) {
 function detachDetector(e) {
   s._updateMap["delete"](e);
 }
-var G = Promise.prototype.then;
+var P = Promise.prototype.then;
 function enableDetectOnThen() {
   Promise.prototype.then = function (e, n) {
-    return G.call(this, function (n) {
-      return H(), "function" == typeof e && e instanceof Function ? e(n) : e;
+    return P.call(this, function (n) {
+      return W(), "function" == typeof e && e instanceof Function ? e(n) : e;
     }, n);
   };
 }
@@ -1178,7 +1182,7 @@ function wrapWithChangeDetector(e, n) {
   return function () {
     n && n.slpreventdefault && arguments.length > 0 && "function" == typeof arguments[0].preventDefault && arguments[0].preventDefault();
     var s = e.apply(this, [].slice.call(arguments));
-    return H(), s;
+    return W(), s;
   };
 }
 s._debouncedPerformUpdates = function (e, n) {
@@ -1192,23 +1196,26 @@ s._debouncedPerformUpdates = function (e, n) {
       return e.apply(o, r);
     }, n);
   };
-}(j, 17);
-var W = n.XMLHttpRequest.prototype.send,
-  P = new Map();
-function Y() {
-  if (this._onreadystatechange) {
-    var _e44 = P.get(this);
-    if (void 0 !== _e44 && _e44 === this._onreadystatechangecount) return void P["delete"](this);
-    void 0 !== _e44 ? P.set(this, _e44 + 1) : P.set(this, 0);
-    var _n38 = this._onreadystatechange.apply(this, arguments);
-    return H(), P["delete"](this), _n38;
-  }
+}(G, 17);
+var Y = n.XMLHttpRequest.prototype.send,
+  B = new Map();
+var q = function q(e) {
+    return this.onreadystatechange ? (this._onreadystatechange = this.onreadystatechange, void 0 === this._onreadystatechangecount ? this._onreadystatechangecount = 0 : this._onreadystatechangecount += 4) : this._onreadystatechangecount = 0, this.onreadystatechange = K, Y.apply(this, arguments);
+  },
+  K = function K() {
+    if (this._onreadystatechange) {
+      var _e44 = B.get(this);
+      if (void 0 !== _e44 && _e44 === this._onreadystatechangecount) return void B["delete"](this);
+      void 0 !== _e44 ? B.set(this, _e44 + 1) : B.set(this, 0);
+      var _n38 = this._onreadystatechange.apply(this, arguments);
+      return W(), B["delete"](this), _n38;
+    }
+  };
+n.XMLHttpRequest.prototype.send = q;
+{
+  var _e45 = n.fetch;
+  n.fetch = function () {
+    var n = _e45.apply(this, arguments);
+    return W(), n;
+  };
 }
-n.XMLHttpRequest.prototype.send = function (e) {
-  return this.onreadystatechange ? (this._onreadystatechange = this.onreadystatechange, void 0 === this._onreadystatechangecount ? this._onreadystatechangecount = 0 : this._onreadystatechangecount += 4) : this._onreadystatechangecount = 0, this.onreadystatechange = Y, W.apply(this, arguments);
-};
-var B = n.fetch;
-n.fetch = function () {
-  var e = B.apply(this, arguments);
-  return H(), e;
-};
