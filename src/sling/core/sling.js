@@ -1,5 +1,5 @@
 const MODE_SLIM = false;
-const MODE_WORKER = false;
+const MODE_WORKER = true;
 
 const origWindow = typeof (window) !== 'undefined';
 var slContext = origWindow ? window : global;
@@ -1243,7 +1243,7 @@ const _mountInternal = (target, component, attachDetector) => {
 }
 
 export function version() {
-    return '22.0.0';
+    return '22.1.0';
 }
 
 const xmur3 = !MODE_SLIM ? function xmur3(str) {
